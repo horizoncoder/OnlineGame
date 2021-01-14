@@ -7,7 +7,7 @@ app.use(cors());
 app.use(express.json());
 
 //routes
-app.use("/dashboard",require("./routes/dashboard"));
+app.use("/dashboard", require("./routes/dashboard"));
 //register and Login
 app.use("/auth", require("./routes/jwtAuth"))
 app.listen(5000, () => {

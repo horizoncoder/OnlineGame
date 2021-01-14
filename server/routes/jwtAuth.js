@@ -5,7 +5,7 @@ const jwtGenerator = require("../utils/jwtGenerator");
 const validInfo = require("../middleware/validInfo");
 const authorization = require("../middleware/authorization");
 //register 
-router.post("/reg", validInfo, async (req,res)=>{
+router.post("/register", validInfo, async (req,res)=>{
     try{
         // destructure req.body(name password)
 
@@ -25,15 +25,15 @@ router.post("/reg", validInfo, async (req,res)=>{
 
          //add user to database
 
-         let newUser = await pool.query(
+         const newUser = await pool.query(
             "INSERT INTO users (user_name, user_email, user_password) VALUES ($1, $2, $3) RETURNING *",
             [name, email, bcryptPassword]
           );
-          res.json(newUser.rows[0]);
+  
 
 //jwt token
 const token = jwtGenerator(newUser.rows[0].user_id);
- res.json({token});
+ res.json({ token });
 
     } catch (err){
 
