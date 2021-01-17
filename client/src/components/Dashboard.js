@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState ,Fragment} from "react";
 import { toast } from "react-toastify";
+import {Link} from 'react-router-dom';
 
 const Dashboard = ({ setAuth }) => {
   const [name, setName] = useState("");
@@ -7,7 +8,7 @@ const Dashboard = ({ setAuth }) => {
   const getProfile = async () => {
     try {
       const res = await fetch("http://localhost:5000/dashboard", {
-        method: "POST",
+        method: "GET",
         headers: { token: localStorage.token }
       });
 
@@ -40,8 +41,13 @@ const Dashboard = ({ setAuth }) => {
       <button onClick={e => logout(e)} className="btn btn-primary">
         Logout
       </button>
+
+      <Link to="/game">Play</Link>
+      
     </div>
   );
 };
+
+
 
 export default Dashboard;

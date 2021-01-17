@@ -1,7 +1,8 @@
 import React, { Fragment, useState } from "react";
 import { Link, Redirect } from "react-router-dom";
 import { toast } from "react-toastify";
-
+//import {url}  from  './api.js';
+const url= new URL('http://localhost:5000');
 const Register = ({ setAuth }) => {
   const [inputs, setInputs] = useState({
     email: "",
@@ -19,7 +20,7 @@ const Register = ({ setAuth }) => {
     try {
       const body = { email, password, name };
       const response = await fetch(
-        "http://localhost:5000/auth/register",
+        url+"auth/register",
         {
           method: "POST",
           headers: {
@@ -29,10 +30,19 @@ const Register = ({ setAuth }) => {
         }
       );
       const parseRes = await response.json();
-console.log(parseRes);
-        localStorage.setItem("token",parseRes.token);
-        setAuth(true);
 
+
+        if(parseRes.token){
+          console.log(parseRes);
+          localStorage.setItem("token",parseRes.token);
+
+          setAuth(true);
+          toast.success("Успешная регистрация")
+        }else{
+          setAuth(false)
+          toast.error(parseRes)
+        }
+  
     } catch (err) {
       console.error(err.message);
     }

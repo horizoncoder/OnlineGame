@@ -14,9 +14,11 @@ router.post("/register", validInfo, async (req,res)=>{
         const user = await pool.query("SELECT * FROM users WHERE user_email = $1", [
             email
           ]);
-          if (user.rows.length > 0) {
+          if (user.rows.length !== 0) {
             return res.status(401).json("User already exist!");
          }
+
+      
          //Bcrypt password
          const saltRound=10;
          const salt = await bcrypt.genSalt(saltRound);
