@@ -1,9 +1,7 @@
 import React from "react";
 import ReactDOM from 'react-dom'
 import './App.css';
-import io from 'socket.io-client';
-import InputTodo from "./InputTodo";
-
+import {Stats} from './Stats'
 class Game extends React.Component {
 
   constructor(props) {
@@ -11,8 +9,9 @@ class Game extends React.Component {
     this.state=this.initialBoard(2) 
   
   }
+  
 
-//начальные данные
+
   initialBoard = (size) => {
     let state = {boardSize: size,
     numRed: 0,
@@ -37,7 +36,7 @@ class Game extends React.Component {
 // квадраты
   for (let i=0; i< state.boardSize; i++) {
     for (let j=0; j< state.boardSize; j++) {
-      state.boxColors[i+","+j] = "black"
+      state.boxColors[i+","+j] = "white"
     }
   }
   return state
@@ -75,12 +74,10 @@ console.log("ход "+y)
           this.setState((prevState)=>({
             numRed: (prevState.turn ==="red") ? prevState.numRed+1 : prevState.numRed,  //считаем очки
             numBlue: (prevState.turn ==="blue") ? prevState.numBlue+1 : prevState.numBlue,
-            
             boxColors: newBoxColors,
            
           }))
           console.log(newBoxColors)
-         
         }
         if (this.checkSquare(parseFloat(y)-1,z) === 4) {
           madeSquare = 1
@@ -114,12 +111,10 @@ console.log("ход "+y)
       if (madeSquare === 0) {
         this.setState((prevState)=> ({
           turn: prevState.turn === "red" ? "blue" : "red", //поменять цвет палки
-          
         }))
       } else {
         this.checkGameOver()
       }
-      
     }
   }
 //проверяем квадраты на заполнение
@@ -150,7 +145,7 @@ console.log("ход "+y)
       }
       return (winMessage)
   }
-//изменить размер поля
+
   changeBoardSize = (event) => {
     if (window.confirm('Создать новое поле?')){
       var newState
@@ -164,7 +159,6 @@ console.log("ход "+y)
       this.setState((prevState)=> newState)
     }
   }
-//изменить цвет квадрата
 
   selectColor = (int) => {
     if (int===0) {
@@ -175,7 +169,7 @@ console.log("ход "+y)
       return ("rgb(0,0,255)")
     }
   }
-//закрасить палочку при навидении
+//закрасить квадарат 
   tint = (event) => {
     var currentCoord=event.target.dataset.coord
     if (this.state.lineCoordinates[currentCoord] === 0) {
@@ -196,7 +190,7 @@ console.log("ход "+y)
 
   makeBoard = (boardSize) => {
     var cols=[];
-    for (let i=0; i<=2*boardSize; i++) {// проверка на одинаковое количество колонок
+    for (let i=0; i<=2*boardSize; i++) {// проверка на одинаковое количество строки 
       var row=[]
       for (let j=0; j<=2*boardSize; j++) {// проверка на одинаковое количество строки 
         if (i%2 === 0) {
@@ -213,7 +207,7 @@ console.log("ход "+y)
         } else {
           if (j%2 === 0) {
             row.push(React.createElement("div"
-              ,{className: "vertical","data-coord":"1,"+Math.floor(j/2)+ "," +Math.floor(i/2) //добавляем координаты точке
+              ,{className: "vertical","data-coord":"1,"+Math.floor(j/2)+ "," +Math.floor(i/2)
               , onClick:this.PutLine, style:{backgroundColor: this.selectColor(this.state.lineCoordinates["1,"+Math.floor(j/2)+ "," +Math.floor(i/2)])}
               , onMouseEnter:this.tint, onMouseLeave:this.untint}
               ,""))
@@ -229,32 +223,36 @@ console.log("ход "+y)
     }
 
     return (React.createElement("div",{id:"game-board"},cols))
-    
   }
- 
+
   render() {
+    
     return (
       <div id="game">
         <div id="header">
-          <p id="score"> Красный:{this.state.numRed} Синий:{this.state.numBlue} </p>
-         размер поля :
+          <p id="score"> Red:{this.state.numRed} Blue:{this.state.numBlue} </p>  <p id="winner"> {this.state.winMessage} </p>
+          Board size :
           <button id= "small" onClick={this.changeBoardSize}> 5x5 </button>
           <button id="medium" onClick={this.changeBoardSize}> 8x8 </button>
           <button id="large" onClick={this.changeBoardSize}> 12x12 </button>
-          <p id="winner"> {this.state.winMessage} </p>
+         
         </div>
         <div id="board">
           {this.makeBoard(this.state.boardSize)}
         </div>
-        <InputTodo></InputTodo>
   
-       
+  
+        <Stats/>
       </div>
-    );
+     
+    )
+    
   }
 }
 
 ReactDOM.render(<Game/>,document.getElementById('root'))
+
   
   
   export { Game};
+  

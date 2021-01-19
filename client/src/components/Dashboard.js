@@ -1,8 +1,6 @@
 import React, { useEffect, useState ,Fragment} from "react";
 import { toast } from "react-toastify";
 import {Link} from 'react-router-dom';
-import InputTodo from "./InputTodo";
-import ListTodos from "./ListTodos";
 import {API_URL} from  './api';
 const Dashboard = ({ setAuth }) => {
   const [name, setName] = useState("");
@@ -53,8 +51,6 @@ const Dashboard = ({ setAuth }) => {
       </button>
 
       <Link to="/game">Play</Link>
-      <InputTodo></InputTodo>
-      <ListTodos></ListTodos>
     </div>
     
   );

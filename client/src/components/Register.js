@@ -1,16 +1,16 @@
-import React, { Fragment, useState,render } from "react";
-import { Button,Form,Col,InputGroup } from 'react-bootstrap';
+import React, { Fragment, useState } from "react";
 import { Link, Redirect } from "react-router-dom";
 import { toast } from "react-toastify";
-import {API_URL} from  './api';
-//const url= new URL('http://localhost:5000');
-const Register =({ setAuth }) =>{
-  const [validated, setValidated] = useState(false);
+import { Form,Button,Col } from 'react-bootstrap';
+//import {url}  from  './api.js';
 
+const url= new URL('http://localhost:5000');
+const Register = ({ setAuth }) => {
   const [inputs, setInputs] = useState({
-    email: "dima6@gmail.com",
-    password: "dima",
-    name: "dima"
+    email: "",
+    password: "",
+    name: "",
+  
     
   });
 
@@ -20,11 +20,17 @@ const Register =({ setAuth }) =>{
     setInputs({ ...inputs, [e.target.name]: e.target.value });
 
   const onSubmitForm = async e => {
+    const form = e.currentTarget;
+    if (form.checkValidity() === false) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+    setValidated(true);
     e.preventDefault();
     try {
       const body = { email, password, name };
       const response = await fetch(
-        API_URL +"auth/register",
+        url+"auth/register",
         {
           method: "POST",
           headers: {
@@ -51,75 +57,78 @@ const Register =({ setAuth }) =>{
       console.error(err.message);
     }
   };
+  const [validated, setValidated] = useState(false);
 
 
-  const handleSubmit = (event) => {
-    const form = event.currentTarget;
-    if (form.checkValidity() === false) {
-      event.preventDefault();
-      event.stopPropagation();
-    }
-
-    setValidated(true);
-  };
 
   return (
-    <Form noValidate validated={validated} onSubmit={onSubmitForm}>
+    <>
+      <Form noValidate validated={validated} onSubmit={onSubmitForm }>
       <Form.Row>
+        
         <Form.Group as={Col} md="4" controlId="validationCustom01">
+          <br></br>
           <Form.Label>Почта</Form.Label>
           <Form.Control
             required
-            type="text"
-            placeholder="example@gmail.com"
-            value={email}
-            onChange={e => onChange(e)}
-          />
-          
-         <Form.Control.Feedback type="invalid">
-            Введите свою почту
-          </Form.Control.Feedback>
-        </Form.Group>
-      
-     
-        
-      </Form.Row>
-      <Form.Row>
-      
-        <Form.Group as={Col} md="4" controlId="validationCustom05">
-          <Form.Label>Имя</Form.Label>
-          <Form.Control 
-          type="text" 
-          placeholder="Имя" 
-          value={name}
+          name="email"
+          value={email}
+          placeholder="email"
           onChange={e => onChange(e)}
-          required />
+          />
+          <Form.Control.Feedback>Отлично!</Form.Control.Feedback>
           <Form.Control.Feedback type="invalid">
-          Введите свое имя
-          </Form.Control.Feedback>
+              Введите почту 
+            </Form.Control.Feedback>
         </Form.Group>
-      </Form.Row>
-
+        </Form.Row>
       <Form.Row>
-      <Form.Group as={Col} md="4" controlId="validationCustom02">
+        <Form.Group as={Col} md="4" controlId="validationCustom02">
           <Form.Label>Пароль</Form.Label>
           <Form.Control
             required
             type="password"
+            name="password"
+            value={password}
             placeholder="password"
             onChange={e => onChange(e)}
-            value={password}
           />
+          <Form.Control.Feedback>Отлично!</Form.Control.Feedback>
           <Form.Control.Feedback type="invalid">
-            Введите свой пароль
-          </Form.Control.Feedback>
+              Введите пароль
+            </Form.Control.Feedback>
+          
         </Form.Group>
-    </Form.Row>
-      <Button type="submit">Submit form</Button>
-      <Link to="/login">login</Link>
-    </Form>
+      </Form.Row>
+      <Form.Row>
+      <Form.Group as={Col} md="4" controlId="validationCustom02">
+          <Form.Label>Имя</Form.Label>
+          <Form.Control
+            required
+            type="text"
+          name="name"
+          value={name}
+          placeholder="name"
+          onChange={e => onChange(e)}
+          />
+           <Form.Control.Feedback>Отлично!</Form.Control.Feedback>
+          <Form.Control.Feedback type="invalid">
+              Введите имя
+            </Form.Control.Feedback>
+        </Form.Group>
+        
+  
+      </Form.Row>
      
+      <Button type="submit">Submit form</Button>
+    </Form>
+      
+    
+      
+      <Link to="/login">login</Link>
+      
+    </>
   );
-}
+};
 
-export default Register
+export default Register;

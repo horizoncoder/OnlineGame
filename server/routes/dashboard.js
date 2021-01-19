@@ -5,27 +5,26 @@ const pool = require("../db");
 router.get("/", authorization, async (req, res) => {
   try {
     const user = await pool.query(
-        "SELECT u.user_name, s.stat_id, s.win, s.score FROM users AS u LEFT JOIN stats AS s ON u.user_id = s.user_id WHERE u.user_id = $1",
+      "SELECT u.user_name, t.todo_id, t.description FROM users AS u LEFT JOIN todos AS t ON u.user_id = t.user_id WHERE u.user_id = $1",
         [req.user] 
       ); 
     
       
       res.json(user.rows[0]);
 
-    
   } catch (err) {
     console.error(err.message);
     res.status(500).send("Server error");
   }
 });
-//создать статистику 
-router.post("/stats", authorization, async (req, res) => {
+
+router.post("/todos", authorization, async (req, res) => {
   try {
     console.log(req.body);
-    const { win,score } = req.body;
+    const { description } = req.body;
     const newTodo = await pool.query(
-      "INSERT INTO stats (user_id, win, score ) VALUES ($1, $2, $3) RETURNING *",
-      [req.user, win, score]
+      "INSERT INTO todos (user_id, description) VALUES ($1, $2) RETURNING *",
+      [req.user, description]
     );
 
     res.json(newTodo.rows[0]);
@@ -34,13 +33,34 @@ router.post("/stats", authorization, async (req, res) => {
   }
 });
 
-//удалить  статистику 
+//update a todo
 
-router.delete("/stats/:id", authorization, async (req, res) => {
+router.put("/todos/:id", authorization, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { description } = req.body;
+    const updateTodo = await pool.query(
+      "UPDATE todos SET description = $1 WHERE todo_id = $2 AND user_id = $3 RETURNING *",
+      [description, id, req.user.id]
+    );
+
+    if (updateTodo.rows.length === 0) {
+      return res.json("This todo is not yours");
+    }
+
+    res.json("Todo was updated");
+  } catch (err) {
+    console.error(err.message);
+  }
+});
+
+//delete a todo
+
+router.delete("/todos/:id", authorization, async (req, res) => {
   try {
     const { id } = req.params;
     const deleteTodo = await pool.query(
-      "DELETE FROM stats WHERE stat_id = $1 AND user_id = $2 RETURNING *",
+      "DELETE FROM todos WHERE todo_id = $1 AND user_id = $2 RETURNING *",
       [id, req.user.id]
     );
 
@@ -53,4 +73,6 @@ router.delete("/stats/:id", authorization, async (req, res) => {
     console.error(err.message);
   }
 });
+
 module.exports = router;
+

@@ -11,8 +11,7 @@ import Navibar from './components/Navibar';
 import Login from './components/Login';
 
 import {Game} from './components/Game';
-import {Chat} from './components/Chat';
-
+import {Stats} from './components/Stats'
 import Dashboard from './components/Dashboard';
 
 
@@ -27,9 +26,6 @@ import {
 } from "react-router-dom";
 
 import {Home} from './router/Home';
-import io from 'socket.io-client'
-
-const socket = io.connect('http://localhost:4000')
 
 toast.configure()
 
@@ -75,8 +71,7 @@ function App() {
             
             <Route  exact path="/" component={Home}/>
             <Route  exact path="/game" component={Game}/>
-           // <Route  exact path="/chat" component={Chat}/>
-            
+            <Route  exact path="/stats" component={Stats}/>
             <Route   exact  path="/game"render={props =>    isAuthenticated ? (   <Dashboard {...props} setAuth={setAuth} /> ) : (   <Redirect to="/login" />   )      }   />
           </Switch>
         </div>
