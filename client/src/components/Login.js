@@ -1,9 +1,11 @@
 import React, { Fragment, useState } from "react";
 import { Link, Redirect } from "react-router-dom";
 
+
 import { toast } from "react-toastify";
-//import {url}  from  './api.js';
-const url= new URL('http://localhost:5000');
+import {API_URL} from  './api';
+console.log(API_URL)
+//const url= new URL('http://localhost:5000');
 const Login = ({ setAuth }) => {
   const [inputs, setInputs] = useState({
     email: "",
@@ -20,7 +22,7 @@ const Login = ({ setAuth }) => {
     try {
       const body = { email, password };
       const response = await fetch(
-        url+"auth/login",
+        API_URL+"auth/login",
         {
           method: "POST",
           headers: {
@@ -47,7 +49,7 @@ const Login = ({ setAuth }) => {
   };
 
   return (
-    <Fragment>
+    <>
       <h1 className="mt-5 text-center">Login</h1>
       <form onSubmit={onSubmitForm}>
         <input
@@ -67,7 +69,7 @@ const Login = ({ setAuth }) => {
         <button class="btn btn-success btn-block">Submit</button>
       </form>
       <Link to="/register">register</Link>
-    </Fragment>
+    </>
   );
 };
 

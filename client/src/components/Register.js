@@ -1,13 +1,17 @@
-import React, { Fragment, useState } from "react";
+import React, { Fragment, useState,render } from "react";
+import { Button,Form,Col,InputGroup } from 'react-bootstrap';
 import { Link, Redirect } from "react-router-dom";
 import { toast } from "react-toastify";
-//import {url}  from  './api.js';
-const url= new URL('http://localhost:5000');
-const Register = ({ setAuth }) => {
+import {API_URL} from  './api';
+//const url= new URL('http://localhost:5000');
+const Register =({ setAuth }) =>{
+  const [validated, setValidated] = useState(false);
+
   const [inputs, setInputs] = useState({
-    email: "",
-    password: "",
-    name: ""
+    email: "dima6@gmail.com",
+    password: "dima",
+    name: "dima"
+    
   });
 
   const { email, password, name } = inputs;
@@ -20,7 +24,7 @@ const Register = ({ setAuth }) => {
     try {
       const body = { email, password, name };
       const response = await fetch(
-        url+"auth/register",
+        API_URL +"auth/register",
         {
           method: "POST",
           headers: {
@@ -48,39 +52,74 @@ const Register = ({ setAuth }) => {
     }
   };
 
-  return (
-    <Fragment>
-      <h1 className="mt-5 text-center">Register</h1>
-      <form onSubmit={onSubmitForm}>
-        <input
-          type="text"
-          name="email"
-          value={email}
-          placeholder="email"
-          onChange={e => onChange(e)}
-          className="form-control my-3"
-        />
-        <input
-          type="password"
-          name="password"
-          value={password}
-          placeholder="password"
-          onChange={e => onChange(e)}
-          className="form-control my-3"
-        />
-        <input
-          type="text"
-          name="name"
-          value={name}
-          placeholder="name"
-          onChange={e => onChange(e)}
-          className="form-control my-3"
-        />
-        <button className="btn btn-success btn-block">Submit</button>
-      </form>
-      <Link to="/login">login</Link>
-    </Fragment>
-  );
-};
 
-export default Register;
+  const handleSubmit = (event) => {
+    const form = event.currentTarget;
+    if (form.checkValidity() === false) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
+
+    setValidated(true);
+  };
+
+  return (
+    <Form noValidate validated={validated} onSubmit={onSubmitForm}>
+      <Form.Row>
+        <Form.Group as={Col} md="4" controlId="validationCustom01">
+          <Form.Label>Почта</Form.Label>
+          <Form.Control
+            required
+            type="text"
+            placeholder="example@gmail.com"
+            value={email}
+            onChange={e => onChange(e)}
+          />
+          
+         <Form.Control.Feedback type="invalid">
+            Введите свою почту
+          </Form.Control.Feedback>
+        </Form.Group>
+      
+     
+        
+      </Form.Row>
+      <Form.Row>
+      
+        <Form.Group as={Col} md="4" controlId="validationCustom05">
+          <Form.Label>Имя</Form.Label>
+          <Form.Control 
+          type="text" 
+          placeholder="Имя" 
+          value={name}
+          onChange={e => onChange(e)}
+          required />
+          <Form.Control.Feedback type="invalid">
+          Введите свое имя
+          </Form.Control.Feedback>
+        </Form.Group>
+      </Form.Row>
+
+      <Form.Row>
+      <Form.Group as={Col} md="4" controlId="validationCustom02">
+          <Form.Label>Пароль</Form.Label>
+          <Form.Control
+            required
+            type="password"
+            placeholder="password"
+            onChange={e => onChange(e)}
+            value={password}
+          />
+          <Form.Control.Feedback type="invalid">
+            Введите свой пароль
+          </Form.Control.Feedback>
+        </Form.Group>
+    </Form.Row>
+      <Button type="submit">Submit form</Button>
+      <Link to="/login">login</Link>
+    </Form>
+     
+  );
+}
+
+export default Register
