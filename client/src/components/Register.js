@@ -2,9 +2,9 @@ import React, { Fragment, useState } from "react";
 import { Link, Redirect } from "react-router-dom";
 import { toast } from "react-toastify";
 import { Form,Button,Col } from 'react-bootstrap';
-//import {url}  from  './api.js';
+import {API_URL} from  './api';
 
-const url= new URL('http://localhost:5000');
+
 const Register = ({ setAuth }) => {
   const [inputs, setInputs] = useState({
     email: "",
@@ -30,7 +30,7 @@ const Register = ({ setAuth }) => {
     try {
       const body = { email, password, name };
       const response = await fetch(
-        url+"auth/register",
+        API_URL+"auth/register",
         {
           method: "POST",
           headers: {
@@ -66,7 +66,7 @@ const Register = ({ setAuth }) => {
       <Form noValidate validated={validated} onSubmit={onSubmitForm }>
       <Form.Row>
         
-        <Form.Group as={Col} md="4" controlId="validationCustom01">
+        <Form.Group as={Col} md="12" controlId="validationCustom01">
           <br></br>
           <Form.Label>Почта</Form.Label>
           <Form.Control
@@ -83,7 +83,7 @@ const Register = ({ setAuth }) => {
         </Form.Group>
         </Form.Row>
       <Form.Row>
-        <Form.Group as={Col} md="4" controlId="validationCustom02">
+        <Form.Group as={Col} md="12" controlId="validationCustom02">
           <Form.Label>Пароль</Form.Label>
           <Form.Control
             required
@@ -101,7 +101,7 @@ const Register = ({ setAuth }) => {
         </Form.Group>
       </Form.Row>
       <Form.Row>
-      <Form.Group as={Col} md="4" controlId="validationCustom02">
+      <Form.Group as={Col} md="12" controlId="validationCustom02">
           <Form.Label>Имя</Form.Label>
           <Form.Control
             required
@@ -120,12 +120,12 @@ const Register = ({ setAuth }) => {
   
       </Form.Row>
      
-      <Button type="submit">Submit form</Button>
+      <Button type="submit">Регистрация</Button>
     </Form>
       
     
       
-      <Link to="/login">login</Link>
+      <Link to="/login">Логин</Link>
       
     </>
   );

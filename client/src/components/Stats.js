@@ -1,20 +1,22 @@
 import React, { Component } from 'react'
-
+import {Game} from './Game'
 class Stats extends Component {
 
     constructor(props) {
         super(props)
-    
+
        this.input=React.createRef()
        this.state={
            list:[],
+          
           }
+          
     }
 
     addTask=()=>{
     
     const Items={
-            value:this.input.current.value,
+            value:this.input= "Синий "+JSON.stringify(this.props.numBlue)+ " Красный "+JSON.stringify(this.props.numRed) +" "+ JSON.stringify(this.props.winMessage),
             Date: new Date().toUTCString()
         };
 
@@ -32,21 +34,30 @@ class Stats extends Component {
             list:JSON.parse(localStorage.getItem('list'))
         });
     }
+  
+
 
     componentDidMount() {
         const list = window.localStorage.getItem('list');
         const parsedList = JSON.parse(list);
+      
         if(list == null){
             return false
+            
         }
+
+      
+
         else{
             this.setState({
                 list: parsedList,
             })
             console.log(this.state.list);
+           
         }
     }
     
+ 
     deleteItem=(event)=> {
         
         let index = event.target.getAttribute('data-key')
@@ -55,7 +66,9 @@ class Stats extends Component {
         this.setState({list:listValue});
         localStorage.setItem('list',JSON.stringify(listValue))
     }
-
+    
+  
+    
     
     
     render() {
@@ -64,15 +77,18 @@ class Stats extends Component {
                 <h1>Сохранить результат</h1>
                 <hr/>
                 <div className="container">
-                    <input type="text" placeholder="Вставьте результат сюда" ref={this.input}></input>
-                        <button onClick={this.addTask} className="button" >Сохранить</button>
+                
+                        <button onClick={this.addTask}  >Сохранить</button>
+                       
                         <br></br>
                         <br></br>
                             <ol>
                                 {
+                                
                                     this.state.list.map((item,index)=>
                                     {
                                         return(<li key={item.id}> {item.value}
+                                       
                                         <button className="button" type="button" value="delete" data-key={index} onClick={this.deleteItem}>Удалить</button></li>)
                                     })
                                 } 
@@ -84,4 +100,4 @@ class Stats extends Component {
     }
 }
 
-export {Stats}
+export {Stats }

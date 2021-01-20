@@ -31,9 +31,9 @@ toast.configure()
 
 
 function App() {
-  const [isAuthenticated,setIsAuthentication] = useState(false);
-  const setAuth=(boolean)=>{
-    setIsAuthentication(boolean)
+         const [isAuthenticated,setIsAuthentication] = useState(false);
+          const setAuth=(boolean)=>{
+         setIsAuthentication(boolean)
   };
   async function isAuth(){
     try {
@@ -48,7 +48,7 @@ function App() {
       console.log(parseRes);
       parseRes === true ? setIsAuthentication(true): setIsAuthentication(false);
     } catch (err) {
-      console.error(err.message)
+         console.error(err.message)
     }
   }
   useEffect(()=>{

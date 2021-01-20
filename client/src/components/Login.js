@@ -2,7 +2,7 @@ import React, { Fragment, useState } from "react";
 import { Link, Redirect } from "react-router-dom";
 import { Form,Button,Col } from 'react-bootstrap';
 import { toast } from "react-toastify";
-//import {url}  from  './api.js';
+import {API_URL} from  './api';
 const url= new URL('http://localhost:5000');
 const Login = ({ setAuth }) => {
   const [inputs, setInputs] = useState({
@@ -26,7 +26,7 @@ const Login = ({ setAuth }) => {
     try {
       const body = { email, password };
       const response = await fetch(
-        url+"auth/login",
+        API_URL+"auth/login",
         {
           method: "POST",
           headers: {
@@ -58,10 +58,10 @@ const Login = ({ setAuth }) => {
 
   return (
     <Fragment>
-      <Form noValidate validated={validated} onSubmit={onSubmitForm }>
+      <Form noValidate validated={validated} onSubmit={onSubmitForm } className="centered-top">
       <Form.Row>
         
-        <Form.Group as={Col} md="4" controlId="validationCustom01">
+        <Form.Group as={Col} md="12" controlId="validationCustom01">
           <br></br>
           <Form.Label>Почта</Form.Label>
           <Form.Control
@@ -78,7 +78,7 @@ const Login = ({ setAuth }) => {
         </Form.Group>
         </Form.Row>
       <Form.Row>
-        <Form.Group as={Col} md="4" controlId="validationCustom02">
+        <Form.Group as={Col} md="12" controlId="validationCustom02">
           <Form.Label>Пароль</Form.Label>
           <Form.Control
             required
@@ -101,9 +101,11 @@ const Login = ({ setAuth }) => {
   
       </Form.Row>
      
-      <Button type="submit">Login</Button>
+      <Button type="submit">Логин</Button>
     </Form>
-    <Link to="/register">register</Link>
+    <Link to="/register">Регистрация</Link>
+
+    
     </Fragment>
     
   );

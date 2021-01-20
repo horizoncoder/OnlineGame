@@ -52,7 +52,7 @@ class Game extends React.Component {
       let newState=this.state.lineCoordinates
      
       newState[currentCoord] = this.state.turn === "red"? 1 : -1
-      console.log("newstate "+newState[currentCoord])
+      
      
       var splitCoord=currentCoord.split(',')
       var x = splitCoord[0] //x кордината
@@ -60,24 +60,19 @@ class Game extends React.Component {
       var z = splitCoord[2] //z кордината
 
       let newBoxColors = this.state.boxColors
-console.log(this.state.boxColors )
 //
       var madeSquare = 0
-console.log("madeSquare " + madeSquare )
-console.log("ход "+y)
       if (x === "0") {
         if (this.checkSquare(y,z) === 4) { //если квадрат заполнин  с 4 сторон меняем цвет 
           madeSquare = 1
-          console.log("madeSquare " + madeSquare )
           newBoxColors[y+','+z] =  (this.state.turn ==="red") ? "rgba(255,0,0,0.5)" : "rgba(0,0,255,0.5)" //по последний палочки меняем цвет квадрата
-          console.log("color"+ newBoxColors[y])
           this.setState((prevState)=>({
             numRed: (prevState.turn ==="red") ? prevState.numRed+1 : prevState.numRed,  //считаем очки
             numBlue: (prevState.turn ==="blue") ? prevState.numBlue+1 : prevState.numBlue,
             boxColors: newBoxColors,
            
           }))
-          console.log(newBoxColors)
+
         }
         if (this.checkSquare(parseFloat(y)-1,z) === 4) {
           madeSquare = 1
@@ -120,9 +115,7 @@ console.log("ход "+y)
 //проверяем квадраты на заполнение
   checkSquare = (y,z) => {
     var checker1 = Math.abs(this.state.lineCoordinates['0,'+y+','+z])
-    console.log(checker1)
     var checker2 = Math.abs(((parseFloat(y)+1))>this.state.boardSize ? 0 : this.state.lineCoordinates['0,'+(parseFloat(y)+1)+','+z])
-    console.log(checker2)
     var checker3 = Math.abs(this.state.lineCoordinates['1,'+z+','+y])
     var checker4 = Math.abs(((parseFloat(z)+1))>this.state.boardSize ? 0 : this.state.lineCoordinates['1,'+(parseFloat(z)+1)+','+y])
     return checker1+checker2+checker3+checker4
@@ -199,7 +192,7 @@ console.log("ход "+y)
             {className: "dot", id: "dot"+Math.floor(i/2)+","+Math.floor(j/2)} ,""))
           } else {
             row.push(React.createElement("div"
-              , {className: "horizon", "data-coord":"0,"+Math.floor(i/2)+ "," +Math.floor(j/2) //добавляем координаты точке
+              , {className: "horizon", "data-coord":"0,"+Math.floor(i/2)+ "," +Math.floor(j/2) //добавляем координаты точкам
               , onClick:this.PutLine, style:{backgroundColor: this.selectColor(this.state.lineCoordinates["0,"+Math.floor(i/2)+ "," +Math.floor(j/2)])} //добавляем палке класс с цветом
               , onMouseEnter:this.tint, onMouseLeave:this.untint}
               , ""))
@@ -230,19 +223,21 @@ console.log("ход "+y)
     return (
       <div id="game">
         <div id="header">
-          <p id="score"> Red:{this.state.numRed} Blue:{this.state.numBlue} </p>  <p id="winner"> {this.state.winMessage} </p>
-          Board size :
-          <button id= "small" onClick={this.changeBoardSize}> 5x5 </button>
+          <h1>Точки и квадраты</h1>
+          <p id="score"> Красный: {this.state.numRed} Синий: {this.state.numBlue} Сейчас ходит: {this.state.turn}  </p>  <p id="winner"> {this.state.winMessage} </p>
+          Размер поля:
+          <button id= "small" onClick={this.changeBoardSize}> 2x2 </button>
           <button id="medium" onClick={this.changeBoardSize}> 8x8 </button>
           <button id="large" onClick={this.changeBoardSize}> 12x12 </button>
-         
+        
         </div>
         <div id="board">
           {this.makeBoard(this.state.boardSize)}
         </div>
+
+        
   
-  
-        <Stats/>
+        <Stats numBlue={this.state.numBlue} numRed={this.state.numRed} winMessage={this.state.winMessage}   />
       </div>
      
     )
@@ -250,9 +245,9 @@ console.log("ход "+y)
   }
 }
 
-ReactDOM.render(<Game/>,document.getElementById('root'))
+//ReactDOM.render(<Game/>,document.getElementById('root'))
 
   
-  
+
   export { Game};
   
