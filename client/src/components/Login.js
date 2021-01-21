@@ -3,7 +3,6 @@ import { Link, Redirect } from "react-router-dom";
 import { Form,Button,Col } from 'react-bootstrap';
 import { toast } from "react-toastify";
 import {API_URL} from  './api';
-const url= new URL('http://localhost:5000');
 const Login = ({ setAuth }) => {
   const [inputs, setInputs] = useState({
     email: "",
@@ -98,7 +97,6 @@ const Login = ({ setAuth }) => {
       <Form.Row>
       
         
-  
       </Form.Row>
      
       <Button type="submit">Логин</Button>
