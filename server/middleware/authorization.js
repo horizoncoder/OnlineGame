@@ -2,7 +2,7 @@ const jwt = require("jsonwebtoken");
 require("dotenv").config()
 
 module.exports= async (req,res,next)=>{
-    try{
+    try {
         const jwtToken= req.header("token");
         if(!jwtToken){
             return res.status(403).json("Not Autorization");
@@ -11,8 +11,8 @@ module.exports= async (req,res,next)=>{
         req.user=playload.user;
         next();
     }
-    catch(err){
+    catch (err){
         console.error(err.message);
-        return res.status(403).json("Not Autorization");
+        return  res.status(403).json("Not Autorization");
     }
 }
