@@ -48,7 +48,6 @@ class Game extends React.Component {
   PutLine = (event) => {
     var currentCoord=event.target.dataset.coord
     if (this.state.lineCoordinates[currentCoord] === 0) { //опредиляем кординаты
-      console.log("lineCoordinates "+this.state.lineCoordinates[currentCoord])
       let newState=this.state.lineCoordinates
      
       newState[currentCoord] = this.state.turn === "red"? 1 : -1

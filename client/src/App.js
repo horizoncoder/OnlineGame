@@ -1,7 +1,6 @@
-import React, { Fragment, useState,useEffect } from 'react';
-import {Button, Navbar} from 'react-bootstrap'
+import React, { Fragment, useState, useEffect } from 'react';
 import './App.css';
-import { ToastContainer, toast } from 'react-toastify';
+import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -10,10 +9,9 @@ import Navibar from './components/Navibar';
 
 import Login from './components/Login';
 
-import {Game} from './components/Game';
-import {Stats} from './components/Stats'
+import { Game } from './components/Game';
+import { Stats } from './components/Stats'
 import Dashboard from './components/Dashboard';
-
 
 import Register from './components/Register';
 
@@ -21,37 +19,33 @@ import {
   BrowserRouter as Router,
   Switch,
   Route,
-  Link,
-  Redirect
+  Redirect,
 } from "react-router-dom";
 
-import {Home} from './router/Home';
+import { Home } from './router/Home';
 
 toast.configure()
 
-
 function App() {
-         const [isAuthenticated,setIsAuthentication] = useState(false);
-          const setAuth=(boolean)=>{
-         setIsAuthentication(boolean)
-  };
+  const [isAuthenticated, setIsAuthentication] = useState(false);
+  const setAuth = (boolean) => {
+  setIsAuthentication(boolean)
+        };
   async function isAuth(){
     try {
-
       const res = await fetch("http://localhost:5000/auth/is-verify", {
         method: "GET",
-        headers: { token: localStorage.token }
+        headers: { token: localStorage.token },
       });
 
-
-      const parseRes= await res.json();
+      const parseRes = await res.json();
       console.log(parseRes);
-      parseRes === true ? setIsAuthentication(true): setIsAuthentication(false);
+      parseRes === true ? setIsAuthentication(true) : setIsAuthentication(false);
     } catch (err) {
          console.error(err.message)
     }
   }
-  useEffect(()=>{
+  useEffect(() => {
     isAuth()
   })
   

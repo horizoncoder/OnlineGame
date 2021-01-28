@@ -52,7 +52,6 @@ class Stats extends Component {
             this.setState({
                 list: parsedList,
             })
-            console.log(this.state.list);
            
         }
     }

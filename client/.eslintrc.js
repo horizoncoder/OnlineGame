@@ -8,7 +8,7 @@ module.exports = {
         "eslint:recommended",
         "plugin:react/recommended",
         "airbnb",
-        "airbnb/hooks"
+        "airbnb/hooks",
     ],
     "parserOptions": {
         "ecmaFeatures": {

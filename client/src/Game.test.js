@@ -9,7 +9,14 @@ test("renders the correct content",()=>{
   expect(root.querySelector("h1").textContent).toBe("Точки и квадраты");
 })
 
-it('добавляем координаты точкамs', () => {
-	const expectedOutput =  "0" +Math.floor(1)+ "," +Math.floor(0);
-	expect("0" +Math.floor(1)+ "," +Math.floor(0)).toEqual(expectedOutput);
+it('добавляем координаты точкам', () => {
+	const expects =  "0" +Math.floor(1)+ "," +Math.floor(0);
+	expect("0" +Math.floor(1)+ "," +Math.floor(0)).toEqual(expects);
+});
+
+
+it('меняем цвет палочки', () => {
+
+	const expects =  (["0,"+Math.floor(1)+ "," +Math.floor(0)]);
+	expect((["0,"+Math.floor(1)+ "," +Math.floor(0)])).toEqual(expects);
 });
