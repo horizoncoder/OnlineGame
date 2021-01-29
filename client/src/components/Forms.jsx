@@ -1,14 +1,14 @@
-import React, { Fragment, useState } from 'react';
-import { Form, Button, Col } from 'react-bootstrap';
+import React, { Fragment, useState } from "react";
+import { Form, Button } from "react-bootstrap";
 
 const Forms = ({ setAuth }) => {
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
   const [emailDirty, setEmailDirty] = useState(false);
   const [passwordDirty, setPasswordDirty] = useState(false);
-  const [emailError, setEmailError] = useState('почта не может быть пустой');
+  const [emailError, setEmailError] = useState("почта не может быть пустой");
   const [passwordError, setPasswordError] = useState(
-    'пароль не может быть пустой'
+    "пароль не может быть пустой"
   );
 
   const emailHandler = (e) => {
@@ -16,7 +16,7 @@ const Forms = ({ setAuth }) => {
     const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
     if (!re.test(String(e.target.value).toLowerCase())) {
-      setEmailError('Неправильная почта');
+      setEmailError("Неправильная почта");
     } else {
       setEmailError();
     }
@@ -25,9 +25,9 @@ const Forms = ({ setAuth }) => {
   const PasswordHandler = (e) => {
     setPassword(e.target.value);
     if (e.target.value.lenght < 3 || e.target.value.lenght > 8) {
-      setPasswordError('ddd');
+      setPasswordError("ddd");
       if (!e.target.value) {
-        setPasswordError('ddd');
+        setPasswordError("ddd");
       }
     } else {
       setPasswordError();
@@ -35,18 +35,19 @@ const Forms = ({ setAuth }) => {
   };
 
   const blurHandler = (e) => {
+    // eslint-disable-next-line default-case
     switch (e.target.name) {
-      case 'email':
+      case "email":
         setEmailDirty(true);
         break;
-      case 'password':
+      case "password":
         setPasswordDirty(true);
         break;
     }
   };
 
   return (
-    <Fragment>
+    <>
       <Form>
         <Form.Group controlId="formBasicEmail">
           <Form.Label>Email address</Form.Label>
@@ -59,10 +60,10 @@ const Forms = ({ setAuth }) => {
             placeholder="Enter email"
           />
           {emailDirty && emailError && (
-            <div style={{ color: 'red' }}>{emailError}</div>
+            <div style={{ color: "red" }}>{emailError}</div>
           )}
           <Form.Text className="text-muted">
-            We'll never share your email with anyone else.
+            Well never share your email with anyone else.
           </Form.Text>
         </Form.Group>
 
@@ -77,7 +78,7 @@ const Forms = ({ setAuth }) => {
             placeholder="Password"
           />
           {passwordDirty && passwordError && (
-            <div style={{ color: 'red' }}>{passwordError}</div>
+            <div style={{ color: "red" }}>{passwordError}</div>
           )}
         </Form.Group>
         <Form.Group controlId="formBasicCheckbox">
@@ -87,7 +88,7 @@ const Forms = ({ setAuth }) => {
           Submit
         </Button>
       </Form>
-    </Fragment>
+    </>
   );
 };
 

@@ -1,6 +1,7 @@
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
 
+// eslint-disable-next-line consistent-return
 module.exports = async (req, res, next) => {
   try {
     const jwtToken = req.header('token');

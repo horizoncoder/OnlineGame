@@ -1,19 +1,21 @@
-import React, { Fragment, useState } from 'react';
-import { Link } from 'react-router-dom';
-import { Form, Button, Col } from 'react-bootstrap';
-import { toast } from 'react-toastify';
-import { API_URL } from './api';
+import React, { Fragment, useState } from "react";
+import { Link } from "react-router-dom";
+import { Form, Button, Col } from "react-bootstrap";
+import { toast } from "react-toastify";
+import { API_URL } from "./api";
 
+// eslint-disable-next-line react/prop-types
 const Login = ({ setAuth }) => {
   const [inputs, setInputs] = useState({
-    email: '',
-    password: '',
+    email: "",
+    password: "",
   });
 
   const { email, password } = inputs;
 
   const onChange = (e) =>
     setInputs({ ...inputs, [e.target.name]: e.target.value });
+  const [validated, setValidated] = useState(false);
 
   const onSubmitForm = async (e) => {
     const form = e.currentTarget;
@@ -26,19 +28,19 @@ const Login = ({ setAuth }) => {
     e.preventDefault();
     try {
       const body = { email, password };
-      const response = await fetch(API_URL + 'auth/login', {
-        method: 'POST',
+      const response = await fetch(`${API_URL}auth/login`, {
+        method: "POST",
         headers: {
-          'Content-type': 'application/json',
+          "Content-type": "application/json",
         },
         body: JSON.stringify(body),
       });
 
       const parseRes = await response.json();
       if (parseRes.token) {
-        localStorage.setItem('token', parseRes.token);
+        localStorage.setItem("token", parseRes.token);
         setAuth(true);
-        toast.success('Успешная авторизация');
+        toast.success("Успешная авторизация");
       } else {
         setAuth(false);
         toast.error(parseRes);
@@ -48,10 +50,8 @@ const Login = ({ setAuth }) => {
     }
   };
 
-  const [validated, setValidated] = useState(false);
-
   return (
-    <Fragment>
+    <>
       <Form
         noValidate
         validated={validated}
@@ -60,7 +60,7 @@ const Login = ({ setAuth }) => {
       >
         <Form.Row>
           <Form.Group as={Col} md="12" controlId="validationCustom01">
-            <br></br>
+            <br />
             <Form.Label>Почта</Form.Label>
             <Form.Control
               required
@@ -93,12 +93,12 @@ const Login = ({ setAuth }) => {
             </Form.Control.Feedback>
           </Form.Group>
         </Form.Row>
-        <Form.Row></Form.Row>
+        <Form.Row />
 
         <Button type="submit">Логин</Button>
       </Form>
       <Link to="/register">Регистрация</Link>
-    </Fragment>
+    </>
   );
 };
 

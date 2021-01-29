@@ -1,17 +1,19 @@
-import React, { Fragment, useState } from 'react';
-import { Link, Redirect } from 'react-router-dom';
-import { toast } from 'react-toastify';
-import { Form, Button, Col } from 'react-bootstrap';
-import { API_URL } from './api';
+import React, { Fragment, useState } from "react";
+import { Link } from "react-router-dom";
+import { toast } from "react-toastify";
+import { Form, Button, Col } from "react-bootstrap";
+import { API_URL } from "./api";
 
+// eslint-disable-next-line react/prop-types
 const Register = ({ setAuth }) => {
   const [inputs, setInputs] = useState({
-    email: '',
-    password: '',
-    name: '',
+    email: "",
+    password: "",
+    name: "",
   });
 
   const { email, password, name } = inputs;
+  const [validated, setValidated] = useState(false);
 
   const onChange = (e) =>
     setInputs({ ...inputs, [e.target.name]: e.target.value });
@@ -26,10 +28,10 @@ const Register = ({ setAuth }) => {
     e.preventDefault();
     try {
       const body = { email, password, name };
-      const response = await fetch(API_URL + 'auth/register', {
-        method: 'POST',
+      const response = await fetch(`${API_URL}auth/register`, {
+        method: "POST",
         headers: {
-          'Content-type': 'application/json',
+          "Content-type": "application/json",
         },
         body: JSON.stringify(body),
       });
@@ -37,10 +39,10 @@ const Register = ({ setAuth }) => {
 
       if (parseRes.token) {
         console.log(parseRes);
-        localStorage.setItem('token', parseRes.token);
+        localStorage.setItem("token", parseRes.token);
 
         setAuth(true);
-        toast.success('Успешная регистрация');
+        toast.success("Успешная регистрация");
       } else {
         setAuth(false);
         toast.error(parseRes);
@@ -49,14 +51,13 @@ const Register = ({ setAuth }) => {
       console.error(err.message);
     }
   };
-  const [validated, setValidated] = useState(false);
 
   return (
     <>
       <Form noValidate validated={validated} onSubmit={onSubmitForm}>
         <Form.Row>
           <Form.Group as={Col} md="12" controlId="validationCustom01">
-            <br></br>
+            <br />
             <Form.Label>Почта</Form.Label>
             <Form.Control
               required

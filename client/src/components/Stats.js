@@ -13,7 +13,7 @@ class Stats extends Component {
           
     }
 
-    addTask=()=>{
+    addTask = ()=>{
     
     const Items={
             value:this.input= "Синий "+JSON.stringify(this.props.numBlue)+ " Красный "+JSON.stringify(this.props.numRed) +" "+ JSON.stringify(this.props.winMessage),
