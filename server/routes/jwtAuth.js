@@ -17,7 +17,16 @@ router.post('/register', validInfo, async (req, res) => {
     ]);
     if (user.rows.length !== 0) {
       return res.status(401).json('User already exist!');
+    } if (email.length > 30) {
+      return res.status(401).json('почта не может быть больше 30 символов');
+    } if (email.length < 14) {
+      return res.status(401).json('почта не может быть меньше 14 символов');
+    } if (password.length > 20) {
+      return res.status(401).json('Пароль не должен быть больше 20 символов');
+    } if (password.length < 3) {
+      return res.status(401).json('Пароль не должен быть меньше 3 символов');
     }
+
 
     // Bcrypt password
     const saltRound = 10;
@@ -53,7 +62,7 @@ router.post('/login', validInfo, async (req, res) => {
     ]);
 
     if (user.rows.length === 0) {
-      return res.status(401).json('Invalid Credential');
+      return res.status(401).json('Неправильные данные');
     }
 
     // check password
@@ -62,8 +71,13 @@ router.post('/login', validInfo, async (req, res) => {
       password,
       user.rows[0].user_password,
     );
+    if (password.length > 20) {
+      return res.status(401).json('Пароль не должен быть больше 20 символов');
+    } if (password.length < 3) {
+      return res.status(401).json('Пароль не должен быть меньше 3 символов');
+    }
     if (!validPassword) {
-      return res.status(401).json('Invalid Credential');
+      return res.status(401).json('Неправильные данные');
     }
 
     // give token

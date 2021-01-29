@@ -9,13 +9,13 @@ module.exports = (req, res, next) => {
     if (![email, name, password].every(Boolean)) {
       return res.status(401).json('Заполните все поля');
     } if (!validEmail(email)) {
-      return res.status(401).json('Неравельная почта');
+      return res.status(401).json('Неправельная почта');
     }
   } else if (req.path === '/login') {
     if (![email, password].every(Boolean)) {
       return res.status(401).json('Заполните все поля');
     } if (!validEmail(email)) {
-      return res.status(401).json('Неравельная почта');
+      return console.log(!validEmail(email));
     }
   }
   next();
