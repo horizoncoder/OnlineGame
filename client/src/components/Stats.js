@@ -13,7 +13,7 @@ class Stats extends Component {
           
     }
 
-    addTask = ()=>{
+    addTask (){
     
     const Items={
             value:this.input= "Синий "+JSON.stringify(this.props.numBlue)+ " Красный "+JSON.stringify(this.props.numRed) +" "+ JSON.stringify(this.props.winMessage),
@@ -57,7 +57,7 @@ class Stats extends Component {
     }
     
  
-    deleteItem=(event)=> {
+    deleteItem(event){
         
         let index = event.target.getAttribute('data-key')
         let listValue=JSON.parse(localStorage.getItem('list'));

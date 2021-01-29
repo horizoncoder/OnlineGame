@@ -8,7 +8,7 @@ class Game extends React.Component {
     this.state = this.initialBoard(2);
   }
 
-  initialBoard = (size) => {
+  initialBoard(size) {
     let state = {
       boardSize: size,
       numRed: 0,
@@ -34,10 +34,10 @@ class Game extends React.Component {
       }
     }
     return state;
-  };
+  }
 
   //поставить палочку
-  PutLine = (event) => {
+  PutLine(event) {
     var currentCoord = event.target.dataset.coord;
     if (this.state.lineCoordinates[currentCoord] === 0) {
       //опредиляем кординаты
@@ -137,9 +137,9 @@ class Game extends React.Component {
         this.checkGameOver();
       }
     }
-  };
+  }
   //проверяем квадраты на заполнение
-  checkSquare = (y, z) => {
+  checkSquare(y, z) {
     var checker1 = Math.abs(this.state.lineCoordinates['0,' + y + ',' + z]);
     var checker2 = Math.abs(
       parseFloat(y) + 1 > this.state.boardSize
@@ -153,18 +153,18 @@ class Game extends React.Component {
         : this.state.lineCoordinates['1,' + (parseFloat(z) + 1) + ',' + y]
     );
     return checker1 + checker2 + checker3 + checker4;
-  };
+  }
   //проверка конца игры
-  checkGameOver = () => {
+  checkGameOver() {
     this.setState((prevState) => ({
       winMessage:
         prevState.numRed + prevState.numBlue == prevState.boardSize * 2
           ? this.makeWinMessage(prevState)
           : '',
     }));
-  };
+  }
 
-  makeWinMessage = (state) => {
+  makeWinMessage(state) {
     var winMessage;
     if (state.numRed > state.numBlue) {
       winMessage = 'Красный победил';
@@ -174,9 +174,9 @@ class Game extends React.Component {
       winMessage = 'ничья';
     }
     return winMessage;
-  };
+  }
 
-  changeBoardSize = (event) => {
+  changeBoardSize(event) {
     if (window.confirm('Создать новое поле?')) {
       var newState;
       if (event.target.id === 'small') {
@@ -188,9 +188,9 @@ class Game extends React.Component {
       }
       this.setState((prevState) => newState);
     }
-  };
+  }
 
-  selectColor = (int) => {
+  selectColor(int) {
     if (int === 0) {
       return 'rgb(255,255,255)';
     } else if (int === 1) {
@@ -198,9 +198,9 @@ class Game extends React.Component {
     } else if (int === -1) {
       return 'rgb(0,0,255)';
     }
-  };
+  }
   //закрасить квадарат
-  tint = (event) => {
+  tint(event) {
     var currentCoord = event.target.dataset.coord;
     if (this.state.lineCoordinates[currentCoord] === 0) {
       if (this.state.turn === 'red') {
@@ -209,16 +209,16 @@ class Game extends React.Component {
         event.target.style.backgroundColor = 'rgba(0,0,255,0.5)';
       }
     }
-  };
+  }
 
-  untint = (event) => {
+  untint(event) {
     var currentCoord = event.target.dataset.coord;
     if (this.state.lineCoordinates[currentCoord] === 0) {
       event.target.style.backgroundColor = 'rgb(255,255,255)';
     }
-  };
+  }
 
-  makeBoard = (boardSize) => {
+  makeBoard(boardSize) {
     var cols = [];
     for (let i = 0; i <= 2 * boardSize; i++) {
       // проверка на одинаковое количество строки
@@ -306,7 +306,7 @@ class Game extends React.Component {
     }
 
     return React.createElement('div', { id: 'game-board' }, cols);
-  };
+  }
 
   render() {
     return (

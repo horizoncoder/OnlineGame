@@ -11,11 +11,11 @@ module.exports = {
     "airbnb/hooks",
     "plugin:prettier/recommended",
   ],
+
   parserOptions: {
     ecmaFeatures: {
       jsx: true,
     },
-    parser: "babel-eslint",
     ecmaVersion: 12,
   },
   plugins: ["react"],

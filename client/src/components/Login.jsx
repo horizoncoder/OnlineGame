@@ -9,9 +9,30 @@ const Login = ({ setAuth }) => {
   const [inputs, setInputs] = useState({
     email: "",
     password: "",
+    emaile: "",
+    passworde: "",
   });
 
-  const { email, password } = inputs;
+  const { email, password, emaile, passworde } = inputs;
+ 
+  const blurHandler = (e) => {
+    // eslint-disable-next-line default-case
+    switch (e.target.name) {
+      case "email":
+        if (inputs.email.length > 30 || inputs.email.length < 12) {
+          inputs.emaile =
+            "Почта должна иметь не больше 30 символов и не меньше 14";
+        }
+        break;
+      case "password":
+        if (inputs.password.length > 20 || inputs.password.length < 3) {
+          inputs.passworde =
+            "Пароль должна иметь не больше 20 символов и не меньше 3";
+        }
+
+        break;
+    }
+  };
 
   const onChange = (e) =>
     setInputs({ ...inputs, [e.target.name]: e.target.value });
@@ -67,9 +88,10 @@ const Login = ({ setAuth }) => {
               name="email"
               value={email}
               placeholder="email"
+              onBlur={(e) => blurHandler(e)}
               onChange={(e) => onChange(e)}
             />
-
+            {emaile}
             <Form.Control.Feedback>Отлично!</Form.Control.Feedback>
             <Form.Control.Feedback type="invalid">
               Введите правильну почту (mail@gmail.com)
@@ -83,10 +105,12 @@ const Login = ({ setAuth }) => {
               required
               type="password"
               name="password"
+              onBlur={(e) => blurHandler(e)}
               value={password}
               placeholder="password"
               onChange={(e) => onChange(e)}
             />
+            {passworde}
             <Form.Control.Feedback>Отлично!</Form.Control.Feedback>
             <Form.Control.Feedback type="invalid">
               Введите пароль

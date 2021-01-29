@@ -17,14 +17,15 @@ const Forms = ({ setAuth }) => {
 
     if (!re.test(String(e.target.value).toLowerCase())) {
       setEmailError("Неправильная почта");
+      setPasswordError("ddd");
     } else {
       setEmailError();
     }
   };
 
-  const PasswordHandler = (e) => {
+  const passwordHandler = (e) => {
     setPassword(e.target.value);
-    if (e.target.value.lenght < 3 || e.target.value.lenght > 8) {
+    if (e.target.value.lenght < 3) {
       setPasswordError("ddd");
       if (!e.target.value) {
         setPasswordError("ddd");
@@ -53,8 +54,8 @@ const Forms = ({ setAuth }) => {
           <Form.Label>Email address</Form.Label>
           <Form.Control
             onChange={(e) => emailHandler(e)}
-            onBlur={(e) => blurHandler(e)}
             value={email}
+            onBlur={(e) => blurHandler(e)}
             name="email"
             type="email"
             placeholder="Enter email"
@@ -70,9 +71,9 @@ const Forms = ({ setAuth }) => {
         <Form.Group controlId="formBasicPassword">
           <Form.Label>Password</Form.Label>
           <Form.Control
-            onChange={(e) => PasswordHandler(e)}
-            onBlur={(e) => blurHandler(e)}
+            onChange={(e) => passwordHandler(e)}
             value={password}
+            onBlur={(e) => blurHandler(e)}
             name="password"
             type="password"
             placeholder="Password"

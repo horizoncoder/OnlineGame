@@ -15,8 +15,8 @@ module.exports = (req, res, next) => {
     if (![email, password].every(Boolean)) {
       return res.status(401).json('Заполните все поля');
     } if (!validEmail(email)) {
-      return console.log(!validEmail(email));
+      return res.status(401).json('Неправельная почта');
     }
   }
-  next();
+  return next();
 };
