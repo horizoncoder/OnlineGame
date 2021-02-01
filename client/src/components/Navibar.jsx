@@ -16,13 +16,9 @@ export default function NaviBar() {
             <Nav.Link as={Link} to="/login">
               Логин
             </Nav.Link>
-
-            {/* <Nav.Link>
-              <Link to="/login">Логин/Регистрация</Link>
+            <Nav.Link as={Link} to="/stats">
+              Статистика
             </Nav.Link>
-            <Nav.Link>
-              <Link to="/stats">Статистика</Link> */}
-            {/* </Nav.Link> */}
           </Nav>
         </Navbar.Collapse>
       </Navbar>

@@ -18,11 +18,10 @@ import {
 import Navibar from "./components/Navibar";
 
 import Login from "./components/Login";
-import Forms from "./components/Forms";
 
 import { Game } from "./components/Game";
 
-import { Stats } from "./components/Stats";
+import  Stats  from "./components/Stats";
 
 import Dashboard from "./components/Dashboard";
 
@@ -98,7 +97,6 @@ function App() {
 
             <Route exact path="/" component={Home} />
             <Route exact path="/game" component={Game} />
-            <Route exact path="/forms" component={Forms} />
             <Route exact path="/stats" component={Stats} />
             <Route
               exact

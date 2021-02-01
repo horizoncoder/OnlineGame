@@ -2,51 +2,24 @@ import React, { Fragment, useState } from "react";
 import { Link } from "react-router-dom";
 import { Form, Button, Col } from "react-bootstrap";
 import { toast } from "react-toastify";
+import { useForm } from "react-hook-form";
+import PropTypes from "prop-types";
 import { API_URL } from "./api";
 
-// eslint-disable-next-line react/prop-types
+
 const Login = ({ setAuth }) => {
   const [inputs, setInputs] = useState({
     email: "",
     password: "",
-    emaile: "",
-    passworde: "",
   });
 
-  const { email, password, emaile, passworde } = inputs;
- 
-  const blurHandler = (e) => {
-    // eslint-disable-next-line default-case
-    switch (e.target.name) {
-      case "email":
-        if (inputs.email.length > 30 || inputs.email.length < 12) {
-          inputs.emaile =
-            "Почта должна иметь не больше 30 символов и не меньше 14";
-        }
-        break;
-      case "password":
-        if (inputs.password.length > 20 || inputs.password.length < 3) {
-          inputs.passworde =
-            "Пароль должна иметь не больше 20 символов и не меньше 3";
-        }
-
-        break;
-    }
-  };
+  const { email, password } = inputs;
+  const { register, handleSubmit, errors } = useForm();
 
   const onChange = (e) =>
     setInputs({ ...inputs, [e.target.name]: e.target.value });
-  const [validated, setValidated] = useState(false);
 
-  const onSubmitForm = async (e) => {
-    const form = e.currentTarget;
-    if (form.checkValidity() === false) {
-      e.preventDefault();
-      e.stopPropagation();
-      setValidated(true);
-    }
-
-    e.preventDefault();
+  const onSubmitForm = async () => {
     try {
       const body = { email, password };
       const response = await fetch(`${API_URL}auth/login`, {
@@ -73,12 +46,7 @@ const Login = ({ setAuth }) => {
 
   return (
     <>
-      <Form
-        noValidate
-        validated={validated}
-        onSubmit={onSubmitForm}
-        className="centered-top"
-      >
+      <Form onSubmit={handleSubmit(onSubmitForm)} className="centered-top">
         <Form.Row>
           <Form.Group as={Col} md="12" controlId="validationCustom01">
             <br />
@@ -88,33 +56,46 @@ const Login = ({ setAuth }) => {
               name="email"
               value={email}
               placeholder="email"
-              onBlur={(e) => blurHandler(e)}
               onChange={(e) => onChange(e)}
+              ref={register({
+                required: "Введите почту",
+                minLength: {
+                  value: 11,
+                  message: "Почта должна быть не меньше 11 символов",
+                },
+                maxLength: {
+                  value: 30,
+                  message: "Почта должна быть не больше 30 символов",
+                },
+                pattern: {
+                  value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i,
+                  message: "Неправильная почта",
+                },
+              })}
             />
-            {emaile}
-            <Form.Control.Feedback>Отлично!</Form.Control.Feedback>
-            <Form.Control.Feedback type="invalid">
-              Введите правильну почту (mail@gmail.com)
-            </Form.Control.Feedback>
+            {errors.email && (
+              <p style={{ color: "red" }}>{errors.email.message}</p>
+            )}
           </Form.Group>
         </Form.Row>
         <Form.Row>
           <Form.Group as={Col} md="12" controlId="validationCustom02">
             <Form.Label>Пароль</Form.Label>
             <Form.Control
-              required
               type="password"
+              placeholder="Password"
               name="password"
-              onBlur={(e) => blurHandler(e)}
-              value={password}
-              placeholder="password"
               onChange={(e) => onChange(e)}
+              value={password}
+              ref={register({
+                required: "Введите пароль",
+                minLength: { value: 8, message: "Короткий пароль" },
+                maxLength: { value: 12, message: "Длинный пароль" },
+              })}
             />
-            {passworde}
-            <Form.Control.Feedback>Отлично!</Form.Control.Feedback>
-            <Form.Control.Feedback type="invalid">
-              Введите пароль
-            </Form.Control.Feedback>
+            {errors.password && (
+              <p style={{ color: "red" }}>{errors.password.message}</p>
+            )}
           </Form.Group>
         </Form.Row>
         <Form.Row />
@@ -125,5 +106,9 @@ const Login = ({ setAuth }) => {
     </>
   );
 };
+Login.propTypes = {
+  setAuth: PropTypes.func.isRequired,
+};
+
 
 export default Login;

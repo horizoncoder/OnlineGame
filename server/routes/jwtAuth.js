@@ -25,8 +25,11 @@ router.post('/register', validInfo, async (req, res) => {
       return res.status(401).json('Пароль не должен быть больше 20 символов');
     } if (password.length < 3) {
       return res.status(401).json('Пароль не должен быть меньше 3 символов');
+    } if (name.length > 12) {
+      return res.status(401).json('Имя не должено быть больше 12 символов');
+    } if (name.length < 3) {
+      return res.status(401).json('Имя не должено быть меньше 3 символов');
     }
-
 
     // Bcrypt password
     const saltRound = 10;

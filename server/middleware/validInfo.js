@@ -1,3 +1,4 @@
+/* eslint-disable no-useless-escape */
 module.exports = (req, res, next) => {
   const { email, name, password } = req.body;
 

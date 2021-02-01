@@ -2,6 +2,7 @@ import React, { Fragment, useState } from "react";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
 import { Form, Button, Col } from "react-bootstrap";
+import { useForm } from "react-hook-form";
 import { API_URL } from "./api";
 
 // eslint-disable-next-line react/prop-types
@@ -13,19 +14,12 @@ const Register = ({ setAuth }) => {
   });
 
   const { email, password, name } = inputs;
-  const [validated, setValidated] = useState(false);
+  const { register, handleSubmit, errors } = useForm();
 
   const onChange = (e) =>
     setInputs({ ...inputs, [e.target.name]: e.target.value });
 
-  const onSubmitForm = async (e) => {
-    const form = e.currentTarget;
-    if (form.checkValidity() === false) {
-      e.preventDefault();
-      e.stopPropagation();
-    }
-    setValidated(true);
-    e.preventDefault();
+  const onSubmitForm = async () => {
     try {
       const body = { email, password, name };
       const response = await fetch(`${API_URL}auth/register`, {
@@ -38,7 +32,6 @@ const Register = ({ setAuth }) => {
       const parseRes = await response.json();
 
       if (parseRes.token) {
-        console.log(parseRes);
         localStorage.setItem("token", parseRes.token);
 
         setAuth(true);
@@ -54,7 +47,7 @@ const Register = ({ setAuth }) => {
 
   return (
     <>
-      <Form noValidate validated={validated} onSubmit={onSubmitForm}>
+      <Form onSubmit={handleSubmit(onSubmitForm)}>
         <Form.Row>
           <Form.Group as={Col} md="12" controlId="validationCustom01">
             <br />
@@ -65,28 +58,45 @@ const Register = ({ setAuth }) => {
               value={email}
               placeholder="email"
               onChange={(e) => onChange(e)}
+              ref={register({
+                required: "Введите почту",
+                minLength: {
+                  value: 11,
+                  message: "Почта должна быть не меньше 11 символов",
+                },
+                maxLength: {
+                  value: 30,
+                  message: "Почта должна быть не больше 30 символов",
+                },
+                pattern: {
+                  value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i,
+                  message: "Неправильная почта",
+                },
+              })}
             />
-            <Form.Control.Feedback>Отлично!</Form.Control.Feedback>
-            <Form.Control.Feedback type="invalid">
-              Введите почту
-            </Form.Control.Feedback>
+            {errors.email && (
+              <p style={{ color: "red" }}>{errors.email.message}</p>
+            )}
           </Form.Group>
         </Form.Row>
         <Form.Row>
           <Form.Group as={Col} md="12" controlId="validationCustom02">
             <Form.Label>Пароль</Form.Label>
             <Form.Control
-              required
               type="password"
+              placeholder="Password"
               name="password"
-              value={password}
-              placeholder="password"
               onChange={(e) => onChange(e)}
+              value={password}
+              ref={register({
+                required: "Введите пароль",
+                minLength: { value: 8, message: "Короткий пароль" },
+                maxLength: { value: 20, message: "Длинный пароль" },
+              })}
             />
-            <Form.Control.Feedback>Отлично!</Form.Control.Feedback>
-            <Form.Control.Feedback type="invalid">
-              Введите пароль
-            </Form.Control.Feedback>
+            {errors.password && (
+              <p style={{ color: "red" }}>{errors.password.message}</p>
+            )}
           </Form.Group>
         </Form.Row>
         <Form.Row>
@@ -99,11 +109,15 @@ const Register = ({ setAuth }) => {
               value={name}
               placeholder="name"
               onChange={(e) => onChange(e)}
+              ref={register({
+                required: "Введите имя",
+                minLength: { value: 2, message: "Короткое имя" },
+                maxLength: { value: 12, message: "Длинное имя" },
+              })}
             />
-            <Form.Control.Feedback>Отлично!</Form.Control.Feedback>
-            <Form.Control.Feedback type="invalid">
-              Введите имя
-            </Form.Control.Feedback>
+            {errors.name && (
+              <p style={{ color: "red" }}>{errors.name.message}</p>
+            )}
           </Form.Group>
         </Form.Row>
 
