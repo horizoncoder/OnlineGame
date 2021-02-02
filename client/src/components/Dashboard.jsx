@@ -1,11 +1,10 @@
-/* eslint-disable import/named */
 import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
+import PropTypes from "prop-types";
 import { API_URL } from "./api";
 
-import { Game } from "./Game";
+import Game from "./Game";
 
-// eslint-disable-next-line react/prop-types
 const Dashboard = ({ setAuth }) => {
   const [name, setName] = useState("");
   const getProfile = async () => {
@@ -55,6 +54,10 @@ const Dashboard = ({ setAuth }) => {
       <Game />
     </div>
   );
+};
+
+Dashboard.propTypes = {
+  setAuth: PropTypes.func.isRequired,
 };
 
 export default Dashboard;

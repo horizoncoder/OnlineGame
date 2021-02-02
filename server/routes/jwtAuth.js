@@ -5,7 +5,6 @@ const jwtGenerator = require('../utils/jwtGenerator');
 const validInfo = require('../middleware/validInfo');
 const authorization = require('../middleware/authorization');
 // register
-// eslint-disable-next-line consistent-return
 router.post('/register', validInfo, async (req, res) => {
   try {
     // destructure req.body(name password)
@@ -50,10 +49,11 @@ router.post('/register', validInfo, async (req, res) => {
     console.error(err.message);
     res.status(500).send('Server Error');
   }
+  return false;
 });
 
 // login
-// eslint-disable-next-line consistent-return
+
 router.post('/login', validInfo, async (req, res) => {
   try {
     // destruct the req body
@@ -90,6 +90,7 @@ router.post('/login', validInfo, async (req, res) => {
     console.error(err.message);
     res.status(500).send('Server Error');
   }
+  return false;
 });
 router.get('/is-verify', authorization, (req, res) => {
   try {

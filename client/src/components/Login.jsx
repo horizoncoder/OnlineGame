@@ -6,7 +6,6 @@ import { useForm } from "react-hook-form";
 import PropTypes from "prop-types";
 import { API_URL } from "./api";
 
-
 const Login = ({ setAuth }) => {
   const [inputs, setInputs] = useState({
     email: "",
@@ -109,6 +108,5 @@ const Login = ({ setAuth }) => {
 Login.propTypes = {
   setAuth: PropTypes.func.isRequired,
 };
-
 
 export default Login;

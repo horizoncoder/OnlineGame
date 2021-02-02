@@ -1,7 +1,3 @@
-/* eslint-disable prettier/prettier */
-/* eslint-disable import/named */
-/* eslint-disable no-unused-expressions */
-/* eslint-disable react/jsx-props-no-spreading */
 import React, { Fragment, useState, useEffect } from "react";
 import "./App.css";
 import { toast } from "react-toastify";
@@ -18,10 +14,11 @@ import {
 import Navibar from "./components/Navibar";
 
 import Login from "./components/Login";
+import  ProtectedRoute from "./components/ProtectedRoute"
 
-import { Game } from "./components/Game";
+import Game from "./components/Game";
 
-import  Stats  from "./components/Stats";
+import Stats from "./components/Stats";
 
 import Dashboard from "./components/Dashboard";
 
@@ -44,10 +41,11 @@ function App() {
       });
 
       const parseRes = await res.json();
-      console.log(parseRes);
-      parseRes === true
-        ? setIsAuthentication(true)
-        : setIsAuthentication(false);
+      if (parseRes === true) {
+        setIsAuthentication(true);
+      } else {
+        setIsAuthentication(false);
+      }
     } catch (err) {
       console.error(err.message);
     }
@@ -55,7 +53,6 @@ function App() {
   useEffect(() => {
     isAuth();
   });
-
   return (
     <>
       <Router>
@@ -65,12 +62,7 @@ function App() {
             <Route
               exact
               path="/login"
-              render={(props) =>
-                !isAuthenticated ? (
-                  <Login {...props} setAuth={setAuth} />
-                ) : (
-                  <Redirect to="/dashboard" />
-                )}
+              render={(props) => !isAuthenticated ? (  <Login {...{ props }} setAuth={setAuth} /> ) : (   <Redirect to="/dashboard" />)}
             />
 
             <Route
@@ -78,10 +70,11 @@ function App() {
               path="/register"
               render={(props) =>
                 !isAuthenticated ? (
-                  <Register {...props} setAuth={setAuth} />
+                  <Register {...{ props }} setAuth={setAuth} />
                 ) : (
                   <Redirect to="/dashboard" />
-                )}
+                )
+              }
             />
 
             <Route
@@ -89,10 +82,11 @@ function App() {
               path="/dashboard"
               render={(props) =>
                 isAuthenticated ? (
-                  <Dashboard {...props} setAuth={setAuth} />
+                  <Dashboard {...{ props }} setAuth={setAuth} />
                 ) : (
                   <Redirect to="/login" />
-                )}
+                )
+              }
             />
 
             <Route exact path="/" component={Home} />
@@ -103,11 +97,10 @@ function App() {
               path="/game"
               render={(props) =>
                 isAuthenticated ? (
-                  <Dashboard {...props} setAuth={setAuth} />
+                  <Dashboard {...{ props }} setAuth={setAuth} />
                 ) : (
                   <Redirect to="/login" />
                 )
-              // eslint-disable-next-line react/jsx-curly-newline
               }
             />
           </Switch>

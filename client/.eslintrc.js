@@ -20,5 +20,9 @@ module.exports = {
     ecmaVersion: 12,
   },
   plugins: ["react"],
-  rules: {},
+  rules: {
+    "prettier/prettier": "error",
+    "arrow-body-style": "off",
+    "prefer-arrow-callback": "off"
+  },
 };

@@ -3,9 +3,9 @@ import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
 import { Form, Button, Col } from "react-bootstrap";
 import { useForm } from "react-hook-form";
+import PropTypes from "prop-types";
 import { API_URL } from "./api";
 
-// eslint-disable-next-line react/prop-types
 const Register = ({ setAuth }) => {
   const [inputs, setInputs] = useState({
     email: "",
@@ -127,5 +127,7 @@ const Register = ({ setAuth }) => {
     </>
   );
 };
-
+Register.propTypes = {
+  setAuth: PropTypes.func.isRequired,
+};
 export default Register;

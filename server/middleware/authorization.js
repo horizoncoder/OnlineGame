@@ -1,7 +1,6 @@
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
 
-// eslint-disable-next-line consistent-return
 module.exports = async (req, res, next) => {
   try {
     const jwtToken = req.header('token');
@@ -10,7 +9,7 @@ module.exports = async (req, res, next) => {
     }
     const playload = jwt.verify(jwtToken, process.env.jwtSecret);
     req.user = playload.user;
-    next();
+    return next();
   } catch (err) {
     console.error(err.message);
     return res.status(403).json('Not Autorization');
