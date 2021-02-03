@@ -5,16 +5,11 @@ import "react-toastify/dist/ReactToastify.css";
 
 import "bootstrap/dist/css/bootstrap.min.css";
 
-import {
-  BrowserRouter as Router,
-  Switch,
-  Route,
-  Redirect,
-} from "react-router-dom";
+import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import Navibar from "./components/Navibar";
 
 import Login from "./components/Login";
-import  ProtectedRoute from "./components/ProtectedRoute"
+import { ProtectedRoute, LoginRoute } from "./components/ProtectedRoute";
 
 import Game from "./components/Game";
 
@@ -22,9 +17,8 @@ import Stats from "./components/Stats";
 
 import Dashboard from "./components/Dashboard";
 
-import Register from "./components/Register";
-
 import { Home } from "./router/Home";
+import Register from "./components/Register";
 
 toast.configure();
 
@@ -62,31 +56,40 @@ function App() {
             <Route
               exact
               path="/login"
-              render={(props) => !isAuthenticated ? (  <Login {...{ props }} setAuth={setAuth} /> ) : (   <Redirect to="/dashboard" />)}
+              render={(props) => (
+                <LoginRoute
+                  {...{ props }}
+                  setAuth={setAuth}
+                  isAuthenticated={isAuthenticated}
+                  component={Login}
+                />
+              )}
             />
 
             <Route
               exact
               path="/register"
-              render={(props) =>
-                !isAuthenticated ? (
-                  <Register {...{ props }} setAuth={setAuth} />
-                ) : (
-                  <Redirect to="/dashboard" />
-                )
-              }
+              render={(props) => (
+                <LoginRoute
+                  {...{ props }}
+                  setAuth={setAuth}
+                  isAuthenticated={isAuthenticated}
+                  component={Register}
+                />
+              )}
             />
 
             <Route
               exact
               path="/dashboard"
-              render={(props) =>
-                isAuthenticated ? (
-                  <Dashboard {...{ props }} setAuth={setAuth} />
-                ) : (
-                  <Redirect to="/login" />
-                )
-              }
+              render={(props) => (
+                <ProtectedRoute
+                  {...{ props }}
+                  setAuth={setAuth}
+                  isAuthenticated={isAuthenticated}
+                  component={Dashboard}
+                />
+              )}
             />
 
             <Route exact path="/" component={Home} />
@@ -94,14 +97,15 @@ function App() {
             <Route exact path="/stats" component={Stats} />
             <Route
               exact
-              path="/game"
-              render={(props) =>
-                isAuthenticated ? (
-                  <Dashboard {...{ props }} setAuth={setAuth} />
-                ) : (
-                  <Redirect to="/login" />
-                )
-              }
+              path="/game1"
+              render={(props) => (
+                <ProtectedRoute
+                  {...{ props }}
+                  setAuth={setAuth}
+                  isAuthenticated={isAuthenticated}
+                  component={Game}
+                />
+              )}
             />
           </Switch>
         </div>
