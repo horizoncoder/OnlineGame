@@ -19,6 +19,7 @@ import Dashboard from "./components/Dashboard";
 
 import { Home } from "./router/Home";
 import Register from "./components/Register";
+import { API_URL } from "./components/api";
 
 toast.configure();
 
@@ -29,7 +30,7 @@ function App() {
   };
   async function isAuth() {
     try {
-      const res = await fetch("http://localhost:5000/auth/is-verify", {
+      const res = await fetch(`${API_URL}auth/is-verify`, {
         method: "GET",
         headers: { token: localStorage.token },
       });

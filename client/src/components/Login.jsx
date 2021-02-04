@@ -58,14 +58,14 @@ const Login = ({ setAuth }) => {
               onChange={(e) => onChange(e)}
               ref={register({
                 required: "Введите почту",
-                minLength: {
-                  value: 11,
-                  message: "Почта должна быть не меньше 11 символов",
-                },
-                maxLength: {
-                  value: 30,
-                  message: "Почта должна быть не больше 30 символов",
-                },
+                // minLength: {
+                //   value: 5,
+                //   message: "Почта должна быть не меньше 11 символов",
+                // },
+                // maxLength: {
+                //   value: 30,
+                //   message: "Почта должна быть не больше 30 символов",
+                // },
                 pattern: {
                   value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i,
                   message: "Неправильная почта",
@@ -88,8 +88,8 @@ const Login = ({ setAuth }) => {
               value={password}
               ref={register({
                 required: "Введите пароль",
-                minLength: { value: 8, message: "Короткий пароль" },
-                maxLength: { value: 12, message: "Длинный пароль" },
+                // minLength: { value: 8, message: "Короткий пароль" },
+                // maxLength: { value: 12, message: "Длинный пароль" },
               })}
             />
             {errors.password && (

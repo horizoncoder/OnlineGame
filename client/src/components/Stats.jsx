@@ -36,12 +36,11 @@ export default class Stats extends Component {
   addTask() {
     const { numBlue } = this.props;
     const { numRed } = this.props;
-    const { winMessage } = this.props;
 
     const items = {
       value: (this.input = `Синий ${JSON.stringify(
         numBlue
-      )} Красный ${JSON.stringify(numRed)} ${JSON.stringify(winMessage)}`),
+      )} Красный ${JSON.stringify(numRed)}`),
       Date: new Date().toUTCString(),
     };
 
@@ -97,7 +96,6 @@ export default class Stats extends Component {
   }
 }
 Stats.propTypes = {
-  numBlue: PropTypes.string.isRequired,
-  numRed: PropTypes.string.isRequired,
-  winMessage: PropTypes.string.isRequired,
+  numBlue: PropTypes.number.isRequired,
+  numRed: PropTypes.number.isRequired,
 };

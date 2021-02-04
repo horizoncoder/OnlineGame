@@ -25,7 +25,7 @@ class Game extends React.Component {
     // квадраты
     for (let i = 0; i < state.boardSize; i += 1) {
       for (let j = 0; j < state.boardSize; j += 1) {
-        state.boxColors[`${i},${j}`] = "white";
+        state.boxColors[`${i},${j}`] = "black";
       }
     }
     return state;
@@ -65,79 +65,64 @@ class Game extends React.Component {
         if (i % 2 === 0) {
           if (j % 2 === 0) {
             row.push(
-              React.createElement(
-                "div",
-                {
-                  className: "dot",
-                  id: `dot${Math.floor(i / 2)},${Math.floor(j / 2)}`,
-                },
-                ""
-              )
+              <div
+                className="dot"
+                id={`dot${Math.floor(i / 2)},${Math.floor(j / 2)}`}
+              />
             );
           } else {
             row.push(
-              React.createElement(
-                "div",
-                {
-                  className: "horizon",
-                  "data-coord": `0,${Math.floor(i / 2)},${Math.floor(j / 2)}`, // добавляем координаты точкам
-                  onClick: this.PutLine,
-                  style: {
-                    backgroundColor: Game.selectColor(
-                      lineCoordinates[
-                        `0,${Math.floor(i / 2)},${Math.floor(j / 2)}`
-                      ]
-                    ),
-                  }, // добавляем палке класс с цветом
-                  onMouseEnter: this.tint,
-                  onMouseLeave: this.untint,
-                },
-                ""
-              )
+              <div
+                className="horizon"
+                onMouseEnter={this.tint}
+                onMouseLeave={this.untint}
+                onClick={this.PutLine}
+                role="presentation"
+                onKeyPress={this.handleKeyPress}
+                style={{
+                  backgroundColor: Game.selectColor(
+                    lineCoordinates[
+                      `0,${Math.floor(i / 2)},${Math.floor(j / 2)}`
+                    ]
+                  ),
+                }}
+                data-coord={`0,${Math.floor(i / 2)},${Math.floor(j / 2)}`}
+              />
             );
           }
         } else if (j % 2 === 0) {
           row.push(
-            React.createElement(
-              "div",
-              {
-                className: "vertical",
-                "data-coord": `1,${Math.floor(j / 2)},${Math.floor(i / 2)}`,
-                onClick: this.PutLine,
-                style: {
-                  backgroundColor: Game.selectColor(
-                    lineCoordinates[
-                      `1,${Math.floor(j / 2)},${Math.floor(i / 2)}`
-                    ]
-                  ),
-                },
-                onMouseEnter: this.tint,
-                onMouseLeave: this.untint,
-              },
-              ""
-            )
+            <div
+              data-coord={`1,${Math.floor(j / 2)},${Math.floor(i / 2)}`}
+              className="vertical"
+              onMouseEnter={this.tint}
+              onMouseLeave={this.untint}
+              onClick={this.PutLine}
+              role="presentation"
+              onKeyPress={this.handleKeyPress}
+              style={{
+                backgroundColor: Game.selectColor(
+                  lineCoordinates[`1,${Math.floor(j / 2)},${Math.floor(i / 2)}`]
+                ),
+              }}
+            />
           );
         } else {
           row.push(
-            React.createElement(
-              "div",
-              {
-                className: "box",
-                id: `box${Math.floor(i / 2)},${Math.floor(j / 2)}`,
-                style: {
-                  backgroundColor:
-                    boxColors[`${Math.floor(i / 2)},${Math.floor(j / 2)}`],
-                },
-              },
-              ""
-            )
+            <div
+              className="box"
+              id={`box${Math.floor(i / 2)},${Math.floor(j / 2)}`}
+              style={{
+                backgroundColor:
+                  boxColors[`${Math.floor(i / 2)},${Math.floor(j / 2)}`],
+              }}
+            />
           );
         }
       }
-      cols.push(React.createElement("div", { className: "colon" }, row));
+      cols.push(<div className="colon">{row}</div>);
     }
-
-    return React.createElement("div", { id: "game-board" }, cols);
+    return <div id="game-board">{cols}</div>;
   }
 
   // поставить палочку
@@ -242,11 +227,11 @@ class Game extends React.Component {
     if (window.confirm("Создать новое поле?")) {
       let newState;
       if (event.target.id === "small") {
-        newState = this.initialBoard(2);
+        newState = Game.initialBoard(2);
       } else if (event.target.id === "medium") {
-        newState = this.initialBoard(8);
+        newState = Game.initialBoard(8);
       } else if (event.target.id === "large") {
-        newState = this.initialBoard(12);
+        newState = Game.initialBoard(12);
       }
       this.setState(() => newState);
     }
@@ -300,7 +285,7 @@ class Game extends React.Component {
     this.setState((prevState) => ({
       winMessage:
         prevState.numRed + prevState.numBlue === prevState.boardSize * 2
-          ? Game.makeWinMessage(prevState)
+          ? console.log("Игра завершена")
           : "",
     }));
   }
@@ -336,7 +321,7 @@ class Game extends React.Component {
         </div>
         <div id="board">{this.makeBoard(boardSize)}</div>
 
-        <Stats numBlue={numBlue} numRed={numRed} winMessage={winMessage} />
+        <Stats numBlue={numBlue} numRed={numRed} />
       </div>
     );
   }

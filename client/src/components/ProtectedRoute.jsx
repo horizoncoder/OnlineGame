@@ -22,13 +22,12 @@ export function ProtectedRoute(props) {
   return <Redirect to="/login" />;
 }
 
-LoginRoute.propTypes = {
+const defaultProps = {
   isAuthenticated: PropTypes.bool.isRequired,
-  component: PropTypes.string.isRequired,
-  setAuth: PropTypes.bool.isRequired,
+  component: PropTypes.func.isRequired,
+  setAuth: PropTypes.func.isRequired,
 };
-ProtectedRoute.propTypes = {
-  isAuthenticated: PropTypes.bool.isRequired,
-  component: PropTypes.string.isRequired,
-  setAuth: PropTypes.bool.isRequired,
-};
+
+LoginRoute.propTypes = defaultProps;
+
+ProtectedRoute.propTypes = defaultProps;

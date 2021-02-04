@@ -61,8 +61,8 @@ const Register = ({ setAuth }) => {
               ref={register({
                 required: "Введите почту",
                 minLength: {
-                  value: 11,
-                  message: "Почта должна быть не меньше 11 символов",
+                  value: 5,
+                  message: "Почта должна быть не меньше 5 символов",
                 },
                 maxLength: {
                   value: 30,
