@@ -16,7 +16,6 @@ import Game from "./components/Game";
 import Stats from "./components/Stats";
 
 import Dashboard from "./components/Dashboard";
-
 import { Home } from "./router/Home";
 import Register from "./components/Register";
 import { API_URL } from "./components/api";

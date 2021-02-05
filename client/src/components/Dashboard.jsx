@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import PropTypes from "prop-types";
 import { API_URL } from "./api";
-
 import Game from "./Game";
 
 const Dashboard = ({ setAuth }) => {
@@ -50,7 +49,6 @@ const Dashboard = ({ setAuth }) => {
       >
         Logout
       </button>
-
       <Game />
     </div>
   );

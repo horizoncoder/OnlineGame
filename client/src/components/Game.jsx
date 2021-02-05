@@ -1,6 +1,9 @@
 import React from "react";
 import "./App.css";
+import { connect } from "react-redux";
+import PropTypes from "prop-types";
 import Stats from "./Stats";
+import { incrementAction, DECREMENT } from "../actions";
 
 class Game extends React.Component {
   static initialBoard(size) {
@@ -25,7 +28,7 @@ class Game extends React.Component {
     // квадраты
     for (let i = 0; i < state.boardSize; i += 1) {
       for (let j = 0; j < state.boardSize; j += 1) {
-        state.boxColors[`${i},${j}`] = "black";
+        state.boxColors[`${i},${j}`] = "white";
       }
     }
     return state;
@@ -46,7 +49,8 @@ class Game extends React.Component {
 
   constructor(props) {
     super(props);
-    this.state = Game.initialBoard(2);
+    const { count } = this.props;
+    this.state = Game.initialBoard(count);
     this.PutLine = this.PutLine.bind(this);
     this.changeBoardSize = this.changeBoardSize.bind(this);
     this.tint = this.tint.bind(this);
@@ -78,7 +82,6 @@ class Game extends React.Component {
                 onMouseLeave={this.untint}
                 onClick={this.PutLine}
                 role="presentation"
-                onKeyPress={this.handleKeyPress}
                 style={{
                   backgroundColor: Game.selectColor(
                     lineCoordinates[
@@ -99,7 +102,6 @@ class Game extends React.Component {
               onMouseLeave={this.untint}
               onClick={this.PutLine}
               role="presentation"
-              onKeyPress={this.handleKeyPress}
               style={{
                 backgroundColor: Game.selectColor(
                   lineCoordinates[`1,${Math.floor(j / 2)},${Math.floor(i / 2)}`]
@@ -223,17 +225,10 @@ class Game extends React.Component {
     }
   }
 
-  changeBoardSize(event) {
+  changeBoardSize() {
+    const { count } = this.props;
     if (window.confirm("Создать новое поле?")) {
-      let newState;
-      if (event.target.id === "small") {
-        newState = Game.initialBoard(2);
-      } else if (event.target.id === "medium") {
-        newState = Game.initialBoard(8);
-      } else if (event.target.id === "large") {
-        newState = Game.initialBoard(12);
-      }
-      this.setState(() => newState);
+      this.setState(() => Game.initialBoard(count));
     }
   }
 
@@ -281,21 +276,24 @@ class Game extends React.Component {
   }
 
   // проверка конца игры
-  checkGameOver() {
-    this.setState((prevState) => ({
-      winMessage:
-        prevState.numRed + prevState.numBlue === prevState.boardSize * 2
-          ? console.log("Игра завершена")
-          : "",
-    }));
-  }
+  // checkGameOver() {
+  //   this.setState((prevState) => ({
+  //     winMessage:
+  //       prevState.numRed + prevState.numBlue === prevState.boardSize * 2
+  //         ? console.log("Игра завершена")
+  //         : "",
+  //   }));
+  // }
 
   render() {
     const { numRed } = this.state;
     const { numBlue } = this.state;
     const { turn } = this.state;
-    const { winMessage } = this.state;
     const { boardSize } = this.state;
+    const { count } = this.props;
+    const { increment } = this.props;
+    const { decrement } = this.props;
+    const board = `Размер поля ${count} на ${count} `;
     return (
       <div id="game">
         <div id="header">
@@ -307,16 +305,15 @@ class Game extends React.Component {
             {numBlue}
             {turn}
           </p>
-          <p id="winner">{winMessage}</p>
-          Размер поля:
+          {board}
+          <button type="submit" onClick={() => increment()}>
+            Добавить
+          </button>
+          <button type="submit" onClick={() => decrement()}>
+            Убавить
+          </button>
           <button id="small" type="submit" onClick={this.changeBoardSize}>
-            2x2
-          </button>
-          <button id="medium" type="submit" onClick={this.changeBoardSize}>
-            8x8
-          </button>
-          <button type="submit" id="large" onClick={this.changeBoardSize}>
-            12x12
+            создать поле
           </button>
         </div>
         <div id="board">{this.makeBoard(boardSize)}</div>
@@ -326,5 +323,25 @@ class Game extends React.Component {
     );
   }
 }
+const mapDispatchToProps = (dispatch) => {
+  return {
+    increment: (x, y) => dispatch(incrementAction(x, y)),
+    decrement() {
+      dispatch({ type: DECREMENT });
+    },
+  };
+};
 
-export default Game;
+const mapStateToProps = ({ Counter }) => {
+  return {
+    count: Counter.count,
+    name: Counter.name,
+  };
+};
+
+Game.propTypes = {
+  count: PropTypes.number.isRequired,
+  increment: PropTypes.number.isRequired,
+  decrement: PropTypes.number.isRequired,
+};
+export default connect(mapStateToProps, mapDispatchToProps)(Game);
