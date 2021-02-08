@@ -3,9 +3,18 @@ import "./App.css";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import Stats from "./Stats";
-import { incrementAction, DECREMENT } from "../actions";
+import { incrementAction, boardsAction, decrementAction } from "../actions";
 
 class Game extends React.Component {
+  state = {
+    numRed: 0,
+    numBlue: 0,
+    turn: "red",
+    winMessage: "",
+    lineCoordinates: {},
+    boxColors: {},
+  };
+
   static initialBoard(size) {
     const state = {
       boardSize: size,
@@ -18,19 +27,20 @@ class Game extends React.Component {
     };
 
     // палочки
-    for (let i = 0; i < 2; i += 1) {
-      for (let j = 0; j < state.boardSize + 1; j += 1) {
-        for (let k = 0; k < state.boardSize; k += 1) {
-          state.lineCoordinates[`${i},${j},${k}`] = 0;
-        }
-      }
-    }
-    // квадраты
-    for (let i = 0; i < state.boardSize; i += 1) {
-      for (let j = 0; j < state.boardSize; j += 1) {
-        state.boxColors[`${i},${j}`] = "white";
-      }
-    }
+    // for (let i = 0; i < 2; i += 1) {
+    //   for (let j = 0; j < state.boardSize + 1; j += 1) {
+    //     for (let k = 0; k < state.boardSize; k += 1) {
+    //       state.lineCoordinates[`${i},${j},${k}`] = 0;
+    //     }
+    //   }
+    // }
+    // // квадраты
+    // for (let i = 0; i < state.boardSize; i += 1) {
+    //   for (let j = 0; j < state.boardSize; j += 1) {
+    //     state.boxColors[`${i},${j}`] = "white";
+    //   }
+    // }
+    // console.log(state);
     return state;
   }
 
@@ -49,18 +59,30 @@ class Game extends React.Component {
 
   constructor(props) {
     super(props);
-    const { count } = this.props;
-    this.state = Game.initialBoard(count);
+    // const { count } = this.props;
+    // this.state = Game.initialBoard(count);
     this.PutLine = this.PutLine.bind(this);
-    this.changeBoardSize = this.changeBoardSize.bind(this);
+    // this.changeBoardSize = this.changeBoardSize.bind(this);
     this.tint = this.tint.bind(this);
     this.untint = this.untint.bind(this);
+
+    this.setState({
+      numRed: 0,
+      numBlue: 0,
+      turn: "red",
+      winMessage: "",
+      lineCoordinates: {},
+      boxColors: {},
+    });
   }
 
   makeBoard(boardSize) {
     const cols = [];
-    const { lineCoordinates } = this.state;
-    const { boxColors } = this.state;
+    // const { stater } = this.props;
+    const { lineCoordinates, boxColors } = this.props;
+    // const { lineCoordinates } = this.state;
+    console.log(`ddd ${Object.keys(lineCoordinates)}`);
+    // const { boxColors } = this.state;
     for (let i = 0; i <= 2 * boardSize; i += 1) {
       // проверка на одинаковое количество строки
       const row = [];
@@ -129,10 +151,9 @@ class Game extends React.Component {
 
   // поставить палочку
   PutLine(event) {
-    const { lineCoordinates } = this.state;
+    const { lineCoordinates, boxColors } = this.props;
     const { turn } = this.state;
     const currentCoord = event.target.dataset.coord;
-    const { boxColors } = this.state;
     if (lineCoordinates[currentCoord] === 0) {
       // определяем кординаты
       const newState = lineCoordinates;
@@ -225,18 +246,20 @@ class Game extends React.Component {
     }
   }
 
-  changeBoardSize() {
-    const { count } = this.props;
-    if (window.confirm("Создать новое поле?")) {
-      this.setState(() => Game.initialBoard(count));
-    }
-  }
+  // changeBoardSize() {
+  //   const { count } = this.props;
+  //   if (window.confirm("Создать новое поле?")) {
+
+  //     this.setState(() => Game.initialBoard(count));
+  //     console.log(this.setState());
+  //   }
+  // }
 
   // закрасить квадарат
-  tint(event) {
+  tint = (event) => {
     const e = event;
     const { turn } = this.state;
-    const { lineCoordinates } = this.state;
+    const { lineCoordinates } = this.props;
     const currentCoord = event.target.dataset.coord;
     if (lineCoordinates[currentCoord] === 0) {
       if (turn === "red") {
@@ -249,7 +272,7 @@ class Game extends React.Component {
 
   untint(event) {
     const e = event;
-    const { lineCoordinates } = this.state;
+    const { lineCoordinates } = this.props;
     const currentCoord = event.target.dataset.coord;
     if (lineCoordinates[currentCoord] === 0) {
       e.target.style.backgroundColor = "rgb(255,255,255)";
@@ -258,7 +281,7 @@ class Game extends React.Component {
 
   // проверяем квадраты на заполнение
   checkSquare(y, z) {
-    const { lineCoordinates } = this.state;
+    const { lineCoordinates } = this.props;
     const { boardSize } = this.state;
     const checker1 = Math.abs(lineCoordinates[`0,${y},${z}`]);
     const checker2 = Math.abs(
@@ -276,23 +299,25 @@ class Game extends React.Component {
   }
 
   // проверка конца игры
-  // checkGameOver() {
-  //   this.setState((prevState) => ({
-  //     winMessage:
-  //       prevState.numRed + prevState.numBlue === prevState.boardSize * 2
-  //         ? console.log("Игра завершена")
-  //         : "",
-  //   }));
-  // }
+  checkGameOver() {
+    this.setState((prevState) => ({
+      winMessage:
+        prevState.numRed + prevState.numBlue === prevState.boardSize * 2
+          ? console.log("Игра завершена")
+          : "",
+    }));
+  }
 
   render() {
     const { numRed } = this.state;
     const { numBlue } = this.state;
     const { turn } = this.state;
+    const { winMessage } = this.state;
     const { boardSize } = this.state;
     const { count } = this.props;
     const { increment } = this.props;
     const { decrement } = this.props;
+    const { boards } = this.props;
     const board = `Размер поля ${count} на ${count} `;
     return (
       <div id="game">
@@ -304,19 +329,20 @@ class Game extends React.Component {
             Синий:
             {numBlue}
             {turn}
+            {winMessage}
           </p>
           {board}
-          <button type="submit" onClick={() => increment()}>
+          <button type="submit" onClick={increment}>
             Добавить
           </button>
-          <button type="submit" onClick={() => decrement()}>
+          <button type="submit" onClick={decrement}>
             Убавить
           </button>
-          <button id="small" type="submit" onClick={this.changeBoardSize}>
+          <button id="small" type="submit" onClick={boards}>
             создать поле
           </button>
         </div>
-        <div id="board">{this.makeBoard(boardSize)}</div>
+        <div id="board">{this.makeBoard(count)}</div>
 
         <Stats numBlue={numBlue} numRed={numRed} />
       </div>
@@ -325,10 +351,9 @@ class Game extends React.Component {
 }
 const mapDispatchToProps = (dispatch) => {
   return {
-    increment: (x, y) => dispatch(incrementAction(x, y)),
-    decrement() {
-      dispatch({ type: DECREMENT });
-    },
+    increment: () => dispatch(incrementAction()),
+    boards: () => dispatch(boardsAction()),
+    decrement: () => dispatch(decrementAction()),
   };
 };
 
@@ -336,6 +361,9 @@ const mapStateToProps = ({ Counter }) => {
   return {
     count: Counter.count,
     name: Counter.name,
+    sizes: Counter.sizes,
+    lineCoordinates: Counter.lineCoordinates,
+    boxColors: Counter.boxColors,
   };
 };
 
@@ -343,5 +371,6 @@ Game.propTypes = {
   count: PropTypes.number.isRequired,
   increment: PropTypes.number.isRequired,
   decrement: PropTypes.number.isRequired,
+  boards: PropTypes.number.isRequired,
 };
 export default connect(mapStateToProps, mapDispatchToProps)(Game);

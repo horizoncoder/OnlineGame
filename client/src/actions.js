@@ -1,5 +1,7 @@
 export const INCREMENT = "INCREMENT";
 export const DECREMENT = "DECREMENT";
-export const INITBOARD = "INITBOARD";
+export const BOARDS = "BOARDS";
 
-export const incrementAction = (x, y) => ({ type: INCREMENT, x, y });
+export const incrementAction = () => ({ type: INCREMENT });
+export const boardsAction = () => ({ type: BOARDS });
+export const decrementAction = () => ({ type: DECREMENT });
