@@ -3,7 +3,7 @@ import "./App.css";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import Stats from "./Stats";
-import { incrementAction, boardsAction, decrementAction } from "../actions";
+import { incrementAction, boardsAction, decrementAction, tintAction } from "../actions";
 
 class Game extends React.Component {
   state = {
@@ -15,34 +15,6 @@ class Game extends React.Component {
     boxColors: {},
   };
 
-  static initialBoard(size) {
-    const state = {
-      boardSize: size,
-      numRed: 0,
-      numBlue: 0,
-      turn: "red",
-      winMessage: "",
-      lineCoordinates: {},
-      boxColors: {},
-    };
-
-    // палочки
-    // for (let i = 0; i < 2; i += 1) {
-    //   for (let j = 0; j < state.boardSize + 1; j += 1) {
-    //     for (let k = 0; k < state.boardSize; k += 1) {
-    //       state.lineCoordinates[`${i},${j},${k}`] = 0;
-    //     }
-    //   }
-    // }
-    // // квадраты
-    // for (let i = 0; i < state.boardSize; i += 1) {
-    //   for (let j = 0; j < state.boardSize; j += 1) {
-    //     state.boxColors[`${i},${j}`] = "white";
-    //   }
-    // }
-    // console.log(state);
-    return state;
-  }
 
   static selectColor(int) {
     if (int === 0) {
@@ -59,34 +31,24 @@ class Game extends React.Component {
 
   constructor(props) {
     super(props);
-    // const { count } = this.props;
-    // this.state = Game.initialBoard(count);
     this.PutLine = this.PutLine.bind(this);
-    // this.changeBoardSize = this.changeBoardSize.bind(this);
-    this.tint = this.tint.bind(this);
-    this.untint = this.untint.bind(this);
+  //this.tint = this.tint.bind(this);
+    //this.untint = this.untint.bind(this);
 
-    this.setState({
-      numRed: 0,
-      numBlue: 0,
-      turn: "red",
-      winMessage: "",
-      lineCoordinates: {},
-      boxColors: {},
-    });
   }
 
-  makeBoard(boardSize) {
+  makeBoard() {
+    const {tint}=this.props
     const cols = [];
-    // const { stater } = this.props;
+    const { count } = this.props
     const { lineCoordinates, boxColors } = this.props;
-    // const { lineCoordinates } = this.state;
+ 
     console.log(`ddd ${Object.keys(lineCoordinates)}`);
-    // const { boxColors } = this.state;
-    for (let i = 0; i <= 2 * boardSize; i += 1) {
+  
+    for (let i = 0; i <= 2 * count; i += 1) {
       // проверка на одинаковое количество строки
       const row = [];
-      for (let j = 0; j <= 2 * boardSize; j += 1) {
+      for (let j = 0; j <= 2 * count; j += 1) {
         // проверка на одинаковое количество строки
         if (i % 2 === 0) {
           if (j % 2 === 0) {
@@ -100,7 +62,7 @@ class Game extends React.Component {
             row.push(
               <div
                 className="horizon"
-                onMouseEnter={this.tint}
+                onMouseEnter={this.changeBackground}
                 onMouseLeave={this.untint}
                 onClick={this.PutLine}
                 role="presentation"
@@ -120,7 +82,7 @@ class Game extends React.Component {
             <div
               data-coord={`1,${Math.floor(j / 2)},${Math.floor(i / 2)}`}
               className="vertical"
-              onMouseEnter={this.tint}
+              onMouseEnter={this.changeBackground}
               onMouseLeave={this.untint}
               onClick={this.PutLine}
               role="presentation"
@@ -245,39 +207,36 @@ class Game extends React.Component {
       }
     }
   }
+   changeBackground=(e)=> {
+    e.target.style.background = 'rgba(255,0,0,0.5)';
+  }
+  NochangeBackground=(e)=> {
+    e.target.style.background = 'rgb(255,255,255)';
+  }
 
-  // changeBoardSize() {
-  //   const { count } = this.props;
-  //   if (window.confirm("Создать новое поле?")) {
-
-  //     this.setState(() => Game.initialBoard(count));
-  //     console.log(this.setState());
+  // закрасить квадарат
+  // tint = (event) => {
+  //   const e = event;
+  //   const { turn } = this.state;
+  //   const { lineCoordinates } = this.props;
+  //   const currentCoord = event.target.dataset.coord;
+  //   if (lineCoordinates[currentCoord] === 0) {
+  //     if (turn === "red") {
+  //       e.target.style.backgroundColor = "rgba(255,0,0,0.5)";
+  //     } else {
+  //       e.target.style.backgroundColor = "rgba(0,0,255,0.5)";
+  //     }
   //   }
   // }
 
-  // закрасить квадарат
-  tint = (event) => {
-    const e = event;
-    const { turn } = this.state;
-    const { lineCoordinates } = this.props;
-    const currentCoord = event.target.dataset.coord;
-    if (lineCoordinates[currentCoord] === 0) {
-      if (turn === "red") {
-        e.target.style.backgroundColor = "rgba(255,0,0,0.5)";
-      } else {
-        e.target.style.backgroundColor = "rgba(0,0,255,0.5)";
-      }
-    }
-  }
-
-  untint(event) {
-    const e = event;
-    const { lineCoordinates } = this.props;
-    const currentCoord = event.target.dataset.coord;
-    if (lineCoordinates[currentCoord] === 0) {
-      e.target.style.backgroundColor = "rgb(255,255,255)";
-    }
-  }
+  // untint(event) {
+  //   const e = event;
+  //   const { lineCoordinates } = this.props;
+  //   const currentCoord = event.target.dataset.coord;
+  //   if (lineCoordinates[currentCoord] === 0) {
+  //     e.target.style.backgroundColor = "rgb(255,255,255)";
+  //   }
+  // }
 
   // проверяем квадраты на заполнение
   checkSquare(y, z) {
@@ -318,6 +277,7 @@ class Game extends React.Component {
     const { increment } = this.props;
     const { decrement } = this.props;
     const { boards } = this.props;
+    const {tint}=this.props;
     const board = `Размер поля ${count} на ${count} `;
     return (
       <div id="game">
@@ -338,7 +298,7 @@ class Game extends React.Component {
           <button type="submit" onClick={decrement}>
             Убавить
           </button>
-          <button id="small" type="submit" onClick={boards}>
+          <button id="small" type="submit" onClick={tint}>
             создать поле
           </button>
         </div>
@@ -354,6 +314,7 @@ const mapDispatchToProps = (dispatch) => {
     increment: () => dispatch(incrementAction()),
     boards: () => dispatch(boardsAction()),
     decrement: () => dispatch(decrementAction()),
+   // tint:() => dispatch(tintAction())
   };
 };
 
@@ -364,6 +325,7 @@ const mapStateToProps = ({ Counter }) => {
     sizes: Counter.sizes,
     lineCoordinates: Counter.lineCoordinates,
     boxColors: Counter.boxColors,
+
   };
 };
 
