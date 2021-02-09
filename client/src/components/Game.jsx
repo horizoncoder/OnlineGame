@@ -3,12 +3,7 @@ import "./App.css";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import Stats from "./Stats";
-import {
-  incrementAction,
-  decrementAction,
-  boardsixAction,
-  setBoardSize,
-} from "../actions";
+import { boardsixAction, setBoardSize } from "../actions";
 
 class Game extends React.Component {
   constructor(props) {
