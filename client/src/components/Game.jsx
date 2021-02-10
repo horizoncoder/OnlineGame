@@ -3,22 +3,22 @@ import "./App.css";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import Stats from "./Stats";
-import { boardsixAction, setBoardSize } from "../actions";
+import {
+  boardsixAction,
+  setBoardSize,
+  calcSCore,
+  switchTurn,
+} from "../actions";
 
 class Game extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {
-      winMessage: "",
-      numBlue: 0,
-      numRed: 0,
-    };
+    this.state = {};
   }
 
   makeBoard = () => {
     const cols = [];
-    const { count } = this.props;
-    const { lineCoordinates, boxColors } = this.props;
+    const { lineCoordinates, boxColors, count } = this.props;
 
     for (let i = 0; i <= 2 * count; i += 1) {
       // проверка на одинаковое количество строки
@@ -37,8 +37,8 @@ class Game extends React.Component {
             row.push(
               <div
                 className="horizon"
-                onMouseEnter={this.changeBackground}
-                onMouseLeave={this.untint}
+                // onMouseEnter={this.changeBackground}
+                // onMouseLeave={this.NochangeBackground}
                 onClick={this.PutLine}
                 role="presentation"
                 style={{
@@ -57,8 +57,8 @@ class Game extends React.Component {
             <div
               data-coord={`1,${Math.floor(j / 2)},${Math.floor(i / 2)}`}
               className="vertical"
-              onMouseEnter={this.changeBackground}
-              onMouseLeave={this.untint}
+              // onMouseEnter={this.changeBackground}
+              // onMouseLeave={this.NochangeBackground}
               onClick={this.PutLine}
               role="presentation"
               style={{
@@ -88,9 +88,17 @@ class Game extends React.Component {
 
   // поставить палочку
   PutLine = (event) => {
-    const { turn } = this.state;
-    const { numBlue, numRed } = this.state;
-    const { lineCoordinates, boxColors, count, turnr } = this.props;
+    // const { turn } = this.state;
+    const {
+      lineCoordinates,
+      boxColors,
+      count,
+      turn,
+      switchTurn,
+      calcSCore,
+      numBlue,
+      numRed,
+    } = this.props;
     const currentCoord = event.target.dataset.coord;
     if (lineCoordinates[currentCoord] === 0) {
       // определяем кординаты
@@ -112,68 +120,30 @@ class Game extends React.Component {
           madeSquare = 1;
           newBoxColors[`${y},${z}`] =
             turn === "red" ? "rgba(255,0,0,0.5)" : "rgba(0,0,255,0.5)"; // по последний палочки меняем цвет квадрата
-          this.setState((prevState) => ({
-            numRed:
-              prevState.turn === "red"
-                ? prevState.numRed + 1
-                : prevState.numRed, // считаем очки
-            numBlue:
-              prevState.turn === "blue"
-                ? prevState.numBlue + 1
-                : prevState.numBlue,
-          }));
+          calcSCore();
         }
         if (this.checkSquare(parseFloat(y) - 1, z) === 4) {
           madeSquare = 1;
           newBoxColors[`${parseFloat(y) - 1},${z}`] =
             turn === "red" ? "rgba(255,0,0,0.5)" : "rgba(0,0,255,0.5)";
-          this.setState((prevState) => ({
-            numRed:
-              prevState.turn === "red"
-                ? prevState.numRed + 1
-                : prevState.numRed,
-            numBlue:
-              prevState.turn === "blue"
-                ? prevState.numBlue + 1
-                : prevState.numBlue,
-          }));
+          calcSCore();
         }
       } else {
         if (this.checkSquare(z, y) === 4) {
           madeSquare = 1;
           newBoxColors[`${z},${y}`] =
             turn === "red" ? "rgba(255,0,0,0.5)" : "rgba(0,0,255,0.5)";
-          this.setState((prevState) => ({
-            numRed:
-              prevState.turn === "red"
-                ? prevState.numRed + 1
-                : prevState.numRed,
-            numBlue:
-              prevState.turn === "blue"
-                ? prevState.numBlue + 1
-                : prevState.numBlue,
-          }));
+          calcSCore();
         }
         if (this.checkSquare(z, parseFloat(y) - 1) === 4) {
           madeSquare = 1;
           newBoxColors[`${z},${parseFloat(y) - 1}`] =
             turn === "red" ? "rgba(255,0,0,0.5)" : "rgba(0,0,255,0.5)";
-          this.setState((prevState) => ({
-            numRed:
-              prevState.turn === "red"
-                ? prevState.numRed + 1
-                : prevState.numRed,
-            numBlue:
-              prevState.turn === "blue"
-                ? prevState.numBlue + 1
-                : prevState.numBlue,
-          }));
+          calcSCore();
         }
       }
       if (madeSquare === 0) {
-        this.setState((prevState) => ({
-          turn: prevState.turn === "red" ? "blue" : "red", // поменять цвет палки
-        }));
+        switchTurn();
         console.log(
           ` Красный ${numRed} Синий ${numBlue} Размер ${count * count} Всего ${
             numRed + numBlue
@@ -228,8 +198,8 @@ class Game extends React.Component {
   // проверка конца игры
 
   render() {
-    const { winMessage, numBlue, numRed } = this.state;
-    const { setBoardSize, count,turnr } = this.props;
+    const { winMessage } = this.state;
+    const { setBoardSize, count, turn, numBlue, numRed } = this.props;
     const board = `Размер поля ${count} на ${count} `;
     return (
       <div id="game">
@@ -240,7 +210,7 @@ class Game extends React.Component {
             {numRed}
             Синий:
             {numBlue}
-            {turnr}
+            {turn}
             {winMessage}
           </p>
           {board}
@@ -263,23 +233,24 @@ class Game extends React.Component {
 }
 const mapDispatchToProps = (dispatch) => {
   return {
-    increment: () => dispatch(incrementAction()),
-    decrement: () => dispatch(decrementAction()),
     boardsix: () => dispatch(boardsixAction()),
     setBoardSize: (size) => dispatch(setBoardSize(size)),
+    switchTurn: () => dispatch(switchTurn()),
+    calcSCore: () => dispatch(calcSCore()),
   };
 };
 
 const mapStateToProps = ({ Counter }) => {
+  const { turn, numBlue, numRed } = Counter;
   return {
     count: Counter.count,
-    numBluer: Counter.numBluer,
-    numRed: Counter.numRed,
+    numBlue,
+    numRed,
     name: Counter.name,
     sizes: Counter.sizes,
     lineCoordinates: Counter.lineCoordinates,
     boxColors: Counter.boxColors,
-    turnr: Counter.turnr,
+    turn,
   };
 };
 
@@ -287,8 +258,11 @@ Game.propTypes = {
   count: PropTypes.number.isRequired,
   lineCoordinates: PropTypes.number.isRequired,
   boxColors: PropTypes.number.isRequired,
-  numBluer: PropTypes.number.isRequired,
+  numBlue: PropTypes.number.isRequired,
   numRed: PropTypes.number.isRequired,
   setBoardSize: PropTypes.func.isRequired,
+  turn: PropTypes.string.isRequired,
+  calcSCore: PropTypes.func.isRequired,
+  switchTurn: PropTypes.func.isRequired,
 };
 export default connect(mapStateToProps, mapDispatchToProps)(Game);

@@ -1,4 +1,4 @@
-import { SET_BOARD_SIZE } from "../actions";
+import { CALC_SCORE, SET_BOARD_SIZE, SWITCH_TURN } from "../actions";
 
 // создать координаты
 const initCoords = (count) => {
@@ -19,11 +19,16 @@ const initCoords = (count) => {
   return { lineCoordinates, boxColors };
 };
 
+const calcScore = (state) => ({
+  numRed: state.turn === "red" ? state.numRed + 1 : state.numRed, // считаем очки
+  numBlue: state.turn === "blue" ? state.numBlue + 1 : state.numBlue,
+});
+
 const initialState = {
   count: 2,
   name: "",
-  turnr: "red",
-  numBluer: 0,
+  turn: "red",
+  numBlue: 0,
   numRed: 0,
   errorMessage: null,
   lineCoordinates: {},
@@ -35,6 +40,10 @@ export default (state = initialState, action) => {
   switch (action.type) {
     case SET_BOARD_SIZE:
       return { ...state, count: action.size, ...initCoords(action.size) };
+    case SWITCH_TURN:
+      return { ...state, turn: state.turn === "red" ? "blue" : "red" };
+    case CALC_SCORE:
+      return { ...state, ...calcScore(state) };
     default:
       return state;
   }
