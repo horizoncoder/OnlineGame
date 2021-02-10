@@ -26,12 +26,50 @@
   border: 2px;
 }
 
+.horizonred {
+  height: 4px;
+  width: 25px;
+  border: 2px;
+  
+}
+
+.horizonblue {
+  height: 4px;
+  width: 25px;
+  border: 2px;
+  
+}
+
+.horizonred:hover {
+  background-color: red;
+}
+
+.horizonblue:hover {
+  background-color: blue;
+}
+
 .vertical {
   height: 25px;
   width: 4px;
   border: 2px;
 }
+.verticalblue {
+  height: 25px;
+  width: 4px;
+  border: 2px;
+}
+.verticalred {
+  height: 25px;
+  width: 4px;
+  border: 2px;
+}
+.verticalred:hover {
+  background-color: red;
+}
 
+.verticalblue:hover {
+  background-color: blue;
+}
 #board {
   display: flex;
   flex-direction: column;

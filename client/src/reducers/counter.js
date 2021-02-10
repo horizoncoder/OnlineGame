@@ -1,4 +1,9 @@
-import { CALC_SCORE, SET_BOARD_SIZE, SWITCH_TURN } from "../actions";
+import {
+  CALC_SCORE,
+  SET_BOARD_SIZE,
+  SWITCH_TURN,
+  CHECKSQUARE,
+} from "../actions";
 
 // создать координаты
 const initCoords = (count) => {
@@ -24,6 +29,23 @@ const calcScore = (state) => ({
   numBlue: state.turn === "blue" ? state.numBlue + 1 : state.numBlue,
 });
 
+const checkSquare = (y, z, state) => {
+  const { lineCoordinates, count } = state;
+  const checker1 = Math.abs(state.lineCoordinates[`0,${y},${z}`]);
+  const checker2 = Math.abs(
+    parseFloat(y) + 1 > count
+      ? 0
+      : lineCoordinates[`0,${parseFloat(y) + 1},${z}`]
+  );
+  const checker3 = Math.abs(lineCoordinates[`1,${z},${y}`]);
+  const checker4 = Math.abs(
+    parseFloat(z) + 1 > count
+      ? 0
+      : lineCoordinates[`1,${parseFloat(z) + 1},${y}`]
+  );
+  return checker1 + checker2 + checker3 + checker4;
+};
+
 const initialState = {
   count: 2,
   name: "",
@@ -33,6 +55,10 @@ const initialState = {
   errorMessage: null,
   lineCoordinates: {},
   boxColors: {},
+  box: {
+    '0:-1': true,
+    '1:1': false,
+  },
   ...initCoords(2),
 };
 
@@ -44,6 +70,8 @@ export default (state = initialState, action) => {
       return { ...state, turn: state.turn === "red" ? "blue" : "red" };
     case CALC_SCORE:
       return { ...state, ...calcScore(state) };
+    case CHECKSQUARE:
+      return { ...state, ...checkSquare(action.y, action.z, state) };
     default:
       return state;
   }
