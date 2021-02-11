@@ -50,7 +50,7 @@ class Game extends React.Component {
             <div
               data-coord={`1,${Math.floor(j / 2)},${Math.floor(i / 2)}`}
               className={turn === "red" ? "verticalred" : "verticalblue"}
-              onClick={this.PutLine}
+              onClick={this.PutLine} // {() => putLine(`${ij}`)}
               role="presentation"
               style={{
                 backgroundColor: this.selectColor(
@@ -83,6 +83,10 @@ class Game extends React.Component {
     const {
       lineCoordinates,
       boxColors,
+      box,
+      box2,
+      box3,
+      box4,
       count,
       turn,
       switchTurn,
@@ -103,33 +107,37 @@ class Game extends React.Component {
 
       //
       let madeSquare = 0;
+      checkSquare(y, z);
       if (x === "0") {
-        if (checkSquare(y, z) === 1) {
+        if (turn === "red") {
           // если квадрат заполнин  с 4 сторон меняем цвет
-          console.log(checkSquare(y, z));
-          madeSquare = 1;
-          boxColors[`${y},${z}`] =
-            turn === "red" ? "rgba(255,0,0,0.5)" : "rgba(0,0,255,0.5)"; // по последний палочки меняем цвет квадрата
+          //madeSquare = 1;
+          boxColors[`${y},${z}`] = "green";
           calcSCore();
+        } else {
+          boxColors[`${y},${z}`] = "white";
         }
-        if (this.checkSquare(parseFloat(y) - 1, z) === 1) {
-          madeSquare = 1;
-          boxColors[`${parseFloat(y) - 1},${z}`] =
-            turn === "red" ? "rgba(255,0,0,0.5)" : "rgba(0,0,255,0.5)";
+        if (turn === "red") {
+          //madeSquare = 1;
+          boxColors[`${parseFloat(y) - 1},${z}`] = "red";
           calcSCore();
+        } else {
+          boxColors[`${y},${z}`] = "blue";
         }
       } else {
-        if (this.checkSquare(z, y) === 1) {
-          madeSquare = 1;
-          boxColors[`${z},${y}`] =
-            turn === "red" ? "rgba(255,0,0,0.5)" : "rgba(0,0,255,0.5)";
+        if (turn === "red") {
+         // madeSquare = 1;
+          boxColors[`${z},${y}`] = "red";
           calcSCore();
+        } else {
+          boxColors[`${y},${z}`] = "blue";
         }
-        if (this.checkSquare(z, parseFloat(y) - 1) === 1) {
-          madeSquare = 1;
-          boxColors[`${z},${parseFloat(y) - 1}`] =
-            turn === "red" ? "rgba(255,0,0,0.5)" : "rgba(0,0,255,0.5)";
+        if (turn === "red") {
+         // madeSquare = 1;
+          boxColors[`${z},${parseFloat(y) - 1}`] = "red";
           calcSCore();
+        } else {
+          boxColors[`${y},${z}`] = "blue";
         }
       }
       if (madeSquare === 0) {
@@ -153,27 +161,36 @@ class Game extends React.Component {
     return false;
   };
 
-  // проверяем квадраты на заполнение
-  checkSquare = (y, z) => {
-    const { lineCoordinates, count } = this.props;
-    const checker1 = Math.abs(lineCoordinates[`0,${y},${z}`]);
-    const checker2 = Math.abs(
-      parseFloat(y) + 1 > count
-        ? 0
-        : lineCoordinates[`0,${parseFloat(y) + 1},${z}`]
-    );
-    const checker3 = Math.abs(lineCoordinates[`1,${z},${y}`]);
-    const checker4 = Math.abs(
-      parseFloat(z) + 1 > count
-        ? 0
-        : lineCoordinates[`1,${parseFloat(z) + 1},${y}`]
-    );
-    return checker1 + checker2 + checker3 + checker4;
-  };
+  //проверяем квадраты на заполнение
+  // checkSquare = (y, z) => {
+  //   const { lineCoordinates, count } = this.props;
+  //   const checker1 = Math.abs(lineCoordinates[`0,${y},${z}`]);
+  //   const checker2 = Math.abs(
+  //     parseFloat(y) + 1 > count
+  //       ? 0
+  //       : lineCoordinates[`0,${parseFloat(y) + 1},${z}`]
+  //   );
+  //   const checker3 = Math.abs(lineCoordinates[`1,${z},${y}`]);
+  //   const checker4 = Math.abs(
+  //     parseFloat(z) + 1 > count
+  //       ? 0
+  //       : lineCoordinates[`1,${parseFloat(z) + 1},${y}`]
+  //   );
+  //   return checker1 + checker2 + checker3 + checker4;
+  // };
 
   render() {
     const { winMessage } = this.state;
-    const { setBoardSize, count, turn, numBlue, numRed } = this.props;
+    const {
+      setBoardSize,
+      count,
+      turn,
+      numBlue,
+      numRed,
+      box,
+      box2,
+      box3,
+    } = this.props;
     const board = `Размер поля ${count} на ${count} `;
     return (
       <div id="game">
@@ -185,6 +202,9 @@ class Game extends React.Component {
             Синий:
             {numBlue}
             {turn}
+            {box}
+            {box2}
+            {box3}
             {winMessage}
           </p>
           {board}
@@ -217,6 +237,10 @@ const mapDispatchToProps = (dispatch) => {
 const mapStateToProps = ({ Counter }) => {
   const {
     turn,
+    box,
+    box2,
+    box3,
+    box4,
     numBlue,
     numRed,
     count,
@@ -226,6 +250,10 @@ const mapStateToProps = ({ Counter }) => {
   } = Counter;
   return {
     count,
+    box,
+    box2,
+    box3,
+    box4,
     numBlue,
     numRed,
     name,

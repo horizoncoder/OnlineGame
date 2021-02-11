@@ -31,7 +31,7 @@ const calcScore = (state) => ({
 
 const checkSquare = (y, z, state) => {
   const { lineCoordinates, count } = state;
-  const checker1 = Math.abs(state.lineCoordinates[`0,${y},${z}`]);
+  const checker1 = Math.abs(lineCoordinates[`0,${y},${z}`]);
   const checker2 = Math.abs(
     parseFloat(y) + 1 > count
       ? 0
@@ -55,10 +55,10 @@ const initialState = {
   errorMessage: null,
   lineCoordinates: {},
   boxColors: {},
-  box: {
-    '0:-1': true,
-    '1:1': false,
-  },
+  box: 0,
+  box2: 0,
+  box3: 0,
+  box4: 0,
   ...initCoords(2),
 };
 
@@ -71,7 +71,23 @@ export default (state = initialState, action) => {
     case CALC_SCORE:
       return { ...state, ...calcScore(state) };
     case CHECKSQUARE:
-      return { ...state, ...checkSquare(action.y, action.z, state) };
+      alert(checkSquare(action.y, action.z, state));
+      if (checkSquare(action.y, action.z, state) === 4) {
+        return { ...state, box: state.box + 4 };
+      }
+      if (checkSquare(parseFloat(action.y) - 1, action.z, state) === 4) {
+        return { ...state, box2: state.box2 + 4 };
+      }
+      if (checkSquare(action.z, action.y, state) === 4) {
+        return { ...state, box3: state.box3 + 4 };
+      }
+      if (checkSquare(action.z, parseFloat(action.y) - 1, state) === 4) {
+        return { ...state, box4: state.box4 + 4 };
+      }
+      return {
+        ...state,
+        ...checkSquare(action.y, action.z, state, state.box + 1),
+      };
     default:
       return state;
   }
