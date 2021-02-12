@@ -3,13 +3,77 @@ import "./App.css";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import Stats from "./Stats";
-import { setBoardSize, calcSCore, switchTurn, checkSquare } from "../actions";
+import { setBoardSize, calcSCore, switchTurn ,checkSquare} from "../actions";
 
 class Game extends React.Component {
   constructor(props) {
     super(props);
     this.state = {};
   }
+// в редрюсер
+  // getBoxCoords.forEach(c => {
+  //   lines[c] = turn === 'red' ? 1 : -1; // c === '011' 
+  // });
+  // const boxFilled = (boxCoord) =>{
+  //   let col = 0;
+  //   Object.keys(lines).forEach(coord => {
+  //     const splitCoord = coord.split(",");
+  //     const x = splitCoord[0]; // x кордината
+  //     const y = splitCoord[1]; // y кордината
+  //     const p = splitCoord[2]; // z кордината
+  //     if (`${x}${y}` === boxCoord) {
+  //       col = col +1;
+  //     }
+  //   });
+  //   return col === 4;
+  // }
+
+  mBoard = () => {
+    const sizeX = 2;
+    const sizeY = 2;
+    const getBoxCoords = (x, y, p) => {
+      if (p === 0 && x > 0) {
+        return [`${x - 1}${y}${2}`, `${x}${y}${p}`];
+      }
+      if (p === 1 && y > 0) {
+        return [`${x}${y - 1}${3}`, `${x}${y}${p}`];
+      }
+      return [`${x}${y}${p}`];
+    };
+    const shouldSetLine = (x, y, p) => {
+      if (p === 2 && x + 1 < sizeX) return false;
+      if (p === 3 && y + 1 < sizeY) return false;
+      return true;
+    };
+    const { lineCoordinates, boxColors, count, turn, putLine } = this.props; // TODO: putLine - action
+    const boxes = [];
+    const lines = [];
+    for (let x = 0; x < sizeX; x += 1) {
+      for (let y = 0; y < sizeY; y += 1) {
+        boxes.push(
+          <div
+            className={"box ".concat(
+              boxColors[`${x},${y}`] ? boxColors[`${x},${y}`] : "black"
+            )}
+          />
+        );
+        for (let p = 0; p < 4; p += 1) {
+          if (shouldSetLine(x, y, p)) {
+            lines.push(
+              <div
+                // className={turn === "red" ? "horizonred" : "horizonblue"}
+                className={"horizon" + lineCoordinates[getBoxCoords(x, y, p)]}
+                onClick={() => putLine(getBoxCoords(x, y, p))}
+                role="presentation"
+              />
+            );
+          }
+        }
+      }
+    }
+    
+    return <div id="game-board">{lines}</div>;
+  };
 
   makeBoard = () => {
     const cols = [];
@@ -32,6 +96,8 @@ class Game extends React.Component {
             row.push(
               <div
                 className={turn === "red" ? "horizonred" : "horizonblue"}
+                // onMouseEnter={this.changeBackground}
+                // onMouseLeave={this.NochangeBackground}
                 onClick={this.PutLine}
                 role="presentation"
                 style={{
@@ -50,7 +116,9 @@ class Game extends React.Component {
             <div
               data-coord={`1,${Math.floor(j / 2)},${Math.floor(i / 2)}`}
               className={turn === "red" ? "verticalred" : "verticalblue"}
-              onClick={this.PutLine} // {() => putLine(`${ij}`)}
+              // onMouseEnter={this.changeBackground}
+              // onMouseLeave={this.NochangeBackground}
+              onClick={this.PutLine}
               role="presentation"
               style={{
                 backgroundColor: this.selectColor(
@@ -78,72 +146,46 @@ class Game extends React.Component {
   };
 
   // поставить палочку
-
-  PutLine = (e) => {
+  PutLine = (event) => {
     const {
       lineCoordinates,
-      boxColors,
-      box,
-      box2,
-      box3,
-      box4,
-      count,
       turn,
+      checkSquare,
       switchTurn,
       calcSCore,
-      checkSquare,
-      numBlue,
-      numRed,
     } = this.props;
-    if (lineCoordinates[e.target.dataset.coord] === 0) {
+    const currentCoord = event.target.dataset.coord;
+    if (lineCoordinates[currentCoord] === 0) {
       // определяем кординаты
 
-      lineCoordinates[e.target.dataset.coord] = turn === "red" ? 1 : -1;
+     // lineCoordinates[currentCoord] = turn === "red" ? 1 : -1;
 
-      const splitCoord = e.target.dataset.coord.split(",");
+      const splitCoord = currentCoord.split(",");
       const x = splitCoord[0]; // x кордината
       const y = splitCoord[1]; // y кордината
       const z = splitCoord[2]; // z кордината
-
-      //
-      let madeSquare = 0;
-      checkSquare(y, z);
-      if (x === "0") {
-        if (turn === "red") {
-          // если квадрат заполнин  с 4 сторон меняем цвет
-          //madeSquare = 1;
-          boxColors[`${y},${z}`] = "green";
-          calcSCore();
-        } else {
-          boxColors[`${y},${z}`] = "white";
-        }
-        if (turn === "red") {
-          //madeSquare = 1;
-          boxColors[`${parseFloat(y) - 1},${z}`] = "red";
-          calcSCore();
-        } else {
-          boxColors[`${y},${z}`] = "blue";
-        }
-      } else {
-        if (turn === "red") {
-         // madeSquare = 1;
-          boxColors[`${z},${y}`] = "red";
-          calcSCore();
-        } else {
-          boxColors[`${y},${z}`] = "blue";
-        }
-        if (turn === "red") {
-         // madeSquare = 1;
-          boxColors[`${z},${parseFloat(y) - 1}`] = "red";
-          calcSCore();
-        } else {
-          boxColors[`${y},${z}`] = "blue";
-        }
-      }
+      const madeSquare = 0;
+      //if (x === "0") {
+        console.log('VALUE!!!', checkSquare(y, z));
+        calcSCore();
+      //   if (checkSquare() === 4) {
+      //     // если квадрат заполнин  с 4 сторон меняем цвет
+      //     calcSCore();
+      //   }
+      //   if (checkSquare(parseFloat(y) - 1, z) === 4) {
+      //     calcSCore();
+      //     checkSquare(y, z);
+      //   }
+      // } else {
+      //   if (checkSquare(z, y) === 4) {
+      //     calcSCore();
+      //   }
+      //   if (checkSquare(z, parseFloat(y) - 1) === 4) {
+      //     calcSCore();
+      //   }
+      // }
       if (madeSquare === 0) {
         switchTurn();
-      } else if (numRed + numBlue + 1 === count * count) {
-        alert("Игра завершина");
       }
     }
   };
@@ -161,36 +203,31 @@ class Game extends React.Component {
     return false;
   };
 
-  //проверяем квадраты на заполнение
-  // checkSquare = (y, z) => {
-  //   const { lineCoordinates, count } = this.props;
+  // проверяем квадраты на заполнение
+  // checkSquare(y, z) {
+  //   const { lineCoordinates } = this.props;
+  //   const { boardSize } = this.state;
   //   const checker1 = Math.abs(lineCoordinates[`0,${y},${z}`]);
   //   const checker2 = Math.abs(
-  //     parseFloat(y) + 1 > count
+  //     parseFloat(y) + 1 > boardSize
   //       ? 0
   //       : lineCoordinates[`0,${parseFloat(y) + 1},${z}`]
   //   );
   //   const checker3 = Math.abs(lineCoordinates[`1,${z},${y}`]);
   //   const checker4 = Math.abs(
-  //     parseFloat(z) + 1 > count
+  //     parseFloat(z) + 1 > boardSize
   //       ? 0
   //       : lineCoordinates[`1,${parseFloat(z) + 1},${y}`]
   //   );
   //   return checker1 + checker2 + checker3 + checker4;
-  // };
+  // }
+
+  // проверка конца игры
 
   render() {
+    this.mBoard();
     const { winMessage } = this.state;
-    const {
-      setBoardSize,
-      count,
-      turn,
-      numBlue,
-      numRed,
-      box,
-      box2,
-      box3,
-    } = this.props;
+    const { setBoardSize, count, turn, numBlue, numRed, box } = this.props;
     const board = `Размер поля ${count} на ${count} `;
     return (
       <div id="game">
@@ -202,10 +239,8 @@ class Game extends React.Component {
             Синий:
             {numBlue}
             {turn}
-            {box}
-            {box2}
-            {box3}
             {winMessage}
+            {box}
           </p>
           {board}
           <button type="submit" onClick={() => setBoardSize(2)}>
@@ -218,7 +253,7 @@ class Game extends React.Component {
             6x6
           </button>
         </div>
-        <div id="board">{this.makeBoard(count)}</div>
+        <div id="board">{this.mBoard()}</div>
 
         <Stats numBlue={numBlue} numRed={numRed} />
       </div>
@@ -235,30 +270,16 @@ const mapDispatchToProps = (dispatch) => {
 };
 
 const mapStateToProps = ({ Counter }) => {
-  const {
-    turn,
-    box,
-    box2,
-    box3,
-    box4,
-    numBlue,
-    numRed,
-    count,
-    name,
-    lineCoordinates,
-    boxColors,
-  } = Counter;
+  const { turn, numBlue, numRed, box } = Counter;
   return {
-    count,
-    box,
-    box2,
-    box3,
-    box4,
+    count: Counter.count,
     numBlue,
+    box,
     numRed,
-    name,
-    lineCoordinates,
-    boxColors,
+    name: Counter.name,
+    sizes: Counter.sizes,
+    lineCoordinates: Counter.lineCoordinates,
+    boxColors: Counter.boxColors,
     turn,
   };
 };
