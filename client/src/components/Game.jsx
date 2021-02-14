@@ -76,24 +76,41 @@ class Game extends React.Component {
   };
 
   makeBoard = () => {
+    const getBoxCoords = (x, y, p) => {
+      if (p === 0 && x > 0) {
+        return [`${x - 1}${y}${2}`, `${x}${y}${p}`];
+      }
+      if (p === 1 && y > 0) {
+        return [`${x}${y - 1}${3}`, `${x}${y}${p}`];
+      }
+      return [`${x}${y}${p}`];
+    };
+    const shouldSetLine = (x, y, p) => {
+      if (p === 2 && x + 1 < sizeX) return false;
+      if (p === 3 && y + 1 < sizeY) return false;
+      return true;
+    };
+    const sizeX = 6;
+    const sizeY = 6;
     const cols = [];
     const { lineCoordinates, boxColors, count, turn } = this.props;
 
-    for (let i = 0; i <= 2 * count; i += 1) {
+    for (let x = 0; x < sizeX; x += 1) {
       // проверка на одинаковое количество строки
       const row = [];
-      for (let j = 0; j <= 2 * count; j += 1) {
+      for (let y = 0; y < sizeY; y += 1) {
         // проверка на одинаковое количество строки
-        if (i % 2 === 0) {
-          if (j % 2 === 0) {
+        if (x % 2 === 0) {
+          if (y % 2 === 0) {
             row.push(
               <div
-                className="dot"
-                id={`dot${Math.floor(i / 2)},${Math.floor(j / 2)}`}
-              />
+            className={"box ".concat(
+              boxColors[`${x},${y}`] ? boxColors[`${x},${y}`] : "black"
+            )}
+          />
             );
           } else {
-            row.push(
+            cols.push(
               <div
                 className={turn === "red" ? "horizonred" : "horizonblue"}
                 // onMouseEnter={this.changeBackground}
@@ -103,42 +120,41 @@ class Game extends React.Component {
                 style={{
                   backgroundColor: this.selectColor(
                     lineCoordinates[
-                      `0,${Math.floor(i / 2)},${Math.floor(j / 2)}`
+                      `0,${Math.floor(x / 2)},${Math.floor(y / 2)}`
                     ]
                   ),
                 }}
-                data-coord={`0,${Math.floor(i / 2)},${Math.floor(j / 2)}`}
+                data-coord={`0,${Math.floor(x / 2)},${Math.floor(y / 2)}`}
               />
             );
           }
-        } else if (j % 2 === 0) {
-          row.push(
-            <div
-              data-coord={`1,${Math.floor(j / 2)},${Math.floor(i / 2)}`}
-              className={turn === "red" ? "verticalred" : "verticalblue"}
-              // onMouseEnter={this.changeBackground}
-              // onMouseLeave={this.NochangeBackground}
-              onClick={this.PutLine}
-              role="presentation"
-              style={{
-                backgroundColor: this.selectColor(
-                  lineCoordinates[`1,${Math.floor(j / 2)},${Math.floor(i / 2)}`]
-                ),
-              }}
-            />
-          );
+        } else if (y % 2 === 0) {
+          for (let p = 0; p < 4; p += 1) {
+            if (shouldSetLine(x, y, p)) {
+              cols.push(
+                <div
+                   className={turn === "red" ? "horizonred" : "horizonblue"}
+                  className={"horizon" + lineCoordinates[getBoxCoords(x, y, p)]}
+                  onClick={() => putLine(getBoxCoords(x, y, p))}
+                  role="presentation"
+                />
+              );
+            }
+          }
         } else {
-          row.push(
-            <div
-              className="box"
-              id={`box${Math.floor(i / 2)},${Math.floor(j / 2)}`}
-              style={{
-                backgroundColor:
-                  boxColors[`${Math.floor(i / 2)},${Math.floor(j / 2)}`],
-              }}
-            />
-          );
-        }
+          for (let p = 0; p < 4; p += 1) {
+            if (shouldSetLine(x, y, p)) {
+              cols.push(
+                <div
+                  // className={turn === "red" ? "horizonred" : "horizonblue"}
+                  className={"horizon" + lineCoordinates[getBoxCoords(x, y, p)]}
+                  onClick={() => putLine(getBoxCoords(x, y, p))}
+                  role="presentation"
+                />
+              );
+            }
+          }
+      }
       }
       cols.push(<div className="colon">{row}</div>);
     }
@@ -253,7 +269,7 @@ class Game extends React.Component {
             6x6
           </button>
         </div>
-        <div id="board">{this.mBoard()}</div>
+        <div id="board">{this.makeBoard()}</div>
 
         <Stats numBlue={numBlue} numRed={numRed} />
       </div>
