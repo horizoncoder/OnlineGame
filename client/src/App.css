@@ -27,7 +27,18 @@
   display: flex;
   flex-direction: column;
 }
-
+.lineV{
+  padding-right:0 ;
+  color: black;
+}
+.turnred:hover {
+  background-color: red;
+}
+.turnblue:hover {
+  background-color: blue;
+}
+.testdiv {
+}
 .row {
   padding-right:0;
 }
@@ -35,18 +46,44 @@
 .dot {
   height: 4px;
   width: 4px;
-  background-color: #000;
+  background-color: green;
+}
+
+.lineblack{
+  background-color: black;
+  width: 3px;
+}
+
+.lineblue{
+  background-color: blue;
+  width: 3px;
+}
+.linered{
+  background-color: red;
+  width: 3px;
+}
+.lineH{
+  background-color: black;
+  height: 3px;
 }
 
 .box {
-  height: 25px;
-  width: 25px;
+  float: left; /*Задаем обтекание*/
+  font-size: 40px;
+  text-align: center;
 }
 
 .horizContainer {
   height: 4px;
   width: 25px;
   border: 2px;
+}
+.horizonred{
+  background-color: black;
+}
+
+.verticalred{
+  background-color: black;
 }
 
 .vertContainer {
@@ -66,7 +103,9 @@
   padding:10px 50px;
   margin:10px
 }
-
+#body{
+  background-color: black;
+}
 
 .App-link {
   color: #61dafb;

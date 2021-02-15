@@ -2,17 +2,19 @@ import React from "react";
 import "./App.css";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
+import { Container, Row, Col } from "react-bootstrap";
+import { pullAt } from "lodash";
 import Stats from "./Stats";
-import { setBoardSize, calcSCore, switchTurn ,checkSquare} from "../actions";
+import { setBoardSize, calcSCore, switchTurn, checkSquare, putLine } from "../actions";
 
 class Game extends React.Component {
   constructor(props) {
     super(props);
     this.state = {};
   }
-// в редрюсер
+  // в редрюсер
   // getBoxCoords.forEach(c => {
-  //   lines[c] = turn === 'red' ? 1 : -1; // c === '011' 
+  //   lines[c] = turn === 'red' ? 1 : -1; // c === '011'
   // });
   // const boxFilled = (boxCoord) =>{
   //   let col = 0;
@@ -47,7 +49,8 @@ class Game extends React.Component {
     };
     const { lineCoordinates, boxColors, count, turn, putLine } = this.props; // TODO: putLine - action
     const boxes = [];
-    const lines = [];
+    const linesV = [];
+    const linesH = [];
     for (let x = 0; x < sizeX; x += 1) {
       for (let y = 0; y < sizeY; y += 1) {
         boxes.push(
@@ -59,10 +62,12 @@ class Game extends React.Component {
         );
         for (let p = 0; p < 4; p += 1) {
           if (shouldSetLine(x, y, p)) {
-            lines.push(
+            (p === 0 || p === 3 ? linesV : linesH).push(
               <div
                 // className={turn === "red" ? "horizonred" : "horizonblue"}
-                className={"horizon" + lineCoordinates[getBoxCoords(x, y, p)]}
+                className={`${p === 0 || p === 3 ? "lineV" : "lineH"} line${
+                  lineCoordinates[getBoxCoords(x, y, p)] || "black"
+                } turn${turn}`}
                 onClick={() => putLine(getBoxCoords(x, y, p))}
                 role="presentation"
               />
@@ -71,78 +76,97 @@ class Game extends React.Component {
         }
       }
     }
-    
-    return <div id="game-board">{lines}</div>;
+    return { boxes, linesV, linesH };
   };
 
   makeBoard = () => {
-    const cols = [];
-    const { lineCoordinates, boxColors, count, turn } = this.props;
+    const { boxes, linesV, linesH } = this.mBoard();
+    pullAt;
 
-    for (let i = 0; i <= 2 * count; i += 1) {
-      // проверка на одинаковое количество строки
-      const row = [];
-      for (let j = 0; j <= 2 * count; j += 1) {
-        // проверка на одинаковое количество строки
-        if (i % 2 === 0) {
-          if (j % 2 === 0) {
-            row.push(
-              <div
-                className="dot"
-                id={`dot${Math.floor(i / 2)},${Math.floor(j / 2)}`}
-              />
-            );
-          } else {
-            row.push(
-              <div
-                className={turn === "red" ? "horizonred" : "horizonblue"}
-                // onMouseEnter={this.changeBackground}
-                // onMouseLeave={this.NochangeBackground}
-                onClick={this.PutLine}
-                role="presentation"
-                style={{
-                  backgroundColor: this.selectColor(
-                    lineCoordinates[
-                      `0,${Math.floor(i / 2)},${Math.floor(j / 2)}`
-                    ]
-                  ),
-                }}
-                data-coord={`0,${Math.floor(i / 2)},${Math.floor(j / 2)}`}
-              />
-            );
-          }
-        } else if (j % 2 === 0) {
-          row.push(
-            <div
-              data-coord={`1,${Math.floor(j / 2)},${Math.floor(i / 2)}`}
-              className={turn === "red" ? "verticalred" : "verticalblue"}
-              // onMouseEnter={this.changeBackground}
-              // onMouseLeave={this.NochangeBackground}
-              onClick={this.PutLine}
-              role="presentation"
-              style={{
-                backgroundColor: this.selectColor(
-                  lineCoordinates[`1,${Math.floor(j / 2)},${Math.floor(i / 2)}`]
-                ),
-              }}
-            />
-          );
-        } else {
-          row.push(
-            <div
-              className="box"
-              id={`box${Math.floor(i / 2)},${Math.floor(j / 2)}`}
-              style={{
-                backgroundColor:
-                  boxColors[`${Math.floor(i / 2)},${Math.floor(j / 2)}`],
-              }}
-            />
-          );
-        }
+    const llines = [];
+    for (let i = 1; i < 6; i++) {
+      if (i % 2 !== 0) {
+        llines.push(
+          <div className="row m-0">
+            <div className="testdiv" />
+            {linesH[1]}
+            {linesH[0]}
+          </div>
+        );
+        pullAt(linesH, [0, 2]);
+      } else {
+        llines.push(
+          <div className="colon">
+            {linesV[0]}
+            {boxes[0]}
+            {linesV[1]}
+            {boxes[1]}
+            {linesV[2]}
+          </div>
+        );
+        pullAt(linesV, [0, 3]);
+        pullAt(boxes, [0, 2]);
       }
-      cols.push(<div className="colon">{row}</div>);
     }
-    return <div id="game-board">{cols}</div>;
+
+    return <div>{llines}</div>;
+
+    // const sizeX = 4;
+    // const sizeY = 4;
+    // const boxes = [];
+    // const lines = [];
+    // const getBoxCoords = (x, y, p) => {
+    //   if (p === 0 && x > 0) {
+    //     return [`${x - 1}${y}${2}`, `${x}${y}${p}`];
+    //   }
+    //   if (p === 1 && y > 0) {
+    //     return [`${x}${y - 1}${3}`, `${x}${y}${p}`];
+    //   }
+    //   return [`${x}${y}${p}`];
+    // };
+    // const shouldSetLine = (x, y, p) => {
+    //   if (p === 2 && x + 1 < sizeX) return false;
+    //   if (p === 3 && y + 1 < sizeY) return false;
+    //   return true;
+    // };
+    // const cols = [];
+    // const { lineCoordinates, boxColors, count, turn } = this.props;
+
+    // for (let x = 0; x < sizeX; x += 1) {
+    //   // проверка на одинаковое количество строки
+    //   const row = [];
+    //   for (let y = 0; y < sizeY; y += 1) {
+    //     // проверка на одинаковое количество строки
+    //     if (x % 2 === 0) {
+    //       if (y % 2 === 0) {
+    //         for (let p = 0; p < 4; p += 1) {
+    //           if (shouldSetLine(x, y, p)) {
+    //             row.push(
+    //               <div
+    //                 className={turn === 'red' ? 'horizonred' : 'horizonblue'}
+    //                 onClick={() => putLine(getBoxCoords(x, y, p))}
+    //                 role="presentation"
+    //               />
+    //             );
+    //           }
+    //         }
+    //       }
+    //       if (y % 2 === 1) {
+    //         row.push(
+    //           <div
+    //             className={turn === "red" ? "verticalred" : "verticalblue"}
+    //             onClick={() => putLine(getBoxCoords(x, y, p))}
+    //             role="presentation"
+    //           />
+    //         );
+    //       } else {
+    //         // row.push(<div className="box" />);
+    //       }
+    //     }
+    //   }
+    //   cols.push(<div className="colon">{row}</div>);
+    // }
+    // return <div id="game-board">{cols}</div>;
   };
 
   // поставить палочку
@@ -158,7 +182,7 @@ class Game extends React.Component {
     if (lineCoordinates[currentCoord] === 0) {
       // определяем кординаты
 
-     // lineCoordinates[currentCoord] = turn === "red" ? 1 : -1;
+      // lineCoordinates[currentCoord] = turn === "red" ? 1 : -1;
 
       const splitCoord = currentCoord.split(",");
       const x = splitCoord[0]; // x кордината
@@ -166,8 +190,8 @@ class Game extends React.Component {
       const z = splitCoord[2]; // z кордината
       const madeSquare = 0;
       //if (x === "0") {
-        console.log('VALUE!!!', checkSquare(y, z));
-        calcSCore();
+      console.log("VALUE!!!", checkSquare(y, z));
+      calcSCore();
       //   if (checkSquare() === 4) {
       //     // если квадрат заполнин  с 4 сторон меняем цвет
       //     calcSCore();
@@ -223,16 +247,29 @@ class Game extends React.Component {
   // }
 
   // проверка конца игры
-
   render() {
     this.mBoard();
+
     const { winMessage } = this.state;
-    const { setBoardSize, count, turn, numBlue, numRed, box } = this.props;
+    const {
+      setBoardSize,
+      count,
+      turn,
+      numBlue,
+      numRed,
+      box,
+      boxColors,
+    } = this.props;
     const board = `Размер поля ${count} на ${count} `;
     return (
       <div id="game">
         <div id="header">
           <h1>Точки и квадраты</h1>
+          <Container>
+            <Row>
+              <Col xs={{ order: "last" }}>d d</Col>
+            </Row>
+          </Container>
           <p id="score">
             Красный:
             {numRed}
@@ -253,7 +290,7 @@ class Game extends React.Component {
             6x6
           </button>
         </div>
-        <div id="board">{this.mBoard()}</div>
+        <div id="board">{this.makeBoard()}</div>
 
         <Stats numBlue={numBlue} numRed={numRed} />
       </div>
@@ -266,6 +303,7 @@ const mapDispatchToProps = (dispatch) => {
     switchTurn: () => dispatch(switchTurn()),
     calcSCore: () => dispatch(calcSCore()),
     checkSquare: (y, z) => dispatch(checkSquare(y, z)),
+    putLine: (coord) => dispatch(putLine(coord)),
   };
 };
 
