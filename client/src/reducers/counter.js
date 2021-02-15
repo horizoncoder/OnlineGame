@@ -4,6 +4,7 @@ import {
   SWITCH_TURN,
   CHECKSQUARE,
   SPLITCOORD,
+  PUTLINE,
 } from "../actions";
 
 // создать координаты
@@ -19,7 +20,7 @@ const initCoords = (count) => {
   }
   for (let i = 0; i < count; i += 1) {
     for (let j = 0; j < count; j += 1) {
-      boxColors[`${i},${j}`] = "black";
+      boxColors[`${i},${j}`] = "black=0,";
     }
   }
   return { lineCoordinates, boxColors };
@@ -29,15 +30,24 @@ const calcScore = (state) => ({
   numRed: state.turn === "red" ? state.numRed + 1 : state.numRed, // считаем очки
   numBlue: state.turn === "blue" ? state.numBlue + 1 : state.numBlue,
 });
-// const EndGame = (state) => {
-//   if (
-//     this.state.numRed + this.state.numBlue + 1 ===
-//     this.state.count * this.state.count
-//   ) {
-//     console.log(state.numRed + state.numBlue);
-//     alert("Ehf")
-//   }
-// };
+const PutLine = () => {
+  getBoxCoords.forEach(c => {
+    lines[c] = turn === 'red' ? 1 : -1; // c === '011'
+  });
+  const boxFilled = (boxCoord) =>{
+    let col = 0;
+    Object.keys(lines).forEach(coord => {
+      const splitCoord = coord.split(",");
+      const x = splitCoord[0]; // x кордината
+      const y = splitCoord[1]; // y кордината
+      const p = splitCoord[2]; // z кордината
+      if (`${x}${y}` === boxCoord) {
+        col = col +1;
+      }
+    });
+    return col === 4;
+  }
+ }
 
 const checkSquare = (y, z, state) => {
   const { lineCoordinates, count } = state;
@@ -100,10 +110,16 @@ export default (state = initialState, action) => {
       return { ...state, turn: state.turn === "red" ? "blue" : "red" };
     case CALC_SCORE:
       return { ...state, ...calcScore(state) };
-    case CHECKSQUARE:{
-      // if (checkSquare(state.y, state.z, state) === 4 && state.turn === "blue") {
-      //   return { ...state, numBlue: state.numBlue + 1 };
-      // }
+
+    case PUTLINE:
+      return {
+        ...state,
+        lineCoordinates: {
+          ...state.lineCoordinates,
+          [action.coord]: state.turn,
+        },
+      };
+    case CHECKSQUARE: {
       const lCoord = state.lineCoordinates;
       if (lCoord[action.coord] === 0)
         lCoord[action.coord] = state.turn === "red" ? 1 : -1;
