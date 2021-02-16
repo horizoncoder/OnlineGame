@@ -29,7 +29,6 @@
 }
 .lineV{
   padding-right:0 ;
-  color: black;
 }
 .turnred:hover {
   background-color: red;
@@ -50,29 +49,41 @@
 }
 
 .lineblack{
-  background-color: black;
   width: 3px;
+  background-color: black;
 }
 
 .lineblue{
-  background-color: blue;
-  width: 3px;
-}
-.linered{
   background-color: red;
   width: 3px;
 }
+.linered{
+  background-color: blue;
+  width: 3px;
+}
 .lineH{
-  background-color: black;
   height: 3px;
 }
 
-.box {
-  float: left; /*Задаем обтекание*/
-  font-size: 40px;
-  text-align: center;
+.box1 {
+  height: 25px;
+  width: 19.4px;
+  background-color: green;
 }
 
+.box1red {
+  height: 25px;
+  width: 19.4px;
+  background-color: red;
+}
+
+.blue{
+  background-color: blue;
+}
+
+.red{
+  background-color: red;
+}
 .horizContainer {
   height: 4px;
   width: 25px;

@@ -3,9 +3,15 @@ import "./App.css";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import { Container, Row, Col } from "react-bootstrap";
-import { pullAt } from "lodash";
+import { pullAt, dropRightWhile, remove, dropRight, drop } from "lodash";
 import Stats from "./Stats";
-import { setBoardSize, calcSCore, switchTurn, checkSquare, putLine } from "../actions";
+import {
+  setBoardSize,
+  calcSCore,
+  switchTurn,
+  checkSquare,
+  putLine,
+} from "../actions";
 
 class Game extends React.Component {
   constructor(props) {
@@ -47,67 +53,92 @@ class Game extends React.Component {
       if (p === 3 && y + 1 < sizeY) return false;
       return true;
     };
-    const { lineCoordinates, boxColors, count, turn, putLine } = this.props; // TODO: putLine - action
+    const {
+      lineCoordinates,
+      boxColors,
+      count,
+      turn,
+      putLine,
+      switchTurn,
+      calcSCore,
+    } = this.props; // TODO: putLine - actio
+    const click = () => {
+      // calcSCore();
+      switchTurn();
+    };
+    console.log("BOXES", boxColors);
     const boxes = [];
     const linesV = [];
     const linesH = [];
-    for (let x = 0; x < sizeX; x += 1) {
-      for (let y = 0; y < sizeY; y += 1) {
+    const coordsV = [];
+    const coordsH = [];
+    for (let y = 0; y < sizeX; y += 1) {
+      for (let x = 0; x < sizeY; x += 1) {
         boxes.push(
           <div
-            className={"box ".concat(
-              boxColors[`${x},${y}`] ? boxColors[`${x},${y}`] : "black"
+            className={"box1 ".concat(
+              boxColors[`${x}${y}`] ? boxColors[`${x}${y}`] : "black"
             )}
+            coords={`${x},${y}`}
           />
         );
         for (let p = 0; p < 4; p += 1) {
           if (shouldSetLine(x, y, p)) {
-            (p === 0 || p === 3 ? linesV : linesH).push(
+            (p === 0 || p === 2 ? linesV : linesH).push(
               <div
                 // className={turn === "red" ? "horizonred" : "horizonblue"}
-                className={`${p === 0 || p === 3 ? "lineV" : "lineH"} line${
-                  lineCoordinates[getBoxCoords(x, y, p)] || "black"
-                } turn${turn}`}
-                onClick={() => putLine(getBoxCoords(x, y, p))}
+                className={`${p === 0 || p === 2 ? "lineV" : "lineH"} line${
+                  lineCoordinates[getBoxCoords(x, y, p)[0]] || "black" } turn${turn}`}
+                onClick={() => putLine(getBoxCoords(x, y, p), click())}
                 role="presentation"
+                coords={getBoxCoords(x, y, p)}
               />
+            );
+            (p === 0 || p === 2 ? coordsV : coordsH).push(
+              getBoxCoords(x, y, p)
             );
           }
         }
       }
     }
+    console.log({ coordsV, coordsH });
     return { boxes, linesV, linesH };
   };
 
   makeBoard = () => {
-    const { boxes, linesV, linesH } = this.mBoard();
-    pullAt;
-
+    const { count } = this.props;
+    let { boxes, linesV, linesH } = this.mBoard();
+    let array = ["el1", "el2", "el3", "el4", "el5", "el6"];
     const llines = [];
-    for (let i = 1; i < 6; i++) {
+    for (let i = 1; i < count; i += 1) {
       if (i % 2 !== 0) {
         llines.push(
-          <div className="row m-1">
+          <div className="row m-0">
             <div className="testdiv" />
-            {linesH[1]}
             {linesH[0]}
+            {linesH[1]}
           </div>
         );
-        pullAt(linesH, [0, 2]);
+        linesH = drop(linesH, 2);
       } else {
         llines.push(
           <div className="colon">
-            {linesV[0]}
-            {boxes[0]}
-            {linesV[1]}
-            {boxes[1]}
-            {linesV[2]}
+            <div className="colon">
+              {linesV[0]}
+              {boxes[0]}
+              {linesV[1]}
+              {boxes[1]}
+              {linesV[2]}
+            </div>
           </div>
         );
-        pullAt(linesV, [0, 3]);
-        pullAt(boxes, [0, 2]);
+        linesV = drop(linesV, 3);
+        boxes = drop(boxes, 2);
       }
+      array = drop(array, 2);
     }
+
+    // => ['b', 'b']
 
     return <div>{llines}</div>;
 
@@ -248,8 +279,6 @@ class Game extends React.Component {
 
   // проверка конца игры
   render() {
-    this.mBoard();
-
     const { winMessage } = this.state;
     const {
       setBoardSize,
@@ -265,11 +294,6 @@ class Game extends React.Component {
       <div id="game">
         <div id="header">
           <h1>Точки и квадраты</h1>
-          <Container>
-            <Row>
-              <Col xs={{ order: "last" }}>d d</Col>
-            </Row>
-          </Container>
           <p id="score">
             Красный:
             {numRed}
@@ -278,15 +302,16 @@ class Game extends React.Component {
             {turn}
             {winMessage}
             {box}
+            {count}
           </p>
           {board}
-          <button type="submit" onClick={() => setBoardSize(2)}>
+          <button type="submit" onClick={() => setBoardSize(6)}>
             2x2
           </button>
-          <button type="submit" onClick={() => setBoardSize(4)}>
+          <button type="submit" onClick={() => setBoardSize(12)}>
             4x4
           </button>
-          <button id="small" type="submit" onClick={() => setBoardSize(6)}>
+          <button id="small" type="submit" onClick={() => setBoardSize(18)}>
             6x6
           </button>
         </div>

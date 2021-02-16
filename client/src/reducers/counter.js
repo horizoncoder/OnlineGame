@@ -8,46 +8,56 @@ import {
 } from "../actions";
 
 // создать координаты
-const initCoords = (count) => {
-  const lineCoordinates = {};
-  const boxColors = {};
-  for (let i = 0; i < 2; i += 1) {
-    for (let j = 0; j < count + 1; j += 1) {
-      for (let k = 0; k < count; k += 1) {
-        lineCoordinates[`${i},${j},${k}`] = 0;
-      }
-    }
-  }
-  for (let i = 0; i < count; i += 1) {
-    for (let j = 0; j < count; j += 1) {
-      boxColors[`${i},${j}`] = "black=0,";
-    }
-  }
-  return { lineCoordinates, boxColors };
-};
+// const initCoords = (count) => {
+//   const lineCoordinates = {};
+//   const boxColors = {};
+//   for (let i = 0; i < 2; i += 1) {
+//     for (let j = 0; j < count + 1; j += 1) {
+//       for (let k = 0; k < count; k += 1) {
+//         lineCoordinates[`${i},${j},${k}`] = 0;
+//       }
+//     }
+//   }
+//   for (let i = 0; i < count; i += 1) {
+//     for (let j = 0; j < count; j += 1) {
+//       boxColors[`${i},${j}`] = "black=0,";
+//     }
+//   }
+//   return { lineCoordinates, boxColors };
+// };
 
 const calcScore = (state) => ({
   numRed: state.turn === "red" ? state.numRed + 1 : state.numRed, // считаем очки
   numBlue: state.turn === "blue" ? state.numBlue + 1 : state.numBlue,
 });
-const PutLine = () => {
-  getBoxCoords.forEach(c => {
-    lines[c] = turn === 'red' ? 1 : -1; // c === '011'
+
+const checkBoxes = (state) => {
+  const { lineCoordinates, boxColors } = state;
+  const filledBoxes = {};
+  Object.keys(lineCoordinates).forEach((coord) => {
+    const splitCoord = coord.split("");
+    console.log({ splitCoord });
+    const x = splitCoord[0]; // x кордината
+    const y = splitCoord[1]; // y кордината
+    const boxCount = filledBoxes[`${x}${y}`];
+    if (!boxColors[`${x}${y}`]) {
+      filledBoxes[`${x}${y}`] = boxCount ? boxCount + 1 : 1;
+    }
   });
-  const boxFilled = (boxCoord) =>{
-    let col = 0;
-    Object.keys(lines).forEach(coord => {
-      const splitCoord = coord.split(",");
-      const x = splitCoord[0]; // x кордината
-      const y = splitCoord[1]; // y кордината
-      const p = splitCoord[2]; // z кордината
-      if (`${x}${y}` === boxCoord) {
-        col = col +1;
-      }
-    });
-    return col === 4;
-  }
- }
+  console.log({ filledBoxes });
+  return Object.keys(filledBoxes).reduce((acc, key) => {
+    if (filledBoxes[key] === 4) {
+      // if (state.turn === "red") {
+      //   return { ...state, numRed: state.numRed + 1 };
+      // }
+      // if (state.turn === "blue") {
+      //   return { ...state, numBlue: state.numBlue + 1 };
+      // }
+      acc[key] = state.turn;
+    }
+    return acc;
+  }, {});
+};
 
 const checkSquare = (y, z, state) => {
   const { lineCoordinates, count } = state;
@@ -87,7 +97,7 @@ const checkSquare = (y, z, state) => {
 };
 
 const initialState = {
-  count: 2,
+  count: 0,
   name: "",
   turn: "red",
   numBlue: 0,
@@ -99,26 +109,36 @@ const initialState = {
   box2: 0,
   box3: 0,
   box4: 0,
-  ...initCoords(2),
+  // ...initCoords(2),
 };
 
 export default (state = initialState, action) => {
   switch (action.type) {
     case SET_BOARD_SIZE:
-      return { ...state, count: action.size, ...initCoords(action.size) };
+      return { ...state, count: action.size };
     case SWITCH_TURN:
       return { ...state, turn: state.turn === "red" ? "blue" : "red" };
     case CALC_SCORE:
       return { ...state, ...calcScore(state) };
 
-    case PUTLINE:
-      return {
+    case PUTLINE: {
+      const newCoords = action.coord.reduce((acc, coord) => {
+        acc[coord] = state.turn;
+        return acc;
+      }, {});
+      const newState = {
         ...state,
         lineCoordinates: {
           ...state.lineCoordinates,
-          [action.coord]: state.turn,
+          ...newCoords,
         },
       };
+      return {
+        ...state,
+        ...newState,
+        boxColors: { ...state.boxColors, ...checkBoxes(newState) },
+      };
+    }
     case CHECKSQUARE: {
       const lCoord = state.lineCoordinates;
       if (lCoord[action.coord] === 0)
