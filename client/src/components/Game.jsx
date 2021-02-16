@@ -87,7 +87,7 @@ class Game extends React.Component {
     for (let i = 1; i < 6; i++) {
       if (i % 2 !== 0) {
         llines.push(
-          <div className="row m-0">
+          <div className="row m-1">
             <div className="testdiv" />
             {linesH[1]}
             {linesH[0]}

@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
+import Game from "./Game";
 
 export default class Stats extends Component {
   constructor(props) {
@@ -61,6 +62,7 @@ export default class Stats extends Component {
   render() {
     const { list } = this.state;
     return (
+      <>
       <div className="main-container">
         <h1>Сохранить результат</h1>
         <hr />
@@ -92,6 +94,8 @@ export default class Stats extends Component {
           </ol>
         </div>
       </div>
+      
+      </>
     );
   }
 }
