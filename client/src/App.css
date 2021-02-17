@@ -67,22 +67,22 @@
 
 .box1 {
   height: 25px;
-  width: 19.4px;
+  width: 20.3px;
   background-color: green;
 }
 
 .box1red {
   height: 25px;
   width: 19.4px;
-  background-color: red;
+  background-color:#0095ff;
 }
 
 .blue{
-  background-color: blue;
+  background-color: #ff6000;
 }
 
 .red{
-  background-color: red;
+  background-color:#0095ff;
 }
 .horizContainer {
   height: 4px;

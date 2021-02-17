@@ -7,36 +7,25 @@ import {
   PUTLINE,
 } from "../actions";
 
-// создать координаты
-// const initCoords = (count) => {
-//   const lineCoordinates = {};
-//   const boxColors = {};
-//   for (let i = 0; i < 2; i += 1) {
-//     for (let j = 0; j < count + 1; j += 1) {
-//       for (let k = 0; k < count; k += 1) {
-//         lineCoordinates[`${i},${j},${k}`] = 0;
-//       }
-//     }
-//   }
-//   for (let i = 0; i < count; i += 1) {
-//     for (let j = 0; j < count; j += 1) {
-//       boxColors[`${i},${j}`] = "black=0,";
-//     }
-//   }
-//   return { lineCoordinates, boxColors };
-// };
-
 const calcScore = (state) => ({
-  numRed: state.turn === "red" ? state.numRed + 1 : state.numRed, // считаем очки
-  numBlue: state.turn === "blue" ? state.numBlue + 1 : state.numBlue,
+  numRed: Object.values(state.boxColors).filter((color) => color === "blue")
+    .length, // считаем очки
+  numBlue: Object.values(state.boxColors).filter((color) => color === "red")
+    .length,
 });
+
+const EndGame = (state) => {
+  if (state.numBlue + state.numRed === state.count ** 2) {
+    alert("Игра завершина");
+}
+}
 
 const checkBoxes = (state) => {
   const { lineCoordinates, boxColors } = state;
   const filledBoxes = {};
   Object.keys(lineCoordinates).forEach((coord) => {
     const splitCoord = coord.split("");
-    console.log({ splitCoord });
+    //console.log({ splitCoord });
     const x = splitCoord[0]; // x кордината
     const y = splitCoord[1]; // y кордината
     const boxCount = filledBoxes[`${x}${y}`];
@@ -46,13 +35,7 @@ const checkBoxes = (state) => {
   });
   console.log({ filledBoxes });
   return Object.keys(filledBoxes).reduce((acc, key) => {
-    if (filledBoxes[key] === 4) {
-      // if (state.turn === "red") {
-      //   return { ...state, numRed: state.numRed + 1 };
-      // }
-      // if (state.turn === "blue") {
-      //   return { ...state, numBlue: state.numBlue + 1 };
-      // }
+    if (filledBoxes[key] === 1) {
       acc[key] = state.turn;
     }
     return acc;
@@ -97,7 +80,7 @@ const checkSquare = (y, z, state) => {
 };
 
 const initialState = {
-  count: 0,
+  count: 2,
   name: "",
   turn: "red",
   numBlue: 0,
@@ -105,11 +88,6 @@ const initialState = {
   errorMessage: null,
   lineCoordinates: {},
   boxColors: {},
-  box: 0,
-  box2: 0,
-  box3: 0,
-  box4: 0,
-  // ...initCoords(2),
 };
 
 export default (state = initialState, action) => {
@@ -126,17 +104,23 @@ export default (state = initialState, action) => {
         acc[coord] = state.turn;
         return acc;
       }, {});
-      const newState = {
+      const newLineState = {
         ...state,
-        lineCoordinates: {
-          ...state.lineCoordinates,
-          ...newCoords,
+        lineCoordinates: { ...state.lineCoordinates, ...newCoords },
+      };
+      const newBoxState = {
+        ...newLineState,
+        boxColors: {
+          ...newLineState.boxColors,
+          ...checkBoxes(newLineState),
+          ...EndGame(state),
         },
       };
       return {
         ...state,
-        ...newState,
-        boxColors: { ...state.boxColors, ...checkBoxes(newState) },
+        ...newLineState,
+        ...newBoxState,
+        ...calcScore(newBoxState),
       };
     }
     case CHECKSQUARE: {
@@ -151,27 +135,13 @@ export default (state = initialState, action) => {
           ...lCoord,
         },
       };
-      console.log('COLORS', checkSquare(action.y, action.z, updatedState));
-      console.log('COORD', action.coord, '---y:', action.y, '---z:', action.z);
+      console.log("COLORS", checkSquare(action.y, action.z, updatedState));
+      console.log("COORD", action.coord, "---y:", action.y, "---z:", action.z);
       return {
         ...state,
         ...updatedState,
         ...checkSquare(action.y, action.z, updatedState),
       };
-      // case 'SPLITCOORD"': {
-      //   // action.y;
-      //   // action.x;
-      //   if (checkSquare(action.y, action.z, state) === 4) {
-      //     const updateLineCoords = state.lineCoordinates;
-      //     updateLineCoords[`${i},${j},${k}`] = state.turn === "red" ? 1 : -1;
-      //     const updatedState = { ...state, lineCoordinates: updateLineCoords };
-      //     return {
-      //       ...state,
-      //       ...updatedState,
-      //       ...checkSquare(x, y, updatedState),
-      //     };
-      //     }
-      //   }
     }
     default:
       return state;
