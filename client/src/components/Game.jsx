@@ -2,8 +2,7 @@ import React from "react";
 import "./App.css";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
-import { Container, Row, Col } from "react-bootstrap";
-import { pullAt, dropRightWhile, remove, dropRight, drop } from "lodash";
+import { drop} from "lodash";
 import Stats from "./Stats";
 import {
   setBoardSize,
@@ -20,7 +19,7 @@ class Game extends React.Component {
   }
 
   mBoard = () => {
-    const{count}=this.props;
+    const { count } = this.props;
     const sizeX = count;
     const sizeY = count;
     const getBoxCoords = (x, y, p) => {
@@ -43,8 +42,7 @@ class Game extends React.Component {
       turn,
       putLine,
       switchTurn,
-      calcSCore,
-    } = this.props; 
+    } = this.props;
     const click = () => {
       // calcSCore();
       switchTurn();
@@ -55,6 +53,7 @@ class Game extends React.Component {
     const linesH = [];
     const coordsV = [];
     const coordsH = [];
+
     for (let y = 0; y < sizeX; y += 1) {
       for (let x = 0; x < sizeY; x += 1) {
         boxes.push(
@@ -70,7 +69,8 @@ class Game extends React.Component {
             (p === 0 || p === 2 ? linesV : linesH).push(
               <div
                 className={`${p === 0 || p === 2 ? "lineV" : "lineH"} line${
-                  lineCoordinates[getBoxCoords(x, y, p)[0]] || "black" } turn${turn}`}
+                  lineCoordinates[getBoxCoords(x, y, p)[0]] || "black"
+                } turn${turn}`}
                 onClick={() => putLine(getBoxCoords(x, y, p), click())}
                 role="presentation"
                 coords={getBoxCoords(x, y, p)}
@@ -83,6 +83,10 @@ class Game extends React.Component {
         }
       }
     }
+   // [linesH[3], linesH[4]] = [linesH[4], linesH[3]];
+    linesH.sort(function (a, b) {
+      return b - a;
+    });
     console.log({ coordsV, coordsH });
     return { boxes, linesV, linesH };
   };
@@ -104,13 +108,25 @@ class Game extends React.Component {
       const llinesV = [];
       for (let i = 0; i < count; i += 1) {
         llinesV.push(linesV[0]);
-        llinesV.push(boxes[0]);
+        if (true && i < count) {
+          llinesV.push(boxes[0]);
+        }
         linesV = drop(linesV, 1);
         boxes = drop(boxes, 1);
       }
       llinesV.push(linesV[0]);
+      linesV = drop(linesV, 1);
       return llinesV;
     };
+    const LineVboxes2 = () => {
+      for (let i = 0; i <= 2; i += 1) {
+        // console.log(i + ":First!");
+        if (i < 2) {
+          // console.log(i + ":Second!")
+        }
+      }
+    };
+    LineVboxes2();
     for (let i = 1; i < 24; i += 1) {
       if (i % 2 !== 0) {
         llines.push(
@@ -128,7 +144,8 @@ class Game extends React.Component {
               {/* {linesV[0]}
               {boxes[0]}
               {linesV[1]}
-              {boxes[1]}  */}
+              {boxes[1]}
+              {linesV[2]} */}
               {LineVboxes()}
             </div>
           </div>
@@ -137,19 +154,6 @@ class Game extends React.Component {
     }
 
     return <div>{llines}</div>;
-  };
-
-  selectColor = (int) => {
-    if (this.int === 0) {
-      return "rgb(255,255,255)";
-    }
-    if (int === 1) {
-      return "rgb(255,0,0)";
-    }
-    if (int === -1) {
-      return "rgb(0,0,255)";
-    }
-    return false;
   };
 
   render() {
