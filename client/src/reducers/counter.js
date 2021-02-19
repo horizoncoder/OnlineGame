@@ -1,10 +1,4 @@
-import {
-  CALC_SCORE,
-  SET_BOARD_SIZE,
-  SWITCH_TURN,
-  CHECKSQUARE,
-  PUTLINE,
-} from "../actions";
+import { CALC_SCORE, SET_BOARD_SIZE, SWITCH_TURN, PUTLINE } from "../actions";
 
 const calcScore = (state) => ({
   numRed: Object.values(state.boxColors).filter((color) => color === "blue")
@@ -14,10 +8,10 @@ const calcScore = (state) => ({
 });
 
 const EndGame = (state) => {
-  if (state.numBlue + state.numRed === state.count ** 2) {
+  if (state.numBlue + state.numRed - 1 === state.count ** 2) {
     alert("Игра завершина");
-}
-}
+  }
+};
 
 const checkBoxes = (state) => {
   const { lineCoordinates, boxColors } = state;
@@ -28,10 +22,9 @@ const checkBoxes = (state) => {
     const y = splitCoord[1]; // y кордината
     const boxCount = filledBoxes[`${x}${y}`];
     if (!boxColors[`${x}${y}`]) {
-      filledBoxes[`${x}${y}`] = boxCount ? boxCount + 1 : 1;
+      filledBoxes[`${x}${y}`] = boxCount ? boxCount + 1 : +1;
     }
   });
-  console.log({ filledBoxes });
   return Object.keys(filledBoxes).reduce((acc, key) => {
     if (filledBoxes[key] === 4) {
       acc[key] = state.turn;
@@ -40,10 +33,8 @@ const checkBoxes = (state) => {
   }, {});
 };
 
-
 const initialState = {
   count: 2,
-  name: "",
   turn: "red",
   numBlue: 0,
   numRed: 0,
@@ -83,26 +74,6 @@ export default (state = initialState, action) => {
         ...newLineState,
         ...newBoxState,
         ...calcScore(newBoxState),
-      };
-    }
-    case CHECKSQUARE: {
-      const lCoord = state.lineCoordinates;
-      if (lCoord[action.coord] === 0)
-        lCoord[action.coord] = state.turn === "red" ? 1 : -1;
-
-      const updatedState = {
-        ...state,
-        lineCoordinates: {
-          ...state.lineCoordinates,
-          ...lCoord,
-        },
-      };
-      console.log("COLORS", checkSquare(action.y, action.z, updatedState));
-      console.log("COORD", action.coord, "---y:", action.y, "---z:", action.z);
-      return {
-        ...state,
-        ...updatedState,
-        ...checkSquare(action.y, action.z, updatedState),
       };
     }
     default:
