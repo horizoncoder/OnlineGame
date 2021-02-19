@@ -1,4 +1,4 @@
-import { CALC_SCORE, SET_BOARD_SIZE, SWITCH_TURN, PUTLINE } from "../actions";
+import { CALC_SCORE, SET_BOARD_SIZE, SWITCH_TURN, PUTLINE,ENDGAME } from "../actions";
 
 const calcScore = (state) => ({
   numRed: Object.values(state.boxColors).filter((color) => color === "blue")
@@ -8,8 +8,8 @@ const calcScore = (state) => ({
 });
 
 const EndGame = (state) => {
-  if (state.numBlue + state.numRed - 1 === state.count ** 2) {
-    alert("Игра завершина");
+  if (Object.keys(state.boxColors).length === state.count ** 2) {
+    alert("Игра завершина")
   }
 };
 
@@ -22,7 +22,7 @@ const checkBoxes = (state) => {
     const y = splitCoord[1]; // y кордината
     const boxCount = filledBoxes[`${x}${y}`];
     if (!boxColors[`${x}${y}`]) {
-      filledBoxes[`${x}${y}`] = boxCount ? boxCount + 1 : +1;
+      filledBoxes[`${x}${y}`] = boxCount ? boxCount + 1 : 1;
     }
   });
   return Object.keys(filledBoxes).reduce((acc, key) => {
@@ -51,10 +51,14 @@ export default (state = initialState, action) => {
       return { ...state, turn: state.turn === "red" ? "blue" : "red" };
     case CALC_SCORE:
       return { ...state, ...calcScore(state) };
+      // case ENDGAME:
+      // return { ...state, ...EndGame(state) };
 
     case PUTLINE: {
       const newCoords = action.coord.reduce((acc, coord) => {
-        acc[coord] = state.turn;
+        if (!state.lineCoordinates[coord]) {
+          acc[coord] = state.turn;
+        }
         return acc;
       }, {});
       const newLineState = {
@@ -66,7 +70,6 @@ export default (state = initialState, action) => {
         boxColors: {
           ...newLineState.boxColors,
           ...checkBoxes(newLineState),
-          ...EndGame(state),
         },
       };
       return {
@@ -74,6 +77,7 @@ export default (state = initialState, action) => {
         ...newLineState,
         ...newBoxState,
         ...calcScore(newBoxState),
+        ...EndGame(newBoxState),
       };
     }
     default:

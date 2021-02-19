@@ -1,3 +1,4 @@
+/* eslint-disable no-shadow */
 import React from "react";
 import "./App.css";
 import { connect } from "react-redux";
@@ -11,6 +12,7 @@ import {
   switchTurn,
   checkSquare,
   putLine,
+  endgame,
 } from "../actions";
 
 class Game extends React.Component {
@@ -37,6 +39,7 @@ class Game extends React.Component {
       if (p === 3 && y + 1 < sizeY) return false;
       return true;
     };
+
     const {
       lineCoordinates,
       boxColors,
@@ -45,10 +48,8 @@ class Game extends React.Component {
       switchTurn,
     } = this.props;
     const click = () => {
-      // calcSCore();
       switchTurn();
     };
-    console.log("BOXES", boxColors);
     const boxes = [];
     let boxesCoords = [];
     const linesV = [];
@@ -91,7 +92,7 @@ class Game extends React.Component {
       for (let j = i * count; j < i * count + count * 3; j += 1) {
         const s = j > count ? j - count : j;
         const lineP = j > count ? 3 : 1;
-        const boxC = boxesCoords[s]; // 00, 10, 01, 11
+        const boxC = boxesCoords[s];
         const lineIdx = coordsH.findIndex((c) =>
           c.find((item) => item === `${boxC}${lineP}`)
         );
@@ -100,7 +101,6 @@ class Game extends React.Component {
       boxesCoords = drop(boxesCoords, count * 2);
     }
 
-    console.log({ coordsV, coordsH });
     return { boxes, linesV, linesH: linesHNew };
   };
 
@@ -190,6 +190,7 @@ const mapDispatchToProps = (dispatch) => {
     setBoardSize: (size) => dispatch(setBoardSize(size)),
     switchTurn: () => dispatch(switchTurn()),
     calcSCore: () => dispatch(calcSCore()),
+    endgame: () => dispatch(endgame()),
     checkSquare: (y, z) => dispatch(checkSquare(y, z)),
     putLine: (coord) => dispatch(putLine(coord)),
   };

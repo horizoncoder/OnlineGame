@@ -28,6 +28,7 @@
   flex-direction: column;
 }
 .lineV{
+  width: 5px;
   padding-right:0 ;
 }
 .turnred:hover {
@@ -47,31 +48,38 @@
 }
 
 .lineblack{
-  width: 3px;
+  width: 5px;
   background-color: black;
+}
+.lineblue:hover{
+  background-color: red;
+}
+
+.linered:hover{
+  background-color: blue;
 }
 
 .lineblue{
   background-color: red;
-  width: 3px;
+  width: 5px;
 }
 .linered{
   background-color: blue;
-  width: 3px;
+  width: 5px;
 }
 .lineH{
-  height: 3px;
+  height: 5px;
 }
 
 .box1 {
   height: 25px;
-  width: 20.3px;
+  width: 18.3px;
   background-color: green;
 }
 
 .box1red {
   height: 25px;
-  width: 19.4px;
+  width: 16.5px;
   background-color:#0095ff;
 }
 
