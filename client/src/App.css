@@ -29,7 +29,10 @@
 }
 .lineV{
   width: 5px;
-  padding-right:0 ;
+}
+.lineH{
+  height: 5px;
+  width: 3px;
 }
 .turnred:hover {
   background-color: red;
@@ -37,19 +40,18 @@
 .turnblue:hover {
   background-color: blue;
 }
-.row {
-  padding-right:0;
-}
+
 
 .dot {
-  height: 4px;
-  width: 4px;
-  background-color: green;
+  height: 2px;
+  width: 2px;
+  background-color: yellow;
+  padding-left: 2px;
 }
 
 .lineblack{
   width: 5px;
-  background-color: black;
+  background-color: white;
 }
 .lineblue:hover{
   background-color: red;
@@ -67,21 +69,31 @@
   background-color: blue;
   width: 5px;
 }
-.lineH{
-  height: 5px;
+
+
+.box-content{
+  height: 4px;
+  width: 4px;
+  background-color: blueviolet;
 }
 
 .box1 {
+  height: 19px;
+  width: 18.5px;
+  background-color: black;
+}
+
+.box2 {
   height: 25px;
-  width: 18.3px;
+  width: 16.3px;
+  background-color: green;
+}
+.box3 {
+  height: 25px;
+  width: 17.7px;
   background-color: green;
 }
 
-.box1red {
-  height: 25px;
-  width: 16.5px;
-  background-color:#0095ff;
-}
 
 .blue{
   background-color: #ff6000;
@@ -120,8 +132,8 @@
   padding:10px 50px;
   margin:10px
 }
-#body{
-  background-color: black;
+body{
+  margin: 0;
 }
 
 .App-link {

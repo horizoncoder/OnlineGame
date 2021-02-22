@@ -13,6 +13,7 @@ import {
   checkSquare,
   putLine,
   endgame,
+  setBoxStyle,
 } from "../actions";
 
 class Game extends React.Component {
@@ -56,7 +57,6 @@ class Game extends React.Component {
     const linesH = [];
     const coordsV = [];
     const coordsH = [];
-
     for (let y = 0; y < sizeX; y += 1) {
       for (let x = 0; x < sizeY; x += 1) {
         boxes.push(
@@ -133,14 +133,13 @@ class Game extends React.Component {
     for (let i = 1; i < 24; i += 1) {
       if (i % 2 !== 0) {
         llines.push(
-          <div className="row m-0">
-            <div className="testdiv" />
-            {Lineh()}
+          <div className="container-fluid ml-3">
+            <div className="row ">{Lineh()}</div>
           </div>
         );
       } else {
         llines.push(
-          <div className="colon">
+          <div className="container-fluid">
             <div className="colon">{LineVboxes()}</div>
           </div>
         );
@@ -177,6 +176,9 @@ class Game extends React.Component {
           <button id="small" type="submit" onClick={() => setBoardSize(6)}>
             6x6
           </button>
+          <button id="small" type="submit" onClick={() => setBoardSize(8)}>
+            8x8
+          </button>
         </div>
         <div id="board">{this.makeBoard()}</div>
 
@@ -193,6 +195,7 @@ const mapDispatchToProps = (dispatch) => {
     endgame: () => dispatch(endgame()),
     checkSquare: (y, z) => dispatch(checkSquare(y, z)),
     putLine: (coord) => dispatch(putLine(coord)),
+    setBoxStyle: (style) => dispatch(setBoxStyle(style)),
   };
 };
 
@@ -202,13 +205,17 @@ const mapStateToProps = ({ Counter }) => {
     numBlue,
     numRed,
     box,
+    style,
     linedel,
     count,
     lineCoordinates,
     boxColors,
+    boxClass,
   } = Counter;
   return {
     count,
+    boxClass,
+    style,
     linedel,
     numBlue,
     box,
