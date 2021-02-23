@@ -1,10 +1,4 @@
-import {
-  CALC_SCORE,
-  SET_BOARD_SIZE,
-  SWITCH_TURN,
-  PUTLINE,
-  SET_BOX_STYLE,
-} from "../actions";
+import { CALC_SCORE, SET_BOARD_SIZE, SWITCH_TURN, PUTLINE } from "../actions";
 
 const calcScore = (state) => ({
   numRed: Object.values(state.boxColors).filter((color) => color === "blue")
@@ -53,8 +47,6 @@ export default (state = initialState, action) => {
   switch (action.type) {
     case SET_BOARD_SIZE:
       return { ...state, count: action.size };
-    case SET_BOX_STYLE:
-      return { ...state, boxClass: action.style };
     case SWITCH_TURN:
       return { ...state, turn: state.turn === "red" ? "blue" : "red" };
     case CALC_SCORE:

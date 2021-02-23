@@ -42,16 +42,25 @@
 }
 
 
-.dot {
-  height: 2px;
-  width: 2px;
-  background-color: yellow;
-  padding-left: 2px;
+.dots {
+  height: 5px;
+  width: 5px;
+  background-color: white;
+}
+
+.row{
+}
+.row2{
+  display: flex;
+  flex-wrap: wrap;
+  margin-right: -15px;
+  margin-left: 15px;
+
 }
 
 .lineblack{
   width: 5px;
-  background-color: white;
+  background-color: gray;
 }
 .lineblue:hover{
   background-color: red;
@@ -69,7 +78,9 @@
   background-color: blue;
   width: 5px;
 }
-
+.display{
+  margin: 20px;
+}
 
 .box-content{
   height: 4px;
@@ -79,20 +90,10 @@
 
 .box1 {
   height: 19px;
-  width: 18.5px;
-  background-color: black;
+  width: 19px;
+  background-color: white;
 }
 
-.box2 {
-  height: 25px;
-  width: 16.3px;
-  background-color: green;
-}
-.box3 {
-  height: 25px;
-  width: 17.7px;
-  background-color: green;
-}
 
 
 .blue{
