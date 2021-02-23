@@ -3,32 +3,25 @@ const express = require('express');
 const app = express();
 const cors = require('cors');
 const http = require('http').createServer(app);
-const io = require('socket.io')(http);
-
-app.get('/', (req, res) => {
-  res.sendFile(`${__dirname}/index.html`);
+const io = require("socket.io")(http, {
+  cors: {
+    origin: "http://127.0.0.1:5000/",
+    methods: ["GET", "POST"]
+  },
 });
 
-io.on('connection', (socket) => {
-  console.log('a user connected');
-  socket.on('disconnect', () => {
-    console.log('user disconnected');
-  });
-});
-
-io.on('connection', (socket) => {
-  socket.on('chat message', (msg) => {
-    io.emit('chat message', msg);
-  });
-});
 const port = 5000;
+//io.set('origins', '127.0.0.1:5000');
+http.listen(port, () => {
+  console.log(`listening on *:${port}`);
+});
 
+io.on('connection', (socket) => { /* socket object may be used to send specific messages to the new connected client */
+  console.log('new client connected');
+  socket.emit('connection', null);
+});
 app.use(cors());
 app.use(express.json());
-
-http.listen(port, () => {
-  console.log(`listening on port ${port} `);
-});
 
 app.use('/dashboard', require('./routes/dashboard'));
 

@@ -68,16 +68,16 @@ class Game extends React.Component {
         boxesCoords.push(`${x}${y}`);
         for (let p = 0; p < 4; p += 1) {
           if (shouldSetLine(x, y, p)) {
-            (p === 0 || p === 2 ? linesVertical : linesHorizontal).push(
-              <div
-                className={`${p === 0 || p === 2 ? "lineV" : "lineH"} line${
-                  lineCoordinates[getBoxCoords(x, y, p)[0]] || "black"
-                } turn${turn}`}
-                onClick={() => putLine(getBoxCoords(x, y, p), click())}
-                role="presentation"
-                coords={getBoxCoords(x, y, p)}
-              />
-            );
+            // (p === 0 || p === 2 ? linesVertical : linesHorizontal).push(
+            //   <div
+            //     className={`${p === 0 || p === 2 ? "lineV" : "lineH"} line${
+            //       lineCoordinates[getBoxCoords(x, y, p)[0]] || "black"
+            //     } turn${turn}`}
+            //     onClick={() => putLine(getBoxCoords(x, y, p), click())}
+            //     role="presentation"
+            //     coords={getBoxCoords(x, y, p)}
+            //   />
+            // );
             (p === 0 || p === 2 ? coordsV : coordsH).push(
               getBoxCoords(x, y, p)
             );
@@ -85,7 +85,7 @@ class Game extends React.Component {
         }
       }
     }
-    const linesHorizontalNew = [];
+    const sortedCoordsH = [];
     for (let i = 0; i < count; i += 1) {
       for (let j = i * count; j < i * count + count * 3; j += 1) {
         const s = j > count ? j - count : j;
@@ -94,17 +94,17 @@ class Game extends React.Component {
         const lineIdx = coordsH.findIndex((c) =>
           c.find((item) => item === `${boxC}${lineP}`)
         );
-        linesHorizontalNew.push(linesHorizontal[lineIdx]);
+        sortedCoordsH.push(coordsH[lineIdx]);
       }
       boxesCoords = drop(boxesCoords, count * 2);
     }
 
-    return { boxes, linesVertical, linesHorizontal: linesHorizontalNew };
+    return { boxes, linesVertical, coordsV, coordsH: sortedCoordsH };
   };
 
   makeBoard = () => {
-    const { count } = this.props;
-    let { boxes, linesVertical, linesHorizontal } = this.mBoard();
+    const { count, turn, lineCoordinates,switchTurn } = this.props;
+    let { boxes, coordsH, linesVertical, linesHorizontal, p } = this.mBoard();
     const llines = [];
     const Lineh = () => {
       const lines = [];
@@ -134,11 +134,21 @@ class Game extends React.Component {
           <div className="container-fluid ">
             <div className="row ml-2">
               <div className="dots row  " />
-              {Lineh()}
+              {coordsH.map((coord) => (
+                <div
+                  className={`${p === 0 || p === 2 ? "lineV" : "lineH"} line${
+                    lineCoordinates[() => coord[0]] || "black"
+                  } turn${turn}`}
+                  onClick={(() => putLine(coord), switchTurn())}
+                  role="presentation"
+                  coords={() => coord}
+                />
+              ))}
               <div className="dots row ml-4  " />
             </div>
           </div>
         );
+        coordsH = drop(coordsH, 4);
       } else {
         llines.push(
           <div className="container-fluid">

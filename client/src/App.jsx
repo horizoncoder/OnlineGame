@@ -6,6 +6,7 @@ import "react-toastify/dist/ReactToastify.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import socketClient from "socket.io-client";
 import Navibar from "./components/Navibar";
 
 import Login from "./components/Login";
@@ -20,9 +21,15 @@ import { Home } from "./router/Home";
 import Register from "./components/Register";
 import { API_URL } from "./components/api";
 
+const SERVER = "http://127.0.0.1:3000";
+
 toast.configure();
 
 function App() {
+  const socket = socketClient(SERVER);
+  socket.on("connection", () => {
+    console.log(`I'm connected with the back-end`);
+});
   const [isAuthenticated, setIsAuthentication] = useState(false);
   const setAuth = (boolean) => {
     setIsAuthentication(boolean);
