@@ -21,7 +21,7 @@ import { Home } from "./router/Home";
 import Register from "./components/Register";
 import { API_URL } from "./components/api";
 
-const SERVER = "http://127.0.0.1:3000";
+const SERVER = "http://localhost:5000";
 
 toast.configure();
 

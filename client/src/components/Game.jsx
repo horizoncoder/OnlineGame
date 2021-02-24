@@ -84,6 +84,7 @@ class Game extends React.Component {
           }
         }
       }
+      // return { x, y };
     }
     const sortedCoordsH = [];
     for (let i = 0; i < count; i += 1) {
@@ -99,18 +100,34 @@ class Game extends React.Component {
       boxesCoords = drop(boxesCoords, count * 2);
     }
 
-    return { boxes, linesVertical, coordsV, coordsH: sortedCoordsH };
+    return {
+      boxes,
+      linesVertical,
+      linesHorizontal,
+      coordsV,
+      coordsH: sortedCoordsH,
+    };
   };
 
   makeBoard = () => {
-    const { count, turn, lineCoordinates,switchTurn } = this.props;
-    let { boxes, coordsH, linesVertical, linesHorizontal, p } = this.mBoard();
+    const { count, turn, lineCoordinates } = this.props;
+    let { coordsH, boxes, linesVertical, linesHorizontal, p } = this.mBoard();
     const llines = [];
     const Lineh = () => {
       const lines = [];
       for (let j = 0; j < count; j += 1) {
-        lines.push(linesHorizontal[0]);
-        linesHorizontal = drop(linesHorizontal, 1);
+        const coord = coordsH[0];
+        lines.push(
+          <div
+            className={`${p === 0 || p === 2 ? "lineV" : "lineH"} line${
+              lineCoordinates[() => coord[0]] || "black"
+            } turn${turn}`}
+            onClick={(() => putLine(coord), switchTurn())}
+            role="presentation"
+            coords={() => coord}
+          />
+        );
+        //coordsH = drop(coordsH, 0);
       }
       return lines;
     };
@@ -130,32 +147,23 @@ class Game extends React.Component {
     };
     for (let i = 1; i < 24; i += 1) {
       if (i % 2 !== 0) {
-        llines.push(
-          <div className="container-fluid ">
-            <div className="row ml-2">
-              <div className="dots row  " />
-              {coordsH.map((coord) => (
-                <div
-                  className={`${p === 0 || p === 2 ? "lineV" : "lineH"} line${
-                    lineCoordinates[() => coord[0]] || "black"
-                  } turn${turn}`}
-                  onClick={(() => putLine(coord), switchTurn())}
-                  role="presentation"
-                  coords={() => coord}
-                />
-              ))}
-              <div className="dots row ml-4  " />
+        for (let j = 0; j < count; j += 1) {
+          llines.push(
+            <div className="container-fluid ">
+              <div className="row ml-2">
+                <div className="dots row  " />
+                {Lineh()}
+                <div className="dots row ml-4  " />
+              </div>
             </div>
-          </div>
-        );
-        coordsH = drop(coordsH, 4);
+          );
+          coordsH = drop(coordsH, 1);
+        }
+        return llines;
       } else {
-        llines.push(
-          <div className="container-fluid">
-            <div className="colon">{LineVboxes()}</div>
-          </div>
-        );
+        llines.push(<div className="container-fluid"></div>);
       }
+      coordsH = drop(coordsH, 0);
     }
 
     return <div>{llines}</div>;

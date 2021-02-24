@@ -3,10 +3,10 @@ const express = require('express');
 const app = express();
 const cors = require('cors');
 const http = require('http').createServer(app);
-const io = require("socket.io")(http, {
+const io = require('socket.io')(http, {
   cors: {
-    origin: "http://127.0.0.1:5000/",
-    methods: ["GET", "POST"]
+    origin: 'http://localhost:3000',
+    методы: ['GET', 'POST'],
   },
 });
 
@@ -16,7 +16,8 @@ http.listen(port, () => {
   console.log(`listening on *:${port}`);
 });
 
-io.on('connection', (socket) => { /* socket object may be used to send specific messages to the new connected client */
+io.on('connection', (socket) => {
+  /* socket object may be used to send specific messages to the new connected client */
   console.log('new client connected');
   socket.emit('connection', null);
 });
