@@ -20,11 +20,12 @@ class Game extends React.Component {
     this.state = {};
   }
 
-  mBoard = () => {
+  makeCoords = () => {
     const { count } = this.props;
     const sizeX = count;
     const sizeY = count;
     const getBoxCoords = (x, y, p) => {
+      // создаем координаты квадратов
       if (p === 0 && x > 0) {
         return [`${x - 1}${y}${2}`, `${x}${y}${p}`];
       }
@@ -39,52 +40,22 @@ class Game extends React.Component {
       return true;
     };
 
-    const {
-      lineCoordinates,
-      boxColors,
-      turn,
-      putLine,
-      switchTurn,
-    } = this.props;
-    const click = () => {
-      switchTurn();
-    };
-    const boxes = [];
-    let boxesCoords = [];
+    const boxesCoords = [];
     const linesVertical = [];
     const linesHorizontal = [];
     const coordsV = [];
     const coordsH = [];
     for (let y = 0; y < sizeX; y += 1) {
       for (let x = 0; x < sizeY; x += 1) {
-        boxes.push(
-          <div
-            className={"box1 ".concat(
-              boxColors[`${x}${y}`] ? boxColors[`${x}${y}`] : "black"
-            )}
-            coords={`${x},${y}`}
-          />
-        );
         boxesCoords.push(`${x}${y}`);
         for (let p = 0; p < 4; p += 1) {
           if (shouldSetLine(x, y, p)) {
-            // (p === 0 || p === 2 ? linesVertical : linesHorizontal).push(
-            //   <div
-            //     className={`${p === 0 || p === 2 ? "lineV" : "lineH"} line${
-            //       lineCoordinates[getBoxCoords(x, y, p)[0]] || "black"
-            //     } turn${turn}`}
-            //     onClick={() => putLine(getBoxCoords(x, y, p), click())}
-            //     role="presentation"
-            //     coords={getBoxCoords(x, y, p)}
-            //   />
-            // );
             (p === 0 || p === 2 ? coordsV : coordsH).push(
               getBoxCoords(x, y, p)
             );
           }
         }
       }
-      // return { x, y };
     }
     const sortedCoordsH = [];
     for (let i = 0; i < count; i += 1) {
@@ -97,11 +68,9 @@ class Game extends React.Component {
         );
         sortedCoordsH.push(coordsH[lineIdx]);
       }
-      boxesCoords = drop(boxesCoords, count * 2);
     }
-
     return {
-      boxes,
+      boxesCoords,
       linesVertical,
       linesHorizontal,
       coordsV,
@@ -110,70 +79,106 @@ class Game extends React.Component {
   };
 
   makeBoard = () => {
-    const { count, turn, lineCoordinates } = this.props;
-    let {
-      coordsH,
-      coordsV,
-      boxes,
-      linesVertical,
-      linesHorizontal,
-      p,
-    } = this.mBoard();
+    const {
+      count,
+      turn,
+      lineCoordinates,
+      putLine,
+      switchTurn,
+      boxColors,
+    } = this.props;
+    const { coordsH, coordsV, boxesCoords } = this.makeCoords();
     const llines = [];
+
+    let cCoordsH = [...coordsH];
+    let cCoordsV = [...coordsV];
+    let cBoxes = [...boxesCoords];
+    console.log(cBoxes);
     const Lineh = () => {
       const lines = [];
       for (let j = 0; j < count; j += 1) {
-        const coord = coordsH[0];
+        const coord = cCoordsH[0];
+        const click = () => {
+          putLine(coord);
+          switchTurn();
+        };
         lines.push(
           <div
-            className={`${p === 0 || p === 2 ? "lineV" : "lineH"} line${
-              lineCoordinates[() => coord[0]] || "black"
+            className={`lineH line${
+              lineCoordinates[coord[0]] || "black"
             } turn${turn}`}
-            onClick={(() => putLine(coord), switchTurn())}
+            onClick={() => click()}
             role="presentation"
-            coords={() => coord}
+            coords={coord}
           />
         );
-        //coordsH = drop(coordsH, 0);
+        cCoordsH = drop(cCoordsH, 1);
       }
       return lines;
     };
+
     const LineVboxes = () => {
-      const coorzv = coordsV[0];
       const llinesVertical = [];
       for (let i = 0; i < count; i += 1) {
+        const coord = cCoordsV[0];
+        const box = cBoxes[0];
+        const click = () => {
+          putLine(coord);
+          switchTurn();
+        };
         llinesVertical.push(
           <div
-            className={`${p === 0 || p === 2 ? "lineV" : "lineH"} line${
-              lineCoordinates[() => coorzv[0]] || "black"
+            className={`lineV line${
+              lineCoordinates[coord[0]] || "black"
             } turn${turn}`}
-            onClick={(() => putLine(coorzv), switchTurn())}
+            onClick={() => click()}
             role="presentation"
-            coords={() => coorzv}
+            coords={coord}
           />
         );
         if (true && i < count) {
-          llinesVertical.push(boxes[0]);
+          llinesVertical.push(
+            <div
+              className={"box1 ".concat(
+                boxColors[`${box}`] ? boxColors[`${box}`] : "black"
+              )}
+              coords={box}
+            />
+          );
         }
-        linesVertical = drop(linesVertical, 1);
-        boxes = drop(boxes, 1);
+        cCoordsV = drop(cCoordsV, 1);
+        cBoxes = drop(cBoxes, 1);
       }
-      llinesVertical.push(linesVertical[0]);
-      linesVertical = drop(linesVertical, 1);
+      const coord = cCoordsV[0];
+      const click = () => {
+        putLine(coord);
+        switchTurn();
+      };
+      llinesVertical.push(
+        <div
+          className={`lineV line${
+            lineCoordinates[coord[0]] || "black"
+          } turn${turn}`}
+          onClick={() => click()}
+          role="presentation"
+          coords={coord}
+        />
+      );
+      cCoordsV = drop(cCoordsV, 1);
       return llinesVertical;
     };
-    for (let i = 1; i < 24; i += 1) {
+
+    for (let i = 1; i < count * 2 + 2; i += 1) {
       if (i % 2 !== 0) {
         llines.push(
           <div className="container-fluid ">
             <div className="row ml-2">
               <div className="dots row  " />
-              {/* {Lineh()} */}
+              {Lineh()}
               <div className="dots row ml-4  " />
             </div>
           </div>
         );
-        coordsH = drop(coordsH, 0);
       } else {
         llines.push(
           <div className="container-fluid">
@@ -247,16 +252,12 @@ const mapStateToProps = ({ Counter }) => {
     numBlue,
     numRed,
     box,
-    style,
-    linedel,
     count,
     lineCoordinates,
     boxColors,
   } = Counter;
   return {
     count,
-    style,
-    linedel,
     numBlue,
     box,
     numRed,

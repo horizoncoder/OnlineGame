@@ -59,23 +59,12 @@ class Game extends React.Component {
         boxesCoords.push(`${x}${y}`);
         for (let p = 0; p < 4; p += 1) {
           if (shouldSetLine(x, y, p)) {
-            // (p === 0 || p === 2 ? linesVertical : linesHorizontal).push(
-            //   <div
-            //     className={`${p === 0 || p === 2 ? "lineV" : "lineH"} line${
-            //       lineCoordinates[getBoxCoords(x, y, p)[0]] || "black"
-            //     } turn${turn}`}
-            //     onClick={() => putLine(getBoxCoords(x, y, p), click())}
-            //     role="presentation"
-            //     coords={getBoxCoords(x, y, p)}
-            //   />
-            // );
             (p === 0 || p === 2 ? coordsV : coordsH).push(
               getBoxCoords(x, y, p)
             );
           }
         }
       }
-      // return { x, y };
     }
     const sortedCoordsH = [];
     for (let i = 0; i < count; i += 1) {
@@ -93,6 +82,7 @@ class Game extends React.Component {
 
     return {
       boxes,
+      boxesCoords,
       linesVertical,
       linesHorizontal,
       coordsV,
@@ -101,25 +91,15 @@ class Game extends React.Component {
   };
 
   makeBoard = () => {
-    const {
-      count,
-      turn,
-      lineCoordinates,
-      putLine,
-      switchTurn,
-      row,
-    } = this.props;
-    let {
-      coordsH,
-      coordsV,
-      boxes,
-      linesVertical,
-      linesHorizontal,
-    } = this.mBoard();
+    const { count, turn, lineCoordinates, putLine, switchTurn } = this.props;
+    const { coordsH, coordsV, boxesCoords } = this.mBoard();
+    let { boxes } = this.mBoard();
     const llines = [];
 
     let cCoordsH = [...coordsH];
     let cCoordsV = [...coordsV];
+    let cBoxes = [...boxesCoords];
+    console.log(cBoxes);
 
     const Lineh = () => {
       const lines = [];
@@ -129,7 +109,6 @@ class Game extends React.Component {
           putLine(coord);
           switchTurn();
         };
-        //if (!coord) return lines;
         console.log(coord);
         lines.push(
           <div
@@ -154,7 +133,6 @@ class Game extends React.Component {
           putLine(coord);
           switchTurn();
         };
-      //  if (!coord) return llinesVertical;
         llinesVertical.push(
           <div
             className={`lineV line${
@@ -190,7 +168,7 @@ class Game extends React.Component {
       return llinesVertical;
     };
 
-    for (let i = 1; i < row; i += 1) {
+    for (let i = 1; i < count * 2 + 2; i += 1) {
       if (i % 2 !== 0) {
         llines.push(
           <div className="container-fluid ">
@@ -214,8 +192,8 @@ class Game extends React.Component {
   };
 
   render() {
-    const { setBoardSize, count, turn, numBlue, numRed, row } = this.props;
-    const board = `Размер поля ${count} на ${count} ${row} `;
+    const { setBoardSize, count, turn, numBlue, numRed } = this.props;
+    const board = `Размер поля ${count} на ${count}`;
     return (
       <div id="game">
         <div id="header">
@@ -236,16 +214,16 @@ class Game extends React.Component {
             </div>
             <br />
           </div>
-          <button type="submit" onClick={() => setBoardSize(2, 6)}>
+          <button type="submit" onClick={() => setBoardSize(2)}>
             2x2
           </button>
-          <button type="submit" onClick={() => setBoardSize(4, 10)}>
+          <button type="submit" onClick={() => setBoardSize(4)}>
             4x4
           </button>
-          <button id="small" type="submit" onClick={() => setBoardSize(6, 14)}>
+          <button id="small" type="submit" onClick={() => setBoardSize(6)}>
             6x6
           </button>
-          <button id="small" type="submit" onClick={() => setBoardSize(8, 18)}>
+          <button id="small" type="submit" onClick={() => setBoardSize(8)}>
             8x8
           </button>
           <br />
@@ -260,7 +238,7 @@ class Game extends React.Component {
 }
 const mapDispatchToProps = (dispatch) => {
   return {
-    setBoardSize: (size, rows) => dispatch(setBoardSize(size, rows)),
+    setBoardSize: (size) => dispatch(setBoardSize(size)),
     switchTurn: () => dispatch(switchTurn()),
     calcSCore: () => dispatch(calcSCore()),
     checkSquare: (y, z) => dispatch(checkSquare(y, z)),
@@ -297,7 +275,6 @@ const mapStateToProps = ({ Counter }) => {
 
 Game.propTypes = {
   count: PropTypes.number.isRequired,
-  row: PropTypes.number.isRequired,
   lineCoordinates: PropTypes.number.isRequired,
   boxColors: PropTypes.number.isRequired,
   numBlue: PropTypes.number.isRequired,

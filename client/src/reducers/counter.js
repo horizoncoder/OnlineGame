@@ -1,15 +1,9 @@
-import {
-  CALC_SCORE,
-  SET_BOARD_SIZE,
-  SWITCH_TURN,
-  PUTLINE,
-  switchTurn,
-} from "../actions";
+import { CALC_SCORE, SET_BOARD_SIZE, SWITCH_TURN, PUTLINE } from "../actions";
 
 const calcScore = (state) => ({
-  numRed: Object.values(state.boxColors).filter((color) => color === "blue")
+  numRed: Object.values(state.boxColors).filter((color) => color === "red")
     .length, // считаем очки
-  numBlue: Object.values(state.boxColors).filter((color) => color === "red")
+  numBlue: Object.values(state.boxColors).filter((color) => color === "blue")
     .length,
 });
 
@@ -41,7 +35,6 @@ const checkBoxes = (state) => {
 
 const initialState = {
   count: 2,
-  row: 6,
   boxClass: " box1 ",
   turn: "red",
   numBlue: 0,
@@ -54,7 +47,7 @@ const initialState = {
 export default (state = initialState, action) => {
   switch (action.type) {
     case SET_BOARD_SIZE:
-      return { ...state, count: action.size, row: action.rows };
+      return { ...state, count: action.size };
     case SWITCH_TURN:
       return { ...state, turn: state.turn === "red" ? "blue" : "red" };
     case CALC_SCORE:
