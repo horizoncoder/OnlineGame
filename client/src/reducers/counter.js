@@ -1,6 +1,7 @@
 import { CALC_SCORE, SET_BOARD_SIZE, SWITCH_TURN, PUTLINE } from "../actions";
 
 const calcScore = (state) => ({
+  // подсчет очков
   numRed: Object.values(state.boxColors).filter((color) => color === "red")
     .length, // считаем очки
   numBlue: Object.values(state.boxColors).filter((color) => color === "blue")

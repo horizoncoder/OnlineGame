@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { toast } from "react-toastify";
 import PropTypes from "prop-types";
 import { API_URL } from "./api";
 import Game from "./Game";
@@ -25,7 +24,6 @@ const Dashboard = ({ setAuth }) => {
     try {
       localStorage.removeItem("token");
       setAuth(false);
-      toast.success("Успешная авторизация");
     } catch (err) {
       console.error(err.message);
     }

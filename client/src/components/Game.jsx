@@ -25,6 +25,7 @@ class Game extends React.Component {
     const sizeX = count;
     const sizeY = count;
     const getBoxCoords = (x, y, p) => {
+      // получаем координаты квадрата
       if (p === 0 && x > 0) {
         return [`${x - 1}${y}${2}`, `${x}${y}${p}`];
       }
@@ -39,7 +40,6 @@ class Game extends React.Component {
       return true;
     };
 
-    const { boxColors } = this.props;
     const boxes = [];
     let boxesCoords = [];
     const linesVertical = [];
@@ -48,14 +48,6 @@ class Game extends React.Component {
     const coordsH = [];
     for (let y = 0; y < sizeX; y += 1) {
       for (let x = 0; x < sizeY; x += 1) {
-        boxes.push(
-          <div
-            className={"box1 ".concat(
-              boxColors[`${x}${y}`] ? boxColors[`${x}${y}`] : "black"
-            )}
-            coords={`${x},${y}`}
-          />
-        );
         boxesCoords.push(`${x}${y}`);
         for (let p = 0; p < 4; p += 1) {
           if (shouldSetLine(x, y, p)) {
@@ -66,6 +58,8 @@ class Game extends React.Component {
         }
       }
     }
+    let boxrender = []; // сортировка координат
+    boxrender = boxesCoords;
     const sortedCoordsH = [];
     for (let i = 0; i < count; i += 1) {
       for (let j = i * count; j < i * count + count * 3; j += 1) {
@@ -82,7 +76,7 @@ class Game extends React.Component {
 
     return {
       boxes,
-      boxesCoords,
+      boxrender,
       linesVertical,
       linesHorizontal,
       coordsV,
@@ -91,16 +85,21 @@ class Game extends React.Component {
   };
 
   makeBoard = () => {
-    const { count, turn, lineCoordinates, putLine, switchTurn } = this.props;
-    const { coordsH, coordsV, boxesCoords } = this.mBoard();
-    let { boxes } = this.mBoard();
+    const {
+      count,
+      turn,
+      lineCoordinates,
+      putLine,
+      switchTurn,
+      boxColors,
+    } = this.props;
+    const { coordsH, coordsV, boxrender } = this.mBoard();
     const llines = [];
 
     let cCoordsH = [...coordsH];
     let cCoordsV = [...coordsV];
-    let cBoxes = [...boxesCoords];
-    console.log(cBoxes);
-
+    let cBoxes = [...boxrender];
+    // генерация div
     const Lineh = () => {
       const lines = [];
       for (let j = 0; j < count; j += 1) {
@@ -109,7 +108,6 @@ class Game extends React.Component {
           putLine(coord);
           switchTurn();
         };
-        console.log(coord);
         lines.push(
           <div
             className={`lineH line${
@@ -129,6 +127,7 @@ class Game extends React.Component {
       const llinesVertical = [];
       for (let i = 0; i < count; i += 1) {
         const coord = cCoordsV[0];
+        const box = cBoxes[0];
         const click = () => {
           putLine(coord);
           switchTurn();
@@ -144,10 +143,17 @@ class Game extends React.Component {
           />
         );
         if (true && i < count) {
-          llinesVertical.push(boxes[0]);
+          llinesVertical.push(
+            <div
+              className={"box1 ".concat(
+                boxColors[`${box}`] ? boxColors[`${box}`] : "black"
+              )}
+              coords={box}
+            />
+          );
         }
         cCoordsV = drop(cCoordsV, 1);
-        boxes = drop(boxes, 1);
+        cBoxes = drop(cBoxes, 1);
       }
       const coord = cCoordsV[0];
       const click = () => {
