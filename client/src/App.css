@@ -63,19 +63,19 @@
   background-color: gray;
 }
 .lineblue:hover{
-  background-color: red;
+  background-color: blue;
 }
 
 .linered:hover{
-  background-color: blue;
+  background-color: red;
 }
 
 .lineblue{
-  background-color: red;
+  background-color: blue;
   width: 5px;
 }
 .linered{
-  background-color: blue;
+  background-color: red;
   width: 5px;
 }
 .display{
@@ -97,11 +97,11 @@
 
 
 .blue{
-  background-color: #ff6000;
+  background-color:#0095ff;
 }
 
 .red{
-  background-color:#0095ff;
+  background-color: #ff6000;
 }
 .horizContainer {
   height: 4px;

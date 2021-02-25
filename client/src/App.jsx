@@ -27,9 +27,7 @@ toast.configure();
 
 function App() {
   const socket = socketClient(SERVER);
-  socket.on("connection", () => {
-    console.log(`I'm connected with the back-end`);
-});
+  socket.on("connection", () => {});
   const [isAuthenticated, setIsAuthentication] = useState(false);
   const setAuth = (boolean) => {
     setIsAuthentication(boolean);

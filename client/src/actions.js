@@ -5,9 +5,10 @@ export const CHECKSQUARE = "CHECKSQUARE";
 export const SPLITCOORD = "SPLITCOORD";
 export const PUTLINE = "PUTLINE";
 
-export const setBoardSize = (size) => ({
+export const setBoardSize = (size, rows) => ({
   type: SET_BOARD_SIZE,
   size,
+  rows,
 });
 export const switchTurn = () => ({ type: SWITCH_TURN });
 export const calcSCore = () => ({ type: CALC_SCORE });

@@ -39,16 +39,7 @@ class Game extends React.Component {
       return true;
     };
 
-    const {
-      lineCoordinates,
-      boxColors,
-      turn,
-      putLine,
-      switchTurn,
-    } = this.props;
-    const click = () => {
-      switchTurn();
-    };
+    const { boxColors } = this.props;
     const boxes = [];
     let boxesCoords = [];
     const linesVertical = [];
@@ -110,10 +101,14 @@ class Game extends React.Component {
   };
 
   makeBoard = () => {
-    const { count, turn, lineCoordinates, putLine, switchTurn } = this.props;
-    const click = () => {
-      switchTurn();
-    };
+    const {
+      count,
+      turn,
+      lineCoordinates,
+      putLine,
+      switchTurn,
+      row,
+    } = this.props;
     let {
       coordsH,
       coordsV,
@@ -130,13 +125,18 @@ class Game extends React.Component {
       const lines = [];
       for (let j = 0; j < count; j += 1) {
         const coord = cCoordsH[0];
-        if (!coord) return lines;
+        const click = () => {
+          putLine(coord);
+          switchTurn();
+        };
+        //if (!coord) return lines;
+        console.log(coord);
         lines.push(
           <div
             className={`lineH line${
               lineCoordinates[coord[0]] || "black"
             } turn${turn}`}
-            onClick={() => putLine(coord)}
+            onClick={() => click()}
             role="presentation"
             coords={coord}
           />
@@ -150,13 +150,17 @@ class Game extends React.Component {
       const llinesVertical = [];
       for (let i = 0; i < count; i += 1) {
         const coord = cCoordsV[0];
-        if (!coord) return llinesVertical;
+        const click = () => {
+          putLine(coord);
+          switchTurn();
+        };
+      //  if (!coord) return llinesVertical;
         llinesVertical.push(
           <div
             className={`lineV line${
               lineCoordinates[coord[0]] || "black"
             } turn${turn}`}
-            onClick={() => putLine(coord)}
+            onClick={() => click()}
             role="presentation"
             coords={coord}
           />
@@ -168,12 +172,16 @@ class Game extends React.Component {
         boxes = drop(boxes, 1);
       }
       const coord = cCoordsV[0];
+      const click = () => {
+        putLine(coord);
+        switchTurn();
+      };
       llinesVertical.push(
         <div
           className={`lineV line${
             lineCoordinates[coord[0]] || "black"
           } turn${turn}`}
-          onClick={() => putLine(coord)}
+          onClick={() => click()}
           role="presentation"
           coords={coord}
         />
@@ -182,7 +190,7 @@ class Game extends React.Component {
       return llinesVertical;
     };
 
-    for (let i = 1; i < 24; i += 1) {
+    for (let i = 1; i < row; i += 1) {
       if (i % 2 !== 0) {
         llines.push(
           <div className="container-fluid ">
@@ -206,8 +214,8 @@ class Game extends React.Component {
   };
 
   render() {
-    const { setBoardSize, count, turn, numBlue, numRed } = this.props;
-    const board = `Размер поля ${count} на ${count} `;
+    const { setBoardSize, count, turn, numBlue, numRed, row } = this.props;
+    const board = `Размер поля ${count} на ${count} ${row} `;
     return (
       <div id="game">
         <div id="header">
@@ -228,16 +236,16 @@ class Game extends React.Component {
             </div>
             <br />
           </div>
-          <button type="submit" onClick={() => setBoardSize(2)}>
+          <button type="submit" onClick={() => setBoardSize(2, 6)}>
             2x2
           </button>
-          <button type="submit" onClick={() => setBoardSize(4)}>
+          <button type="submit" onClick={() => setBoardSize(4, 10)}>
             4x4
           </button>
-          <button id="small" type="submit" onClick={() => setBoardSize(6)}>
+          <button id="small" type="submit" onClick={() => setBoardSize(6, 14)}>
             6x6
           </button>
-          <button id="small" type="submit" onClick={() => setBoardSize(8)}>
+          <button id="small" type="submit" onClick={() => setBoardSize(8, 18)}>
             8x8
           </button>
           <br />
@@ -252,7 +260,7 @@ class Game extends React.Component {
 }
 const mapDispatchToProps = (dispatch) => {
   return {
-    setBoardSize: (size) => dispatch(setBoardSize(size)),
+    setBoardSize: (size, rows) => dispatch(setBoardSize(size, rows)),
     switchTurn: () => dispatch(switchTurn()),
     calcSCore: () => dispatch(calcSCore()),
     checkSquare: (y, z) => dispatch(checkSquare(y, z)),
@@ -269,11 +277,13 @@ const mapStateToProps = ({ Counter }) => {
     style,
     linedel,
     count,
+    row,
     lineCoordinates,
     boxColors,
   } = Counter;
   return {
     count,
+    row,
     style,
     linedel,
     numBlue,
@@ -287,6 +297,7 @@ const mapStateToProps = ({ Counter }) => {
 
 Game.propTypes = {
   count: PropTypes.number.isRequired,
+  row: PropTypes.number.isRequired,
   lineCoordinates: PropTypes.number.isRequired,
   boxColors: PropTypes.number.isRequired,
   numBlue: PropTypes.number.isRequired,
