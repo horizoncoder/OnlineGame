@@ -11,16 +11,20 @@ const io = require('socket.io')(http, {
 });
 
 const port = 5000;
-//io.set('origins', '127.0.0.1:5000');
 http.listen(port, () => {
   console.log(`listening on *:${port}`);
 });
+app.get('/', (req, res) => {
+  res.sendFile(`${__dirname}/index.html`);
+});
 
 io.on('connection', (socket) => {
-  /* socket object may be used to send specific messages to the new connected client */
   console.log('new client connected');
-  socket.emit('connection', null);
+  socket.on('disconnect', () => {
+    console.log('user disconnected');
+  });
 });
+
 app.use(cors());
 app.use(express.json());
 

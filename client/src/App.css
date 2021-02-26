@@ -27,6 +27,11 @@
   display: flex;
   flex-direction: column;
 }
+
+.colon {
+  display: flex;
+  flex-direction: row;
+}
 .lineV{
   width: 5px;
 }

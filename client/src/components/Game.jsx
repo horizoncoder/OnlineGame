@@ -1,7 +1,7 @@
 import React from "react";
 import "./App.css";
 import { connect } from "react-redux";
-import PropTypes from "prop-types";
+import PropTypes, { string } from "prop-types";
 import { drop, map, clone } from "lodash";
 import Stats from "./Stats";
 import {
@@ -85,9 +85,9 @@ class Game extends React.Component {
     const { coordsH, coordsV, BoxsCoord } = this.mBoard();
     const llines = [];
 
-    let cCoordsH = [...coordsH];
-    let cCoordsV = [...coordsV];
-    let cBoxes = [...BoxsCoord];
+    let cCoordsH = map(coordsH, clone);
+    let cCoordsV = map(coordsV, clone);
+    let cBoxes = map(BoxsCoord, clone);
     // генерация div
     const Lineh = () => {
       const lines = [];
@@ -253,25 +253,10 @@ const mapDispatchToProps = (dispatch) => {
 };
 
 const mapStateToProps = ({ Counter }) => {
-  const {
-    turn,
-    numBlue,
-    numRed,
-    box,
-    style,
-    linedel,
-    count,
-    row,
-    lineCoordinates,
-    boxColors,
-  } = Counter;
+  const { turn, numBlue, numRed, count, lineCoordinates, boxColors } = Counter;
   return {
     count,
-    row,
-    style,
-    linedel,
     numBlue,
-    box,
     numRed,
     lineCoordinates,
     boxColors,
@@ -281,8 +266,8 @@ const mapStateToProps = ({ Counter }) => {
 
 Game.propTypes = {
   count: PropTypes.number.isRequired,
-  lineCoordinates: PropTypes.number.isRequired,
-  boxColors: PropTypes.number.isRequired,
+  lineCoordinates: PropTypes.objectOf(string).isRequired,
+  boxColors: PropTypes.objectOf(string).isRequired,
   numBlue: PropTypes.number.isRequired,
   numRed: PropTypes.number.isRequired,
   setBoardSize: PropTypes.func.isRequired,
