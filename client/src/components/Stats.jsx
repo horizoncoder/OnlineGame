@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
-import Game from "./Game";
 
 export default class Stats extends Component {
   constructor(props) {
@@ -63,38 +62,37 @@ export default class Stats extends Component {
     const { list } = this.state;
     return (
       <>
-      <div className="main-container">
-        <h1>Сохранить результат</h1>
-        <hr />
-        <div className="container">
-          <button type="submit" onClick={this.addTask}>
-            Сохранить
-          </button>
+        <div className="main-container">
+          <h1>Сохранить результат</h1>
+          <hr />
+          <div className="container">
+            <button type="submit" onClick={this.addTask}>
+              Сохранить
+            </button>
 
-          <br />
-          <br />
-          <ol>
-            {list.map((item, index) => {
-              return (
-                <li key={item.id}>
-                  {" "}
-                  {item.value}
-                  <button
-                    className="button"
-                    type="button"
-                    value="delete"
-                    data-key={index}
-                    onClick={this.deleteItem}
-                  >
-                    Удалить
-                  </button>
-                </li>
-              );
-            })}
-          </ol>
+            <br />
+            <br />
+            <ol>
+              {list.map((item, index) => {
+                return (
+                  <li key={item.id}>
+                    {" "}
+                    {item.value}
+                    <button
+                      className="button"
+                      type="button"
+                      value="delete"
+                      data-key={index}
+                      onClick={this.deleteItem}
+                    >
+                      Удалить
+                    </button>
+                  </li>
+                );
+              })}
+            </ol>
+          </div>
         </div>
-      </div>
-      
       </>
     );
   }

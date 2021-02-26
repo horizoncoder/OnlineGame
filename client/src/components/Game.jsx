@@ -1,10 +1,8 @@
-/* eslint-disable no-shadow */
 import React from "react";
 import "./App.css";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
-import { drop } from "lodash";
-// eslint-disable-next-line import/no-cycle
+import { drop, map, clone } from "lodash";
 import Stats from "./Stats";
 import {
   setBoardSize,
@@ -22,10 +20,9 @@ class Game extends React.Component {
 
   mBoard = () => {
     const { count } = this.props;
-    const sizeX = count;
-    const sizeY = count;
-    const getBoxCoords = (x, y, p) => {
-      // получаем координаты квадрата
+    const size = count;
+    const getLineCoords = (x, y, p) => {
+      // получаем координаты линии
       if (p === 0 && x > 0) {
         return [`${x - 1}${y}${2}`, `${x}${y}${p}`];
       }
@@ -35,31 +32,26 @@ class Game extends React.Component {
       return [`${x}${y}${p}`];
     };
     const shouldSetLine = (x, y, p) => {
-      if (p === 2 && x + 1 < sizeX) return false;
-      if (p === 3 && y + 1 < sizeY) return false;
+      if (p === 2 && x + 1 < size) return false;
+      if (p === 3 && y + 1 < size) return false;
       return true;
     };
 
-    const boxes = [];
     let boxesCoords = [];
-    const linesVertical = [];
-    const linesHorizontal = [];
     const coordsV = [];
     const coordsH = [];
-    for (let y = 0; y < sizeX; y += 1) {
-      for (let x = 0; x < sizeY; x += 1) {
+    for (let y = 0; y < size; y += 1) {
+      for (let x = 0; x < size; x += 1) {
         boxesCoords.push(`${x}${y}`);
         for (let p = 0; p < 4; p += 1) {
           if (shouldSetLine(x, y, p)) {
-            (p === 0 || p === 2 ? coordsV : coordsH).push(
-              getBoxCoords(x, y, p)
-            );
+            (p % 2 === 0 ? coordsV : coordsH).push(getLineCoords(x, y, p));
           }
         }
       }
     }
-    let boxrender = []; // сортировка координат
-    boxrender = boxesCoords;
+    let BoxsCoord = []; // сортировка координат
+    BoxsCoord = map(boxesCoords, clone);
     const sortedCoordsH = [];
     for (let i = 0; i < count; i += 1) {
       for (let j = i * count; j < i * count + count * 3; j += 1) {
@@ -75,10 +67,7 @@ class Game extends React.Component {
     }
 
     return {
-      boxes,
-      boxrender,
-      linesVertical,
-      linesHorizontal,
+      BoxsCoord,
       coordsV,
       coordsH: sortedCoordsH,
     };
@@ -89,31 +78,30 @@ class Game extends React.Component {
       count,
       turn,
       lineCoordinates,
-      putLine,
-      switchTurn,
+      putLine: putLineAction,
+      switchTurn: switchTurnAction,
       boxColors,
     } = this.props;
-    const { coordsH, coordsV, boxrender } = this.mBoard();
+    const { coordsH, coordsV, BoxsCoord } = this.mBoard();
     const llines = [];
 
     let cCoordsH = [...coordsH];
     let cCoordsV = [...coordsV];
-    let cBoxes = [...boxrender];
+    let cBoxes = [...BoxsCoord];
     // генерация div
     const Lineh = () => {
       const lines = [];
       for (let j = 0; j < count; j += 1) {
         const coord = cCoordsH[0];
-        const click = () => {
-          putLine(coord);
-          switchTurn();
-        };
         lines.push(
           <div
             className={`lineH line${
               lineCoordinates[coord[0]] || "black"
             } turn${turn}`}
-            onClick={() => click()}
+            onClick={() => {
+              putLineAction(coord);
+              switchTurnAction();
+            }}
             role="presentation"
             coords={coord}
           />
@@ -128,21 +116,20 @@ class Game extends React.Component {
       for (let i = 0; i < count; i += 1) {
         const coord = cCoordsV[0];
         const box = cBoxes[0];
-        const click = () => {
-          putLine(coord);
-          switchTurn();
-        };
         llinesVertical.push(
           <div
             className={`lineV line${
               lineCoordinates[coord[0]] || "black"
             } turn${turn}`}
-            onClick={() => click()}
+            onClick={() => {
+              putLineAction(coord);
+              switchTurnAction();
+            }}
             role="presentation"
             coords={coord}
           />
         );
-        if (true && i < count) {
+        if (i < count) {
           llinesVertical.push(
             <div
               className={"box1 ".concat(
@@ -156,16 +143,15 @@ class Game extends React.Component {
         cBoxes = drop(cBoxes, 1);
       }
       const coord = cCoordsV[0];
-      const click = () => {
-        putLine(coord);
-        switchTurn();
-      };
       llinesVertical.push(
         <div
           className={`lineV line${
             lineCoordinates[coord[0]] || "black"
           } turn${turn}`}
-          onClick={() => click()}
+          onClick={() => {
+            putLineAction(coord);
+            switchTurnAction();
+          }}
           role="presentation"
           coords={coord}
         />
@@ -198,7 +184,13 @@ class Game extends React.Component {
   };
 
   render() {
-    const { setBoardSize, count, turn, numBlue, numRed } = this.props;
+    const {
+      setBoardSize: setBoardSizeAction,
+      count,
+      turn,
+      numBlue,
+      numRed,
+    } = this.props;
     const board = `Размер поля ${count} на ${count}`;
     return (
       <div id="game">
@@ -220,16 +212,24 @@ class Game extends React.Component {
             </div>
             <br />
           </div>
-          <button type="submit" onClick={() => setBoardSize(2)}>
+          <button type="submit" onClick={() => setBoardSizeAction(2)}>
             2x2
           </button>
-          <button type="submit" onClick={() => setBoardSize(4)}>
+          <button type="submit" onClick={() => setBoardSizeAction(4)}>
             4x4
           </button>
-          <button id="small" type="submit" onClick={() => setBoardSize(6)}>
+          <button
+            id="small"
+            type="submit"
+            onClick={() => setBoardSizeAction(6)}
+          >
             6x6
           </button>
-          <button id="small" type="submit" onClick={() => setBoardSize(8)}>
+          <button
+            id="small"
+            type="submit"
+            onClick={() => setBoardSizeAction(8)}
+          >
             8x8
           </button>
           <br />
