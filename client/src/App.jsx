@@ -20,6 +20,8 @@ import Dashboard from "./components/Dashboard";
 import { Home } from "./router/Home";
 import Register from "./components/Register";
 import { API_URL } from "./components/api";
+import ChooseRoom from "./components/ChooseRoom";
+import Room from "./components/Room";
 
 const SERVER = "http://localhost:5000";
 
@@ -99,6 +101,7 @@ function App() {
 
             <Route exact path="/" component={Home} />
             <Route exact path="/game" component={Game} />
+            <Route exact path="/" component={ChooseRoom} />
             <Route exact path="/stats" component={Stats} />
             <Route
               exact
@@ -112,6 +115,12 @@ function App() {
                 />
               )}
             />
+            <Router path='/' exact>
+              <ChooseRoom></ChooseRoom>
+            </Router>
+            <Router path='/room/:id/:username'>
+                <Room></Room>
+            </Router>
           </Switch>
         </div>
       </Router>
