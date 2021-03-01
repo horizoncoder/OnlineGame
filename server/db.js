@@ -2,11 +2,11 @@ const { Pool } = require('pg');
 require('dotenv').config();
 
 const pool = new Pool({
-  host: 'localhost',
-  user: 'myuser',
+  host: process.env.DBhost,
+  user: process.env.DBuser,
   password: process.env.BDpassword,
-  port: 5432,
-  database: 'player',
+  port: process.env.DBport,
+  database: process.env.DBname,
 });
 
 module.exports = pool;

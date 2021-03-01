@@ -4,12 +4,15 @@ export const CALC_SCORE = "CALC_SCORE";
 export const CHECKSQUARE = "CHECKSQUARE";
 export const SPLITCOORD = "SPLITCOORD";
 export const PUTLINE = "PUTLINE";
-
+export const GET_LINE_COORDS = "GETLINECOORDS";
+export const PUSH_COORDS = "PUSHCOORDS";
 export const setBoardSize = (size) => ({
   type: SET_BOARD_SIZE,
   size,
 });
 export const switchTurn = () => ({ type: SWITCH_TURN });
+export const getLineCoords = (x, y, p) => ({ type: GET_LINE_COORDS, x, y, p });
+export const pushCoords = () => ({ type: PUSH_COORDS });
 export const calcSCore = () => ({ type: CALC_SCORE });
 export const checkSquare = (y, z, coord) => ({
   type: CHECKSQUARE,

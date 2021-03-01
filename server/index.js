@@ -2,7 +2,9 @@ const express = require('express');
 
 const app = express();
 const cors = require('cors');
+const bodyParser = require('body-parser');
 const http = require('http').createServer(app);
+const socketService = require('./socket');
 const io = require('socket.io')(http, {
   cors: {
     origin: 'http://localhost:3000',
@@ -19,12 +21,27 @@ app.get('/', (req, res) => {
 });
 
 io.on('connection', (socket) => {
-  console.log('new client connected');
-  socket.on('disconnect', () => {
-    console.log('user disconnected');
+  console.log(`user connected with socket id ${socket.id}`);
+  socket.on('join-room', (data) => {
+    socket.join(data.roomId);
+    const room = socketService().addUserToRoom(data.username, data.roomId);
+    io.to(data.roomId).emit('roomData', room);
+    console.log(`connect ${data.roomId},${data.roomId}`);
+  });
+
+  socket.on('leave-room', (data) => {
+    const room = socketService().removeUserFromRoom(data.username, data.roomId);
+    io.to(data.roomId).emit('roomData', room);
+
+    socket.leave(data.roomId);
+  });
+
+  socket.on('message', (data) => {
+    io.to(data.roomId).emit('message', data);
   });
 });
 
+app.use(bodyParser.json());
 app.use(cors());
 app.use(express.json());
 

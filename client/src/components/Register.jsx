@@ -90,8 +90,18 @@ const Register = ({ setAuth }) => {
               value={password}
               ref={register({
                 required: "Введите пароль",
-                minLength: { value: 8, message: "Короткий пароль" },
-                maxLength: { value: 20, message: "Длинный пароль" },
+                minLength: {
+                  value: 8,
+                  message: "Пароль должна быть не меньше 20 символов",
+                },
+                maxLength: {
+                  value: 20,
+                  message: "Пароль должна быть не больше 20 символов",
+                },
+                pattern: {
+                  value: /^(?=.*\d)(?=.*[a-z]).{4,}$/i,
+                  message: "Пароль должен иметь латинские буквы и одну цифру ",
+                },
               })}
             />
             {errors.password && (

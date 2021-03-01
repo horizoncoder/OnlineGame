@@ -1,6 +1,71 @@
-import { CALC_SCORE, SET_BOARD_SIZE, SWITCH_TURN, PUTLINE } from "../actions";
+import { drop, map, clone } from "lodash";
+import {
+  CALC_SCORE,
+  SET_BOARD_SIZE,
+  SWITCH_TURN,
+  PUTLINE,
+  GET_LINE_COORDS,
+  PUSH_COORDS,
+} from "../actions";
 
+const getLineCoords = (x, y, p) => {
+  // получаем координаты линии
+  if (p === 0 && x > 0) {
+    return [`${x - 1}${y}${2}`, `${x}${y}${p}`];
+  }
+  if (p === 1 && y > 0) {
+    return [`${x}${y - 1}${3}`, `${x}${y}${p}`];
+  }
+  return [`${x}${y}${p}`];
+};
+const shouldSetLine = (state, x, y, p) => {
+  if (p === 2 && x + 1 < state.count) return false;
+  if (p === 3 && y + 1 < state.count) return false;
+  return true;
+};
+const pushCoords = (state) => {
+  let boxesCoords = [];
+  const coordsV = [];
+  const coordsH = [];
+  for (let y = 0; y < state.count; y += 1) {
+    for (let x = 0; x < state.count; x += 1) {
+      boxesCoords.push(`${x}${y}`);
+      for (let p = 0; p < 4; p += 1) {
+        if (shouldSetLine(x, y, p)) {
+          (p % 2 === 0 ? coordsV : coordsH).push(getLineCoords(x, y, p));
+        }
+      }
+    }
+  }
+
+  let BoxsCoord = []; // сортировка координат
+  BoxsCoord = map(boxesCoords, clone);
+  const sortedCoordsH = [];
+  for (let i = 0; i < state.count; i += 1) {
+    for (
+      let j = i * state.count;
+      j < i * state.count + state.count * 3;
+      j += 1
+    ) {
+      const s = j > state.count ? j - state.count : j;
+      const lineP = j > state.count ? 3 : 1;
+      const boxC = boxesCoords[s];
+      const lineIdx = coordsH.findIndex((c) =>
+        c.find((item) => item === `${boxC}${lineP}`)
+      );
+      sortedCoordsH.push(coordsH[lineIdx]);
+    }
+    boxesCoords = drop(boxesCoords, state.count * 2);
+    
+    return {
+      BoxsCoord,
+      coordsV,
+      coordsH: sortedCoordsH,
+    };
+  }
+};
 const calcScore = (state) => ({
+  Color: state.turn ? state.numRed : state.numBlue,
   // подсчет очков
   numRed: Object.values(state.boxColors).filter((color) => color === "red")
     .length, // считаем очки
@@ -35,7 +100,7 @@ const checkBoxes = (state) => {
 };
 
 const initialState = {
-  count: 2,
+  count: 0,
   boxClass: " box1 ",
   turn: "red",
   numBlue: 0,
@@ -43,6 +108,9 @@ const initialState = {
   errorMessage: null,
   lineCoordinates: {},
   boxColors: {},
+  BoxsCoord: {},
+  coordsV: {},
+  coordsH: {},
 };
 
 export default (state = initialState, action) => {
@@ -53,6 +121,13 @@ export default (state = initialState, action) => {
       return { ...state, turn: state.turn === "red" ? "blue" : "red" };
     case CALC_SCORE:
       return { ...state, ...calcScore(state) };
+    case GET_LINE_COORDS:
+      return { ...state, ...getLineCoords() };
+    case PUSH_COORDS:
+      return {
+        ...state,
+        ...pushCoords(state),
+      };
 
     case PUTLINE: {
       const newCoords = action.coord.reduce((acc, coord) => {

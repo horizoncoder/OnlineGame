@@ -10,6 +10,8 @@ import {
   switchTurn,
   checkSquare,
   putLine,
+  getLineCoords,
+  pushCoords,
 } from "../actions";
 
 class Game extends React.Component {
@@ -65,7 +67,7 @@ class Game extends React.Component {
       }
       boxesCoords = drop(boxesCoords, count * 2);
     }
-
+    // console.log(coordsH);
     return {
       BoxsCoord,
       coordsV,
@@ -82,13 +84,17 @@ class Game extends React.Component {
       switchTurn: switchTurnAction,
       boxColors,
     } = this.props;
-    const { coordsH, coordsV, BoxsCoord } = this.mBoard();
+    // const {  } = this.mBoard();
+    const { BoxsCoord, coordsH, coordsV } = this.props;
+    // const {coordsH,coordsV} = this.mBoard();
+    // const { BoxsCoord } = this.props;
     const llines = [];
-
     let cCoordsH = map(coordsH, clone);
     let cCoordsV = map(coordsV, clone);
     let cBoxes = map(BoxsCoord, clone);
     // генерация div
+    // console.log(cCoordsH);
+    console.log(cCoordsV);
     const Lineh = () => {
       const lines = [];
       for (let j = 0; j < count; j += 1) {
@@ -186,6 +192,8 @@ class Game extends React.Component {
   render() {
     const {
       setBoardSize: setBoardSizeAction,
+      getLineCoords,
+      pushCoords,
       count,
       turn,
       numBlue,
@@ -212,25 +220,53 @@ class Game extends React.Component {
             </div>
             <br />
           </div>
-          <button type="submit" onClick={() => setBoardSizeAction(2)}>
+          <button
+            type="submit"
+            onClick={() => {
+              setBoardSizeAction(2);
+              pushCoords();
+            }}
+          >
             2x2
           </button>
-          <button type="submit" onClick={() => setBoardSizeAction(4)}>
+          <button
+            type="submit"
+            onClick={() => {
+              setBoardSizeAction(4);
+              pushCoords();
+            }}
+          >
             4x4
           </button>
           <button
             id="small"
             type="submit"
-            onClick={() => setBoardSizeAction(6)}
+            onClick={() => {
+              setBoardSizeAction(6);
+              pushCoords();
+            }}
           >
             6x6
           </button>
           <button
             id="small"
             type="submit"
-            onClick={() => setBoardSizeAction(8)}
+            onClick={() => {
+              setBoardSizeAction(8);
+              pushCoords();
+            }}
           >
             8x8
+          </button>
+          <button
+            id="small"
+            type="submit"
+            onClick={() => {
+              setBoardSizeAction(8);
+              pushCoords();
+            }}
+          >
+            test
           </button>
           <br />
           {board}
@@ -246,6 +282,8 @@ const mapDispatchToProps = (dispatch) => {
   return {
     setBoardSize: (size) => dispatch(setBoardSize(size)),
     switchTurn: () => dispatch(switchTurn()),
+    pushCoords: () => dispatch(pushCoords()),
+    getLineCoords: () => dispatch(getLineCoords()),
     calcSCore: () => dispatch(calcSCore()),
     checkSquare: (y, z) => dispatch(checkSquare(y, z)),
     putLine: (coord) => dispatch(putLine(coord)),
@@ -253,7 +291,17 @@ const mapDispatchToProps = (dispatch) => {
 };
 
 const mapStateToProps = ({ Counter }) => {
-  const { turn, numBlue, numRed, count, lineCoordinates, boxColors } = Counter;
+  const {
+    turn,
+    numBlue,
+    numRed,
+    count,
+    lineCoordinates,
+    boxColors,
+    BoxsCoord,
+    coordsH,
+    coordsV,
+  } = Counter;
   return {
     count,
     numBlue,
@@ -261,6 +309,9 @@ const mapStateToProps = ({ Counter }) => {
     lineCoordinates,
     boxColors,
     turn,
+    BoxsCoord,
+    coordsH,
+    coordsV,
   };
 };
 
@@ -274,5 +325,6 @@ Game.propTypes = {
   turn: PropTypes.string.isRequired,
   switchTurn: PropTypes.func.isRequired,
   putLine: PropTypes.func.isRequired,
+  pushCoords: PropTypes.func.isRequired,
 };
 export default connect(mapStateToProps, mapDispatchToProps)(Game);
