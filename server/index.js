@@ -19,7 +19,6 @@ http.listen(port, () => {
 app.get('/', (req, res) => {
   res.sendFile(`${__dirname}/index.html`);
 });
-
 io.on('connection', (socket) => {
   console.log(`user connected with socket id ${socket.id}`);
   socket.on('join-room', (data) => {
@@ -42,6 +41,7 @@ io.on('connection', (socket) => {
 });
 
 app.use(bodyParser.json());
+
 app.use(cors());
 app.use(express.json());
 

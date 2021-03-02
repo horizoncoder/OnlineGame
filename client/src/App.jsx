@@ -85,7 +85,6 @@ function App() {
                 />
               )}
             />
-
             <Route
               exact
               path="/dashboard"
@@ -102,6 +101,7 @@ function App() {
             <Route exact path="/" component={Home} />
             <Route exact path="/game" component={Game} />
             <Route exact path="/chooseroom" component={ChooseRoom} />
+
             <Route exact path="/stats" component={Stats} />
             <Route
               exact
