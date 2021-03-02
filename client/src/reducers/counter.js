@@ -1,11 +1,10 @@
-import { drop, map, clone } from "lodash";
+import { map, clone } from "lodash";
 import {
   CALC_SCORE,
   SET_BOARD_SIZE,
   SWITCH_TURN,
   PUTLINE,
   GET_LINE_COORDS,
-  PUSH_COORDS,
 } from "../actions";
 
 const getLineCoords = (x, y, p) => {
@@ -18,20 +17,20 @@ const getLineCoords = (x, y, p) => {
   }
   return [`${x}${y}${p}`];
 };
-const shouldSetLine = (state, x, y, p) => {
-  if (p === 2 && x + 1 < state.count) return false;
-  if (p === 3 && y + 1 < state.count) return false;
+const shouldSetLine = (count, x, y, p) => {
+  if (p === 2 && x + 1 < count) return false;
+  if (p === 3 && y + 1 < count) return false;
   return true;
 };
-const pushCoords = (state) => {
-  let boxesCoords = [];
+const pushCoords = (count) => {
+  const boxesCoords = [];
   const coordsV = [];
   const coordsH = [];
-  for (let y = 0; y < state.count; y += 1) {
-    for (let x = 0; x < state.count; x += 1) {
+  for (let y = 0; y < count; y += 1) {
+    for (let x = 0; x < count; x += 1) {
       boxesCoords.push(`${x}${y}`);
       for (let p = 0; p < 4; p += 1) {
-        if (shouldSetLine(x, y, p)) {
+        if (shouldSetLine(count, x, y, p)) {
           (p % 2 === 0 ? coordsV : coordsH).push(getLineCoords(x, y, p));
         }
       }
@@ -41,22 +40,16 @@ const pushCoords = (state) => {
   let BoxsCoord = []; // сортировка координат
   BoxsCoord = map(boxesCoords, clone);
   const sortedCoordsH = [];
-  for (let i = 0; i < state.count; i += 1) {
-    for (
-      let j = i * state.count;
-      j < i * state.count + state.count * 3;
-      j += 1
-    ) {
-      const s = j > state.count ? j - state.count : j;
-      const lineP = j > state.count ? 3 : 1;
+  for (let i = 0; i < count; i += 1) {
+    for (let j = i * count; j < i * count + count * 20; j += 1) {
+      const s = j > count ? j - count : j;
+      const lineP = j > count ? 3 : 1;
       const boxC = boxesCoords[s];
       const lineIdx = coordsH.findIndex((c) =>
         c.find((item) => item === `${boxC}${lineP}`)
       );
       sortedCoordsH.push(coordsH[lineIdx]);
     }
-    boxesCoords = drop(boxesCoords, state.count * 2);
-    
     return {
       BoxsCoord,
       coordsV,
@@ -116,19 +109,13 @@ const initialState = {
 export default (state = initialState, action) => {
   switch (action.type) {
     case SET_BOARD_SIZE:
-      return { ...state, count: action.size };
+      return { ...state, count: action.size, ...pushCoords(action.size) };
     case SWITCH_TURN:
       return { ...state, turn: state.turn === "red" ? "blue" : "red" };
     case CALC_SCORE:
       return { ...state, ...calcScore(state) };
     case GET_LINE_COORDS:
       return { ...state, ...getLineCoords() };
-    case PUSH_COORDS:
-      return {
-        ...state,
-        ...pushCoords(state),
-      };
-
     case PUTLINE: {
       const newCoords = action.coord.reduce((acc, coord) => {
         if (!state.lineCoordinates[coord]) {

@@ -6,6 +6,7 @@ export const SPLITCOORD = "SPLITCOORD";
 export const PUTLINE = "PUTLINE";
 export const GET_LINE_COORDS = "GETLINECOORDS";
 export const PUSH_COORDS = "PUSHCOORDS";
+export const M_BOARD = "MBOARD";
 export const setBoardSize = (size) => ({
   type: SET_BOARD_SIZE,
   size,
@@ -22,3 +23,4 @@ export const checkSquare = (y, z, coord) => ({
 });
 export const splitCoord = (x, y, z) => ({ type: SPLITCOORD, x, y, z });
 export const putLine = (coord) => ({ type: PUTLINE, coord });
+export const mBoard = () => ({ type: PUTLINE });

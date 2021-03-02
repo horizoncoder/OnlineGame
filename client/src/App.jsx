@@ -22,6 +22,7 @@ import Register from "./components/Register";
 import { API_URL } from "./components/api";
 import ChooseRoom from "./components/ChooseRoom";
 import Room from "./components/Room";
+import Chat from "./components/Chat";
 
 const SERVER = "http://localhost:5000";
 
@@ -101,6 +102,7 @@ function App() {
             <Route exact path="/" component={Home} />
             <Route exact path="/game" component={Game} />
             <Route exact path="/chooseroom" component={ChooseRoom} />
+            <Route exact path="/chat" component={Chat} />
 
             <Route exact path="/stats" component={Stats} />
             <Route

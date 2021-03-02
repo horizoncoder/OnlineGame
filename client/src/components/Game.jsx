@@ -10,7 +10,6 @@ import {
   switchTurn,
   checkSquare,
   putLine,
-  getLineCoords,
   pushCoords,
 } from "../actions";
 
@@ -19,61 +18,6 @@ class Game extends React.Component {
     super(props);
     this.state = {};
   }
-
-  mBoard = () => {
-    const { count } = this.props;
-    const size = count;
-    const getLineCoords = (x, y, p) => {
-      // получаем координаты линии
-      if (p === 0 && x > 0) {
-        return [`${x - 1}${y}${2}`, `${x}${y}${p}`];
-      }
-      if (p === 1 && y > 0) {
-        return [`${x}${y - 1}${3}`, `${x}${y}${p}`];
-      }
-      return [`${x}${y}${p}`];
-    };
-    const shouldSetLine = (x, y, p) => {
-      if (p === 2 && x + 1 < size) return false;
-      if (p === 3 && y + 1 < size) return false;
-      return true;
-    };
-
-    let boxesCoords = [];
-    const coordsV = [];
-    const coordsH = [];
-    for (let y = 0; y < size; y += 1) {
-      for (let x = 0; x < size; x += 1) {
-        boxesCoords.push(`${x}${y}`);
-        for (let p = 0; p < 4; p += 1) {
-          if (shouldSetLine(x, y, p)) {
-            (p % 2 === 0 ? coordsV : coordsH).push(getLineCoords(x, y, p));
-          }
-        }
-      }
-    }
-    let BoxsCoord = []; // сортировка координат
-    BoxsCoord = map(boxesCoords, clone);
-    const sortedCoordsH = [];
-    for (let i = 0; i < count; i += 1) {
-      for (let j = i * count; j < i * count + count * 3; j += 1) {
-        const s = j > count ? j - count : j;
-        const lineP = j > count ? 3 : 1;
-        const boxC = boxesCoords[s];
-        const lineIdx = coordsH.findIndex((c) =>
-          c.find((item) => item === `${boxC}${lineP}`)
-        );
-        sortedCoordsH.push(coordsH[lineIdx]);
-      }
-      boxesCoords = drop(boxesCoords, count * 2);
-    }
-    // console.log(coordsH);
-    return {
-      BoxsCoord,
-      coordsV,
-      coordsH: sortedCoordsH,
-    };
-  };
 
   makeBoard = () => {
     const {
@@ -84,17 +28,12 @@ class Game extends React.Component {
       switchTurn: switchTurnAction,
       boxColors,
     } = this.props;
-    // const {  } = this.mBoard();
-    const { BoxsCoord, coordsH, coordsV } = this.props;
-    // const {coordsH,coordsV} = this.mBoard();
-    // const { BoxsCoord } = this.props;
+    const { BoxsCoord, coordsV, coordsH } = this.props;
     const llines = [];
     let cCoordsH = map(coordsH, clone);
     let cCoordsV = map(coordsV, clone);
     let cBoxes = map(BoxsCoord, clone);
     // генерация div
-    // console.log(cCoordsH);
-    console.log(cCoordsV);
     const Lineh = () => {
       const lines = [];
       for (let j = 0; j < count; j += 1) {
@@ -165,7 +104,6 @@ class Game extends React.Component {
       cCoordsV = drop(cCoordsV, 1);
       return llinesVertical;
     };
-
     for (let i = 1; i < count * 2 + 2; i += 1) {
       if (i % 2 !== 0) {
         llines.push(
@@ -192,8 +130,6 @@ class Game extends React.Component {
   render() {
     const {
       setBoardSize: setBoardSizeAction,
-      getLineCoords,
-      pushCoords,
       count,
       turn,
       numBlue,
@@ -224,7 +160,6 @@ class Game extends React.Component {
             type="submit"
             onClick={() => {
               setBoardSizeAction(2);
-              pushCoords();
             }}
           >
             2x2
@@ -233,7 +168,6 @@ class Game extends React.Component {
             type="submit"
             onClick={() => {
               setBoardSizeAction(4);
-              pushCoords();
             }}
           >
             4x4
@@ -243,7 +177,6 @@ class Game extends React.Component {
             type="submit"
             onClick={() => {
               setBoardSizeAction(6);
-              pushCoords();
             }}
           >
             6x6
@@ -253,7 +186,6 @@ class Game extends React.Component {
             type="submit"
             onClick={() => {
               setBoardSizeAction(8);
-              pushCoords();
             }}
           >
             8x8
@@ -263,7 +195,6 @@ class Game extends React.Component {
             type="submit"
             onClick={() => {
               setBoardSizeAction(8);
-              pushCoords();
             }}
           >
             test
@@ -283,7 +214,6 @@ const mapDispatchToProps = (dispatch) => {
     setBoardSize: (size) => dispatch(setBoardSize(size)),
     switchTurn: () => dispatch(switchTurn()),
     pushCoords: () => dispatch(pushCoords()),
-    getLineCoords: () => dispatch(getLineCoords()),
     calcSCore: () => dispatch(calcSCore()),
     checkSquare: (y, z) => dispatch(checkSquare(y, z)),
     putLine: (coord) => dispatch(putLine(coord)),
@@ -293,6 +223,8 @@ const mapDispatchToProps = (dispatch) => {
 const mapStateToProps = ({ Counter }) => {
   const {
     turn,
+    getLineCoords,
+    mBoard,
     numBlue,
     numRed,
     count,
@@ -304,12 +236,14 @@ const mapStateToProps = ({ Counter }) => {
   } = Counter;
   return {
     count,
+    mBoard,
     numBlue,
     numRed,
     lineCoordinates,
     boxColors,
     turn,
     BoxsCoord,
+    getLineCoords,
     coordsH,
     coordsV,
   };
@@ -325,6 +259,8 @@ Game.propTypes = {
   turn: PropTypes.string.isRequired,
   switchTurn: PropTypes.func.isRequired,
   putLine: PropTypes.func.isRequired,
-  pushCoords: PropTypes.func.isRequired,
+  BoxsCoord: PropTypes.objectOf(string).isRequired,
+  coordsV: PropTypes.objectOf(string).isRequired,
+  coordsH: PropTypes.objectOf(string).isRequired,
 };
 export default connect(mapStateToProps, mapDispatchToProps)(Game);

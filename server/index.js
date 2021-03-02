@@ -20,8 +20,12 @@ app.get('/', (req, res) => {
   res.sendFile(`${__dirname}/index.html`);
 });
 io.on('connection', (socket) => {
+  socket.on('message', (data) => {
+    io.emit('message', { from: data.from, message: data.message });
+  });
   console.log(`user connected with socket id ${socket.id}`);
   socket.on('join-room', (data) => {
+    console.log('join-room');
     socket.join(data.roomId);
     const room = socketService().addUserToRoom(data.username, data.roomId);
     io.to(data.roomId).emit('roomData', room);
@@ -29,6 +33,7 @@ io.on('connection', (socket) => {
   });
 
   socket.on('leave-room', (data) => {
+    console.log('leave-room');
     const room = socketService().removeUserFromRoom(data.username, data.roomId);
     io.to(data.roomId).emit('roomData', room);
 
