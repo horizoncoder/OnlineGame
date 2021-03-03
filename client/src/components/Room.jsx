@@ -17,6 +17,7 @@ export default function () {
       roomId: id,
       username,
     });
+    console.log(username);
     const handler = (data) => {
       setUsers(data.users);
       setRoomId(data.id);
@@ -30,7 +31,7 @@ export default function () {
       socket.off("roomData", handler);
       socket.disconnect();
     };
-  }, [id, roomId, username]);
+  }, [id]);
   useEffect(() => {
     const handler = (data) => {
       console.log(data);

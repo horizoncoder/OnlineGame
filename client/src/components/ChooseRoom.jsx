@@ -9,7 +9,7 @@ export default function () {
     event.preventDefault();
     history.push(`/room/${room}/${username}`);
   };
-  console.log(room);
+  console.log(username);
   return (
     <div>
       <form onSubmit={onSubmit}>

@@ -36,7 +36,7 @@ export default function () {
     <>
       <div className="container">
         <div className="form-group">
-          <label htmlFor="name">Name</label>
+          <label value="name">Name</label>
           <input
             type="text"
             name="name"

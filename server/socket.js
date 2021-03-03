@@ -15,6 +15,7 @@ module.exports = () => {
   const addUserToRoom = (username, roomId) => {
     const index = getRoomIndex(roomId);
     rooms[index].users.push(username);
+    console.log(username);
     return rooms[index];
   };
   const removeUserFromRoom = (username, roomId) => {
