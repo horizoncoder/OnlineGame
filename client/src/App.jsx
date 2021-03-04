@@ -22,8 +22,8 @@ import Register from "./components/Register";
 import { API_URL } from "./components/api";
 import ChooseRoom from "./components/ChooseRoom";
 import Room from "./components/Room";
+import Lobby from "./components/Lobby";
 import Chat from "./components/Chat";
-import Chat2 from "./components/Chat2";
 import Join from "./components/Join";
 
 const SERVER = "http://localhost:5000";
@@ -105,8 +105,8 @@ function App() {
             <Route exact path="/game" component={Game} />
             <Route exact path="/chooseroom" component={ChooseRoom} />
             <Route exact path="/chat" component={Chat} />
-            <Route exact path="/chat2" component={Chat2} />
             <Route exact path="/join" component={Join} />
+            <Route exact path="/lobby" component={Lobby} />
 
             <Route exact path="/stats" component={Stats} />
             <Route
