@@ -1,16 +1,15 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import RoomsInfo from './RoomsInfo';
-import InfoBar from "./infoBar";
 import './App.css';
 
 const Join = () => {
   const [name, setName] = useState('');
   const [room, setRoom] = useState('');
- const arr=[]
+
   return (
     <>
-      <RoomsInfo room={room} />
+      <RoomsInfo />
       <div className="joinOutContainer">
         <div className="joinInContainer">
           <h1 className="heading">Join</h1>
@@ -34,7 +33,7 @@ const Join = () => {
             onClick={(event) =>
               !name || !room ? event.preventDefault() : null
             }
-            to={`/Chat?name=${name}&room=${room}`}
+            to={`/chat?name=${name}&room=${room}`}
           >
             <button type="submit" className="button mt-20">
               Sign In

@@ -13,7 +13,7 @@ let socket;
 const Chat = ({ location }) => {
   const [name, setName] = useState("");
   const [room, setRoom] = useState("");
-  const [users, setUsers] = useState("");
+  const [users, setUsers] = useState([]);
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState([]);
   const ENDPOINT = "localhost:5000";
@@ -26,8 +26,8 @@ const Chat = ({ location }) => {
     setName(name);
     setRoom(room);
 
-    socket.emit("join", { name, room }, () => {});
-    socket.on("roomData", ({ users })=>{
+    socket.emit("join", { name, room, users }, () => {});
+    socket.on("roomData", ({ users }) => {
       setUsers(users);
     });
     return () => {
@@ -46,7 +46,7 @@ const Chat = ({ location }) => {
       socket.emit("sendMessage", message, () => setMessage(""));
     }
   };
-  console.log(message, messages);
+  console.log(`dd ${users}`);
   return (
     <div className="outContainer">
       <div className="container">

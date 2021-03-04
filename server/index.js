@@ -11,7 +11,10 @@ const io = require('socket.io')(http, {
 });
 const router = require('./router');
 const { addUser, removeUser, getUser, getUserInRoom } = require('./user');
-
+app.get('/api/customers', (req, res) => {
+  const customers = [{ id: 1, firstName: 'john', lastName: 'Doe' }];
+  res.json(customers);
+});
 const port = 5000;
 http.listen(port, () => {
   console.log(`listening on *:${port}`);
@@ -29,10 +32,13 @@ io.on('connection', (socket) => {
     });
     socket.broadcast
       .to(user.room)
-      .emit('message', { user: 'admin', text: `${user.name} ,has joined` });
+      .emit('message', { user: 'admin', text: `${user} ,has joined` });
 
     socket.join(user.room);
-    io.to(user.room).emit('roomData', { room: user.room, users: getUserInRoom(user.room) });
+    io.to(user.room).emit('roomData', {
+      room: user.room,
+      users: getUserInRoom(user.room),
+    });
     cb();
   });
   socket.on('sendMessage', (message, cb) => {
@@ -47,7 +53,10 @@ io.on('connection', (socket) => {
   socket.on('disconnect', () => {
     const user = removeUser(socket.id);
     if (user) {
-      io.to(user.room).emit('message', { user: 'admin', text: `${user.name} has left the room` });
+      io.to(user.room).emit('message', {
+        user: 'admin',
+        text: `${user.name} has left the room`,
+      });
     }
   });
 });

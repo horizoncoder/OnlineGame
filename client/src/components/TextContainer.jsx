@@ -8,9 +8,10 @@ const TextContainer = ({ users }) => (
         <h1>Connected People</h1>
         <div className="activeContainer">
           <h2>
-            {users.map(({ name }) => (
+            {users.map(({ name , room }) => (
               <div key={name} className="activeItem">
                 <h1>{name}</h1>
+                <h1> {room}</h1>
               </div>
             ))}
           </h2>

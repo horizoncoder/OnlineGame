@@ -19,6 +19,9 @@ export default function NaviBar() {
             <Nav.Link as={Link} to="/stats">
               Статистика
             </Nav.Link>
+            <Nav.Link as={Link} to="/join">
+              Чат
+            </Nav.Link>
           </Nav>
         </Navbar.Collapse>
       </Navbar>

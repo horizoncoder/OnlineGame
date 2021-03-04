@@ -1,11 +1,13 @@
 const users = [];
-const rooms = [];
+const express = require('express');
+
+const app = express();
 const addUser = ({ id, name, room }) => {
   name = name.trim().toLowerCase();
   room = room.trim().toLowerCase();
 
   const existingUser = users.find(
-    (user) => user.room === room && user.name === name,
+    (user) => user.room === room && user.name === name
   );
   if (existingUser) {
     return { error: 'Username is taken' };
@@ -17,6 +19,10 @@ const addUser = ({ id, name, room }) => {
   const user = { id, name, room };
   users.push(user);
   console.log(users);
+  app.get('/api/customers', (req, res) => {
+    const customers = [{ id: 1, firstName: 'john', lastName: 'Doe' }];
+    res.json(customers);
+  });
   return { user };
 };
 
@@ -32,5 +38,5 @@ const getRooms = (id) => users.find((room) => room.id === id);
 
 const getUserInRoom = (room) => users.filter((user) => user.room === room);
 
-module.exports = { addUser, removeUser, getUser, getUserInRoom , getRooms 
-};
+module.exports = { addUser, removeUser, getUser, getUserInRoom, getRooms };
+app.use(express.json());
