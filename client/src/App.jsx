@@ -25,6 +25,7 @@ import Room from "./components/Room";
 import Lobby from "./components/Lobby";
 import Chat from "./components/Chat";
 import Join from "./components/Join";
+import Custom from "./components/Custom";
 
 const SERVER = "http://localhost:5000";
 
@@ -107,6 +108,7 @@ function App() {
             <Route exact path="/chat" component={Chat} />
             <Route exact path="/join" component={Join} />
             <Route exact path="/lobby" component={Lobby} />
+            <Route exact path="/custom" component={Custom} />
 
             <Route exact path="/stats" component={Stats} />
             <Route

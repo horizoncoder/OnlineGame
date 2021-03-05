@@ -12,7 +12,6 @@ const Lobby = ({ location }) => {
   const [name, setName] = useState("");
   const [room, setRoom] = useState("");
   const [users, setUsers] = useState("");
-
   const ENDPOINT = "localhost:5000";
 
   useEffect(() => {
@@ -24,7 +23,7 @@ const Lobby = ({ location }) => {
     setRoom(room);
 
     socket.emit("join", { name, room }, () => {});
-    socket.on("roomData", ({ users })=>{
+    socket.on("roomData", ({ users }) => {
       setUsers(users);
     });
     return () => {

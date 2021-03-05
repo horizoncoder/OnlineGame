@@ -4,16 +4,27 @@ class Custom extends Component {
   constructor() {
     super();
     this.state = {
-      customers:[],
+      customers: [],
     };
   }
+
   componentDidMount(){
-      fetch('/api/customers')
+    fetch("/api/customers")
+      .then((res) => {
+        console.log({ res })
+      })
+      // .then((customers) =>
+      //   this.setState({ customers }, () =>
+      //     console.log("Customers fetched..", customers)
+      //   )
+      // );
   }
+
   render() {
     return (
       <div>
-        <h2></h2>
+        <h2>Hello</h2>
+        <h2>{this.state.customers}</h2>
       </div>
     );
   }

@@ -19,10 +19,7 @@ const addUser = ({ id, name, room }) => {
   const user = { id, name, room };
   users.push(user);
   console.log(users);
-  app.get('/api/customers', (req, res) => {
-    const customers = [{ id: 1, firstName: 'john', lastName: 'Doe' }];
-    res.json(customers);
-  });
+
   return { user };
 };
 

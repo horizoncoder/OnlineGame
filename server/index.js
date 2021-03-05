@@ -1,8 +1,11 @@
 const express = require('express');
+const { Sequelize } = require('sequelize');
 
 const app = express();
+const exphbs = require('express-handlebars');
 const cors = require('cors');
 const bodyParser = require('body-parser');
+const path = require('path');
 const http = require('http').createServer(app);
 const io = require('socket.io')(http, {
   cors: {
@@ -10,9 +13,27 @@ const io = require('socket.io')(http, {
   },
 });
 const router = require('./router');
-const { addUser, removeUser, getUser, getUserInRoom } = require('./user');
+const {
+  addUser, removeUser, getUser, getUserInRoom,
+} = require('./user');
+// Handlebars
+app.engine('handlebars', exphbs({defaultLayout: 'main' }));
+app.set('view engine', 'handlebars');
+app.use(express.static(path.join(__dirname,'')))
+
+app.get('/', (req, res) => res.send('Index'));
+// DataBase
+const db = require('./config/database');
+// Game routes
+app.use('/game', require('./routes/game'));
+// Test DB
+db.authenticate()
+  .then(() => console.log('Data connected...'));
+
 app.get('/api/customers', (req, res) => {
-  const customers = [{ id: 1, firstName: 'john', lastName: 'Doe' }];
+  const customers = {
+    customers: [{ id: 1, firstName: 'john', lastName: 'Doe' }],
+  };
   res.json(customers);
 });
 const port = 5000;
