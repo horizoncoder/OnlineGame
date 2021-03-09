@@ -26,7 +26,9 @@ import Lobby from "./components/Lobby";
 import Chat from "./components/Chat";
 import Join from "./components/Join";
 import Custom from "./components/Custom";
-
+import LoginS from "./components/LoginS";
+import RegisterS from "./components/RegisterS";
+import Profile from "./components/Profile";
 const SERVER = "http://localhost:5000";
 
 toast.configure();
@@ -109,6 +111,9 @@ function App() {
             <Route exact path="/join" component={Join} />
             <Route exact path="/lobby" component={Lobby} />
             <Route exact path="/custom" component={Custom} />
+            <Route exact path="/logins" component={LoginS} />
+            <Route exact path="/registers" component={RegisterS} />
+            <Route exact path="/profile" component={Profile} />
 
             <Route exact path="/stats" component={Stats} />
             <Route

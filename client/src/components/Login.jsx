@@ -8,11 +8,11 @@ import { API_URL } from "./api";
 
 const Login = ({ setAuth }) => {
   const [inputs, setInputs] = useState({
-    email: "",
+    username: "",
     password: "",
   });
 
-  const { email, password } = inputs;
+  const { username, password } = inputs;
   const { register, handleSubmit, errors } = useForm();
 
   const onChange = (e) =>
@@ -20,8 +20,8 @@ const Login = ({ setAuth }) => {
 
   const onSubmitForm = async () => {
     try {
-      const body = { email, password };
-      const response = await fetch(`${API_URL}auth/login`, {
+      const body = { username, password };
+      const response = await fetch(`${API_URL}/api/auth/signin`, {
         method: "POST",
         headers: {
           "Content-type": "application/json",
@@ -52,9 +52,9 @@ const Login = ({ setAuth }) => {
             <Form.Label>Почта</Form.Label>
             <Form.Control
               required
-              name="email"
-              value={email}
-              placeholder="email"
+              name="username"
+              value={username}
+              placeholder="username"
               onChange={(e) => onChange(e)}
               ref={register({
                 required: "Введите почту",
@@ -64,8 +64,8 @@ const Login = ({ setAuth }) => {
                 },
               })}
             />
-            {errors.email && (
-              <p style={{ color: "red" }}>{errors.email.message}</p>
+            {errors.username && (
+              <p style={{ color: "red" }}>{errors.username.message}</p>
             )}
           </Form.Group>
         </Form.Row>

@@ -9,9 +9,12 @@ const io = require('socket.io')(http, {
     origin: 'http://localhost:3000',
   },
 });
-
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*');
+  next();
+});
 const corsOptions = {
-  origin: 'http://localhost:3000',
+  origin: 'http://localhost:8081',
 };
 app.use(bodyParser.json());
 

@@ -1,7 +1,7 @@
 import React from "react";
 import { Nav, Navbar } from "react-bootstrap";
 import { Link } from "react-router-dom";
-
+import AuthService from "../services/auth.service";
 export default function NaviBar() {
   return (
     <>
@@ -21,6 +21,9 @@ export default function NaviBar() {
             </Nav.Link>
             <Nav.Link as={Link} to="/join">
               Чат
+            </Nav.Link>
+            <Nav.Link as={Link} to="/profile">
+              user
             </Nav.Link>
           </Nav>
         </Navbar.Collapse>
