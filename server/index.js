@@ -1,26 +1,42 @@
 const express = require('express');
-const { Sequelize } = require('sequelize');
 
 const app = express();
-require('./routes/auth.routes')(app);
-require('./routes/user.routes')(app);
 const cors = require('cors');
 const bodyParser = require('body-parser');
-const path = require('path');
 const http = require('http').createServer(app);
 const io = require('socket.io')(http, {
   cors: {
     origin: 'http://localhost:3000',
   },
 });
-const router = require('./router');
-const { addUser, removeUser, getUser, getUserInRoom } = require('./user');
 
-app.get('/', (req, res) => res.send('Index'));
-// DataBase
+const corsOptions = {
+  origin: 'http://localhost:3000',
+};
+app.use(bodyParser.json());
+
+// parse requests of content-type - application/x-www-form-urlencoded
+app.use(bodyParser.urlencoded({ extended: true }));
+
+// database
 const db = require('./models');
-
 const Role = db.role;
+
+// db.sequelize.sync();
+// force: true will drop the table if it already exists
+db.sequelize.sync({ force: true }).then(() => {
+  console.log('Drop and Resync Database with { force: true }');
+  initial();
+});
+
+// simple route
+app.get('/', (req, res) => {
+  res.json({ message: 'Welcome to bezkoder application.' });
+});
+
+// routes
+require('./routes/auth.routes')(app);
+require('./routes/user.routes')(app);
 
 function initial() {
   Role.create({
@@ -38,20 +54,11 @@ function initial() {
     name: 'admin',
   });
 }
-db.sequelize.sync({ force: true }).then(() => {
-  console.log('Drop and Resync Db');
-  initial();
-});
-// Game routes
-// app.use('/game', require('./routes/game'));
-// Test DB
-// db.authenticate()
-//   .then(() => console.log('Data connected...'));
-
+app.use(cors(corsOptions));
+const router = require('./router');
+const { addUser, removeUser, getUser, getUserInRoom } = require('./user');
 app.get('/api/customers', (req, res) => {
-  const customers = {
-    customers: [{ id: 1, firstName: 'john', lastName: 'Doe' }],
-  };
+  const customers = [{ id: 1, firstName: 'john', lastName: 'Doe' }];
   res.json(customers);
 });
 const port = 5000;
