@@ -2,7 +2,8 @@ const express = require('express');
 const { Sequelize } = require('sequelize');
 
 const app = express();
-const exphbs = require('express-handlebars');
+require('./routes/auth.routes')(app);
+require('./routes/user.routes')(app);
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const path = require('path');
@@ -13,22 +14,39 @@ const io = require('socket.io')(http, {
   },
 });
 const router = require('./router');
-const {
-  addUser, removeUser, getUser, getUserInRoom,
-} = require('./user');
-// Handlebars
-app.engine('handlebars', exphbs({defaultLayout: 'main' }));
-app.set('view engine', 'handlebars');
-app.use(express.static(path.join(__dirname,'')))
+const { addUser, removeUser, getUser, getUserInRoom } = require('./user');
 
 app.get('/', (req, res) => res.send('Index'));
 // DataBase
-const db = require('./config/database');
+const db = require('./models');
+
+const Role = db.role;
+
+function initial() {
+  Role.create({
+    id: 1,
+    name: 'user',
+  });
+
+  Role.create({
+    id: 2,
+    name: 'moderator',
+  });
+
+  Role.create({
+    id: 3,
+    name: 'admin',
+  });
+}
+db.sequelize.sync({ force: true }).then(() => {
+  console.log('Drop and Resync Db');
+  initial();
+});
 // Game routes
-app.use('/game', require('./routes/game'));
+// app.use('/game', require('./routes/game'));
 // Test DB
-db.authenticate()
-  .then(() => console.log('Data connected...'));
+// db.authenticate()
+//   .then(() => console.log('Data connected...'));
 
 app.get('/api/customers', (req, res) => {
   const customers = {

@@ -1,7 +1,8 @@
-const { Sequelize } = require('sequelize');
-
-module.exports = new Sequelize('player', 'myuser', 'user', {
-  host: 'localhost',
+module.exports = {
+  HOST: 'localhost',
+  USER: 'myuser',
+  PASSWORD: 'user',
+  DB: 'game',
   dialect: 'postgres',
   pool: {
     max: 5,
@@ -9,4 +10,4 @@ module.exports = new Sequelize('player', 'myuser', 'user', {
     acquire: 30000,
     idle: 10000,
   },
-});
+};
