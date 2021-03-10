@@ -120,7 +120,8 @@ export default class Register extends Component {
   }
 
   render() {
-    const { password, username, email, message, successful } = this.props;
+    const { password, username, message, successful } = this.state;
+
     return (
       <div className="col-md-12">
         <div className="card card-container">
@@ -150,7 +151,7 @@ export default class Register extends Component {
                     type="text"
                     className="form-control"
                     name="email"
-                    value={email}
+                    value={this.state.email}
                     onChange={this.onChangeEmail}
                     validations={[required, email]}
                   />
@@ -200,10 +201,3 @@ export default class Register extends Component {
     );
   }
 }
-Register.propTypes = {
-  password: PropTypes.string.isRequired,
-  email: PropTypes.string.isRequired,
-  username: PropTypes.string.isRequired,
-  message: PropTypes.string.isRequired,
-  successful: PropTypes.string.isRequired,
-};
