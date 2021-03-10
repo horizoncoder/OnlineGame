@@ -1,4 +1,4 @@
-import React, { Fragment, useState, useEffect } from "react";
+import React from "react";
 import "./App.css";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -9,26 +9,23 @@ import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import socketClient from "socket.io-client";
 import Navibar from "./components/Navibar";
 
-import Login from "./components/Login";
-import { ProtectedRoute, LoginRoute } from "./components/ProtectedRoute";
-
 import Game from "./components/Game";
 
 import Stats from "./components/Stats";
-
-import Dashboard from "./components/Dashboard";
 import { Home } from "./router/Home";
-import Register from "./components/Register";
-import { API_URL } from "./components/api";
+import Logins from "./components/LoginS";
+import RegisterS from "./components/RegisterS";
 import ChooseRoom from "./components/ChooseRoom";
 import Room from "./components/Room";
 import Lobby from "./components/Lobby";
 import Chat from "./components/Chat";
 import Join from "./components/Join";
+import BoardUser from "./components/BoardUser";
+import BoardAdmin from "./components/BoardAdmin";
+import BoardModerator from "./components/BoardModerator";
 import Custom from "./components/Custom";
-import LoginS from "./components/LoginS";
-import RegisterS from "./components/RegisterS";
 import Profile from "./components/Profile";
+
 const SERVER = "http://localhost:5000";
 
 toast.configure();
@@ -36,74 +33,13 @@ toast.configure();
 function App() {
   const socket = socketClient(SERVER);
   socket.on("connection", () => {});
-  const [isAuthenticated, setIsAuthentication] = useState(false);
-  const setAuth = (boolean) => {
-    setIsAuthentication(boolean);
-  };
-  async function isAuth() {
-    try {
-      const res = await fetch(`${API_URL}auth/is-verify`, {
-        method: "GET",
-        headers: { token: localStorage.token },
-      });
 
-      const parseRes = await res.json();
-      if (parseRes === true) {
-        setIsAuthentication(true);
-      } else {
-        setIsAuthentication(false);
-      }
-    } catch (err) {
-      console.error(err.message);
-    }
-  }
-  useEffect(() => {
-    isAuth();
-  });
   return (
     <>
       <Router>
         <Navibar />
         <div className="container">
           <Switch>
-            <Route
-              exact
-              path="/login"
-              render={(props) => (
-                <LoginRoute
-                  {...{ props }}
-                  setAuth={setAuth}
-                  isAuthenticated={isAuthenticated}
-                  component={Login}
-                />
-              )}
-            />
-
-            <Route
-              exact
-              path="/register"
-              render={(props) => (
-                <LoginRoute
-                  {...{ props }}
-                  setAuth={setAuth}
-                  isAuthenticated={isAuthenticated}
-                  component={Register}
-                />
-              )}
-            />
-            <Route
-              exact
-              path="/dashboard"
-              render={(props) => (
-                <ProtectedRoute
-                  {...{ props }}
-                  setAuth={setAuth}
-                  isAuthenticated={isAuthenticated}
-                  component={Dashboard}
-                />
-              )}
-            />
-
             <Route exact path="/" component={Home} />
             <Route exact path="/game" component={Game} />
             <Route exact path="/chooseroom" component={ChooseRoom} />
@@ -111,23 +47,15 @@ function App() {
             <Route exact path="/join" component={Join} />
             <Route exact path="/lobby" component={Lobby} />
             <Route exact path="/custom" component={Custom} />
-            <Route exact path="/logins" component={LoginS} />
             <Route exact path="/registers" component={RegisterS} />
             <Route exact path="/profile" component={Profile} />
-
+            <Route exact path="/home" component={Home} />
+            <Route exact path="/login" component={Logins} />
+            <Route exact path="/register" component={RegisterS} />
+            <Route path="/user" component={BoardUser} />
+            <Route path="/mod" component={BoardModerator} />
+            <Route path="/admin" component={BoardAdmin} />
             <Route exact path="/stats" component={Stats} />
-            <Route
-              exact
-              path="/game1"
-              render={(props) => (
-                <ProtectedRoute
-                  {...{ props }}
-                  setAuth={setAuth}
-                  isAuthenticated={isAuthenticated}
-                  component={Game}
-                />
-              )}
-            />
             <Router path="/" exact>
               <ChooseRoom />
             </Router>

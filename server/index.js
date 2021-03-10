@@ -9,12 +9,13 @@ const io = require('socket.io')(http, {
     origin: 'http://localhost:3000',
   },
 });
+
 app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', '*');
   next();
 });
 const corsOptions = {
-  origin: 'http://localhost:8081',
+  origin: 'http://localhost:3000',
 };
 app.use(bodyParser.json());
 
@@ -23,24 +24,8 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 // database
 const db = require('./models');
+
 const Role = db.role;
-
-// db.sequelize.sync();
-// force: true will drop the table if it already exists
-db.sequelize.sync({ force: true }).then(() => {
-  console.log('Drop and Resync Database with { force: true }');
-  initial();
-});
-
-// simple route
-app.get('/', (req, res) => {
-  res.json({ message: 'Welcome to bezkoder application.' });
-});
-
-// routes
-require('./routes/auth.routes')(app);
-require('./routes/user.routes')(app);
-
 function initial() {
   Role.create({
     id: 1,
@@ -57,16 +42,32 @@ function initial() {
     name: 'admin',
   });
 }
+// force: true will drop the table if it already exists
+db.sequelize.sync({ force: false }).then(() => {
+  initial();
+});
+
+// simple route
+app.get('/', (req, res) => {
+  res.json({ message: 'Welcome to bezkoder application.' });
+});
+
+// routes
+require('./routes/auth.routes')(app);
+require('./routes/user.routes')(app);
+
 app.use(cors(corsOptions));
 const router = require('./router');
-const { addUser, removeUser, getUser, getUserInRoom } = require('./user');
+const {
+  addUser, removeUser, getUser, getUserInRoom,
+} = require('./user');
+
 app.get('/api/customers', (req, res) => {
   const customers = [{ id: 1, firstName: 'john', lastName: 'Doe' }];
   res.json(customers);
 });
 const port = 5000;
 http.listen(port, () => {
-  console.log(`listening on *:${port}`);
 });
 app.get('/', (req, res) => {
   res.sendFile(`${__dirname}/index.html`);
@@ -115,7 +116,3 @@ app.use(bodyParser.json());
 app.use(cors());
 app.use(express.json());
 app.use(router);
-
-app.use('/dashboard', require('./routes/dashboard'));
-
-app.use('/auth', require('./routes/jwtAuth'));

@@ -8,16 +8,15 @@ class Custom extends Component {
     };
   }
 
-  componentDidMount(){
-    fetch("/api/customers")
-      .then((res) => {
-        console.log({ res })
-      })
-      // .then((customers) =>
-      //   this.setState({ customers }, () =>
-      //     console.log("Customers fetched..", customers)
-      //   )
-      // );
+  componentDidMount() {
+    fetch("/api/customers").then((res) => {
+      console.log({ res });
+    });
+    // .then((customers) =>
+    //   this.setState({ customers }, () =>
+    //     console.log("Customers fetched..", customers)
+    //   )
+    // );
   }
 
   render() {
