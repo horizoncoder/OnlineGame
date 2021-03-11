@@ -1,3 +1,4 @@
+/* eslint-disable react/no-array-index-key */
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import TutorialDataService from "../services/tutorial.service";
@@ -32,6 +33,13 @@ export default class TutorialsList extends Component {
     });
   }
 
+  setActiveTutorial(tutorial, index) {
+    this.setState({
+      currentTutorial: tutorial,
+      currentIndex: index,
+    });
+  }
+
   retrieveTutorials() {
     TutorialDataService.getAll()
       .then((response) => {
@@ -50,13 +58,6 @@ export default class TutorialsList extends Component {
     this.setState({
       currentTutorial: null,
       currentIndex: -1,
-    });
-  }
-
-  setActiveTutorial(tutorial, index) {
-    this.setState({
-      currentTutorial: tutorial,
-      currentIndex: index,
     });
   }
 
@@ -129,8 +130,9 @@ export default class TutorialsList extends Component {
                   className={`list-group-item ${
                     index === currentIndex ? "active" : ""
                   }`}
-                  onClick={() => this.setActiveTutorial(tutorial, index)}
+                  onKeyDown={() => this.setActiveTutorial(tutorial, index)}
                   key={index}
+                  role="presentation"
                 >
                   {tutorial.title}
                 </li>
@@ -140,6 +142,7 @@ export default class TutorialsList extends Component {
           <button
             className="m-3 btn btn-sm btn-danger"
             onClick={this.removeAllTutorials}
+            type="submit"
           >
             Remove All
           </button>

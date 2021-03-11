@@ -1,5 +1,7 @@
-import React, { Component } from "react";
-import TutorialDataService from "../services/tutorial.service";
+import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
+import TutorialDataService from '../services/tutorial.service';
+import AuthService from '../services/auth.service';
 
 export default class AddTutorial extends Component {
   constructor(props) {
@@ -11,45 +13,45 @@ export default class AddTutorial extends Component {
 
     this.state = {
       id: null,
-      title: "",
-      description: "", 
+      title: '',
+      description: '',
       published: false,
 
-      submitted: false
+      submitted: false,
     };
   }
 
   onChangeTitle(e) {
     this.setState({
-      title: e.target.value
+      title: e.target.value,
     });
   }
 
   onChangeDescription(e) {
     this.setState({
-      description: e.target.value
+      description: e.target.value,
     });
   }
 
   saveTutorial() {
     var data = {
       title: this.state.title,
-      description: this.state.description
+      description: this.state.description,
     };
 
     TutorialDataService.create(data)
-      .then(response => {
+      .then((response) => {
         this.setState({
           id: response.data.id,
           title: response.data.title,
           description: response.data.description,
           published: response.data.published,
 
-          submitted: true
+          submitted: true,
         });
         console.log(response.data);
       })
-      .catch(e => {
+      .catch((e) => {
         console.log(e);
       });
   }
@@ -57,23 +59,33 @@ export default class AddTutorial extends Component {
   newTutorial() {
     this.setState({
       id: null,
-      title: "",
-      description: "",
+      title: '',
+      description: '',
       published: false,
 
-      submitted: false
+      submitted: false,
     });
   }
 
   render() {
+    const currentUser = AuthService.getCurrentUser();
     return (
       <div className="submit-form">
         {this.state.submitted ? (
           <div>
             <h4>You submitted successfully!</h4>
-            <button className="btn btn-success" onClick={this.newTutorial}>
-              Add
-            </button>
+            <Link
+              // onClick={(event) => (room ? event.preventDefault() : null)}
+              to={`/chat?name=${currentUser.id}&room=${this.state.title}`}
+            >
+              <button
+                className="btn btn-success"
+                onClick={this.newTutorial}
+                type="submit"
+              >
+                Add
+              </button>
+            </Link>
           </div>
         ) : (
           <div>
@@ -102,7 +114,6 @@ export default class AddTutorial extends Component {
                 name="description"
               />
             </div>
-
             <button onClick={this.saveTutorial} className="btn btn-success">
               Submit
             </button>
