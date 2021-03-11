@@ -2,11 +2,11 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import RoomsInfo from './RoomsInfo';
 import './App.css';
-
+import AuthService from "../services/auth.service";
 const Join = () => {
   const [name, setName] = useState('');
   const [room, setRoom] = useState('');
-
+  const currentUser = AuthService.getCurrentUser();
   return (
     <>
       <RoomsInfo />
@@ -30,10 +30,8 @@ const Join = () => {
             />
           </div>
           <Link
-            onClick={(event) =>
-              !name || !room ? event.preventDefault() : null
-            }
-            to={`/chat?name=${name}&room=${room}`}
+            onClick={(event) => (!room ? event.preventDefault() : null)}
+            to={`/chat?name=${currentUser.id}&room=${room}`}
           >
             <button type="submit" className="button mt-20">
               Sign In

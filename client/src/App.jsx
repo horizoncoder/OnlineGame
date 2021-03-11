@@ -25,7 +25,9 @@ import BoardAdmin from "./components/BoardAdmin";
 import BoardModerator from "./components/BoardModerator";
 import Custom from "./components/Custom";
 import Profile from "./components/Profile";
-
+import TutorialsList from "./components/tutorials-list.component";
+import AddTutorial from "./components/add-tutorial.component";
+import Tutorial from "./components/tutorial.component";
 const SERVER = "http://localhost:5000";
 
 toast.configure();
@@ -56,6 +58,9 @@ function App() {
             <Route path="/mod" component={BoardModerator} />
             <Route path="/admin" component={BoardAdmin} />
             <Route exact path="/stats" component={Stats} />
+            <Route exact path="/tutorials" component={TutorialsList} />
+            <Route exact path="/add" component={AddTutorial} />
+            <Route path="/tutorials/:id" component={Tutorial} />
             <Router path="/" exact>
               <ChooseRoom />
             </Router>

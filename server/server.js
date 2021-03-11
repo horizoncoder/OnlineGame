@@ -12,6 +12,7 @@ const io = require('socket.io')(http, {
 
 app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Methods', 'POST, GET, OPTIONS, DELETE, PUT');
   next();
 });
 const corsOptions = {
@@ -25,6 +26,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 // database
 const db = require('./models');
 
+db.sequelize.sync();
 const Role = db.role;
 function initial() {
   Role.create({
@@ -55,6 +57,7 @@ app.get('/', (req, res) => {
 // routes
 require('./routes/auth.routes')(app);
 require('./routes/user.routes')(app);
+require('./routes/turorial.routes')(app);
 
 app.use(cors(corsOptions));
 const router = require('./router');

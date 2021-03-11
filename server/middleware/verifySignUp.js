@@ -2,11 +2,11 @@ const db = require('../models');
 
 const { ROLES } = db;
 const User = db.user;
-const checkDuplicateUsernameOrEmail = (req, res, next) => {
-  // Username
-  User.findOne({
+async function checkDuplicateUsernameOrEmail(req, res, next) {
+  const { email,username } = req.body;
+  await User.findOne({
     where: {
-      username: req.body.username,
+      username,
     },
   }).then((user) => {
     if (user) {
@@ -19,7 +19,7 @@ const checkDuplicateUsernameOrEmail = (req, res, next) => {
     // Email
     User.findOne({
       where: {
-        email: req.body.email,
+        email,
       },
     }).then((user) => {
       if (user) {
@@ -32,17 +32,16 @@ const checkDuplicateUsernameOrEmail = (req, res, next) => {
       next();
     });
   });
-};
+}
 
 const checkRolesExisted = (req, res, next) => {
-  if (req.body.roles) {
-    for (let i = 0; i < req.body.roles.length; i += 1) {
-      if (!ROLES.includes(req.body.roles[i])) {
-        res.status(400).send({
-          message: `Failed! Role does not exist = ${req.body.roles[i]}`,
-        });
-        return;
-      }
+  const { roles } = req.body;
+  if (roles) {
+    if (!ROLES.includes(roles)) {
+      res.status(400).send({
+        message: `Failed! Role does not exist = ${roles}`,
+      });
+      return;
     }
   }
 

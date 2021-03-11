@@ -53,6 +53,16 @@ class Navibar extends Component {
                 Chat
               </Link>
             </li>
+            <li className="nav-item">
+              <Link to="/tutorials" className="nav-link">
+                tutorials
+              </Link>
+            </li>
+            <li className="nav-item">
+              <Link to="/add" className="nav-link">
+                add
+              </Link>
+            </li>
             {showModeratorBoard && (
               <li className="nav-item">
                 <Link to="/mod" className="nav-link">

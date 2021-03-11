@@ -8,9 +8,9 @@ const Role = db.role;
 
 const Op = db.Sequelize.Op;
 
-exports.signup = (req, res) => {
+async function signup(req, res) {
   // Save User to Database
-  User.create({
+  await User.create({
     username: req.body.username,
     email: req.body.email,
     password: bcrypt.hashSync(req.body.password, 8),
@@ -38,10 +38,10 @@ exports.signup = (req, res) => {
     .catch((err) => {
       res.status(500).send({ message: err.message });
     });
-};
+}
 
-exports.signin = (req, res) => {
-  User.findOne({
+async function signin(req, res) {
+  await User.findOne({
     where: {
       username: req.body.username,
     },
@@ -84,4 +84,6 @@ exports.signin = (req, res) => {
     .catch((err) => {
       res.status(500).send({ message: err.message });
     });
-};
+}
+module.exports.signup = signup;
+module.exports.signin = signin;
