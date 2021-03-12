@@ -19,15 +19,13 @@ import ChooseRoom from "./components/ChooseRoom";
 import Room from "./components/Room";
 import Lobby from "./components/Lobby";
 import Chat from "./components/Chat";
-import Join from "./components/Join";
 import BoardUser from "./components/BoardUser";
 import BoardAdmin from "./components/BoardAdmin";
 import BoardModerator from "./components/BoardModerator";
-import Custom from "./components/Custom";
 import Profile from "./components/Profile";
-import TutorialsList from "./components/tutorials-list.component";
-import AddTutorial from "./components/add-tutorial.component";
-import Tutorial from "./components/tutorial.component";
+import TutorialsList from "./components/ListRoom";
+import AddTutorial from "./components/AddRoom";
+
 const SERVER = "http://localhost:5000";
 
 toast.configure();
@@ -46,9 +44,7 @@ function App() {
             <Route exact path="/game" component={Game} />
             <Route exact path="/chooseroom" component={ChooseRoom} />
             <Route exact path="/chat" component={Chat} />
-            <Route exact path="/join" component={Join} />
             <Route exact path="/lobby" component={Lobby} />
-            <Route exact path="/custom" component={Custom} />
             <Route exact path="/registers" component={RegisterS} />
             <Route exact path="/profile" component={Profile} />
             <Route exact path="/home" component={Home} />
@@ -60,7 +56,6 @@ function App() {
             <Route exact path="/stats" component={Stats} />
             <Route exact path="/tutorials" component={TutorialsList} />
             <Route exact path="/add" component={AddTutorial} />
-            <Route path="/tutorials/:id" component={Tutorial} />
             <Router path="/" exact>
               <ChooseRoom />
             </Router>

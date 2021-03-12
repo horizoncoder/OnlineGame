@@ -1,7 +1,8 @@
 /* eslint-disable react/no-array-index-key */
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
-import TutorialDataService from "../services/tutorial.service";
+import TutorialDataService from "../services/room.service";
+import AuthService from '../services/auth.service';
 
 export default class TutorialsList extends Component {
   constructor(props) {
@@ -14,7 +15,7 @@ export default class TutorialsList extends Component {
     this.searchTitle = this.searchTitle.bind(this);
 
     this.state = {
-      tutorials: [],
+      rooms: [],
       currentTutorial: null,
       currentIndex: -1,
       searchTitle: "",
@@ -33,9 +34,9 @@ export default class TutorialsList extends Component {
     });
   }
 
-  setActiveTutorial(tutorial, index) {
+  setActiveTutorial(room, index) {
     this.setState({
-      currentTutorial: tutorial,
+      currentTutorial: room,
       currentIndex: index,
     });
   }
@@ -44,7 +45,7 @@ export default class TutorialsList extends Component {
     TutorialDataService.getAll()
       .then((response) => {
         this.setState({
-          tutorials: response.data,
+          rooms: response.data,
         });
         console.log(response.data);
       })
@@ -81,7 +82,7 @@ export default class TutorialsList extends Component {
     TutorialDataService.findByTitle(this.state.searchTitle)
       .then((response) => {
         this.setState({
-          tutorials: response.data,
+          rooms: response.data,
         });
         console.log(response.data);
       })
@@ -91,13 +92,8 @@ export default class TutorialsList extends Component {
   }
 
   render() {
-    const {
-      searchTitle,
-      tutorials,
-      currentTutorial,
-      currentIndex,
-    } = this.state;
-
+    const { searchTitle, rooms, currentTutorial, currentIndex } = this.state;
+    const currentUser = AuthService.getCurrentUser();
     return (
       <div className="list row">
         <div className="col-md-8">
@@ -121,20 +117,28 @@ export default class TutorialsList extends Component {
           </div>
         </div>
         <div className="col-md-6">
-          <h4>Tutorials List</h4>
+          <h4>Room List</h4>
 
           <ul className="list-group">
-            {tutorials &&
-              tutorials.map((tutorial, index) => (
+            {rooms &&
+              rooms.map((room, index) => (
                 <li
                   className={`list-group-item ${
                     index === currentIndex ? "active" : ""
                   }`}
-                  onKeyDown={() => this.setActiveTutorial(tutorial, index)}
+                  onKeyDown={() => this.setActiveTutorial(room, index)}
                   key={index}
                   role="presentation"
                 >
-                  {tutorial.title}
+                  {room.room}
+                  <Link to={`/chat?name=${currentUser.id}&room=${room.room}`}>
+                    <button
+                      className="d-inline-flex m-2 bg-success text-light"
+                      type="submit"
+                    >
+                      connect
+                    </button>
+                  </Link>
                 </li>
               ))}
           </ul>
@@ -147,43 +151,7 @@ export default class TutorialsList extends Component {
             Remove All
           </button>
         </div>
-        <div className="col-md-6">
-          {currentTutorial ? (
-            <div>
-              <h4>Tutorial</h4>
-              <div>
-                <label>
-                  <strong>Title:</strong>
-                </label>{" "}
-                {currentTutorial.title}
-              </div>
-              <div>
-                <label>
-                  <strong>Description:</strong>
-                </label>{" "}
-                {currentTutorial.description}
-              </div>
-              <div>
-                <label>
-                  <strong>Status:</strong>
-                </label>{" "}
-                {currentTutorial.published ? "Published" : "Pending"}
-              </div>
-
-              <Link
-                to={`/tutorials/${currentTutorial.id}`}
-                className="badge badge-warning"
-              >
-                Edit
-              </Link>
-            </div>
-          ) : (
-            <div>
-              <br />
-              <p>Please click on a Tutorial...</p>
-            </div>
-          )}
-        </div>
+        <div className="col-md-6"> </div>
       </div>
     );
   }

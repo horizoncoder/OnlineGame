@@ -49,13 +49,8 @@ class Navibar extends Component {
               </Link>
             </li>
             <li className="nav-item">
-              <Link to="/join" className="nav-link">
-                Chat
-              </Link>
-            </li>
-            <li className="nav-item">
               <Link to="/tutorials" className="nav-link">
-                tutorials
+                Rooms
               </Link>
             </li>
             <li className="nav-item">

@@ -1,11 +1,11 @@
 const db = require('../models');
-const Tutorial = db.tutorials;
+const Tutorial = db.rooms;
 const Op = db.Sequelize.Op;
 
 // Create and Save a new Tutorial
 exports.create = (req, res) => {
   // Validate request
-  if (!req.body.title) {
+  if (!req.body.room) {
     res.status(400).send({
       message: 'Content can not be empty!',
     });
@@ -13,14 +13,14 @@ exports.create = (req, res) => {
   }
 
   // Create a Tutorial
-  const tutorial = {
-    title: req.body.title,
-    description: req.body.description,
-    published: req.body.published ? req.body.published : false,
+  const rooms = {
+    userid1: req.body.userid1,
+    userid2: req.body.userid2,
+    room: req.body.room,
   };
 
   // Save Tutorial in the database
-  Tutorial.create(tutorial)
+  Tutorial.create(rooms)
     .then((data) => {
       res.send(data);
     })
@@ -34,8 +34,8 @@ exports.create = (req, res) => {
 
 // Retrieve all Tutorials from the database.
 exports.findAll = (req, res) => {
-  const title = req.query.title;
-  var condition = title ? { title: { [Op.iLike]: `%${title}%` } } : null;
+  const room = req.query.room;
+  let condition = room ? { room: { [Op.iLike]: `%${room}%` } } : null;
 
   Tutorial.findAll({ where: condition })
     .then((data) => {
@@ -44,7 +44,7 @@ exports.findAll = (req, res) => {
     .catch((err) => {
       res.status(500).send({
         message:
-          err.message || 'Some error occurred while retrieving tutorials.',
+          err.message || 'Some error occurred while retrieving roomss.',
       });
     });
 };
@@ -109,7 +109,7 @@ exports.delete = (req, res) => {
     })
     .catch((err) => {
       res.status(500).send({
-        message: 'Could not delete Tutorial with id=' + id,
+        message: `Could not delete Tutorial with id=${id}`,
       });
     });
 };
@@ -126,7 +126,7 @@ exports.deleteAll = (req, res) => {
     .catch((err) => {
       res.status(500).send({
         message:
-          err.message || 'Some error occurred while removing all tutorials.',
+          err.message || 'Some error occurred while removing all roomss.',
       });
     });
 };
@@ -140,7 +140,7 @@ exports.findAllPublished = (req, res) => {
     .catch((err) => {
       res.status(500).send({
         message:
-          err.message || 'Some error occurred while retrieving tutorials.',
+          err.message || 'Some error occurred while retrieving roomss.',
       });
     });
 };

@@ -49,15 +49,10 @@ db.sequelize.sync({ force: false }).then(() => {
   initial();
 });
 
-// simple route
-app.get('/', (req, res) => {
-  res.json({ message: 'Welcome to bezkoder application.' });
-});
-
 // routes
 require('./routes/auth.routes')(app);
 require('./routes/user.routes')(app);
-require('./routes/turorial.routes')(app);
+require('./routes/room.routes')(app);
 
 app.use(cors(corsOptions));
 const router = require('./router');
@@ -65,10 +60,6 @@ const {
   addUser, removeUser, getUser, getUserInRoom,
 } = require('./user');
 
-app.get('/api/customers', (req, res) => {
-  const customers = [{ id: 1, firstName: 'john', lastName: 'Doe' }];
-  res.json(customers);
-});
 const port = 5000;
 http.listen(port, () => {
 });
