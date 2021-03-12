@@ -1,18 +1,17 @@
-import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
-import TutorialDataService from '../services/room.service';
-import AuthService from '../services/auth.service';
+import React, { Component } from "react";
+import { Link } from "react-router-dom";
+import RoomDataService from "../services/room.service";
+import AuthService from "../services/auth.service";
 
-export default class AddTutorial extends Component {
+export default class AddRoom extends Component {
   constructor(props) {
     super(props);
     this.onChangeTitle = this.onChangeTitle.bind(this);
-    this.saveTutorial = this.saveTutorial.bind(this);
-    this.newTutorial = this.newTutorial.bind(this);
+    this.saveRoom = this.saveRoom.bind(this);
+    this.newRoom = this.newRoom.bind(this);
 
     this.state = {
-      id: null,
-      room: '',
+      room: "",
     };
   }
 
@@ -22,15 +21,15 @@ export default class AddTutorial extends Component {
     });
   }
 
-  saveTutorial() {
+  saveRoom() {
+    const { room } = this.state;
     const data = {
-      room: this.state.room,
+      room,
     };
 
-    TutorialDataService.create(data)
+    RoomDataService.create(data)
       .then((response) => {
         this.setState({
-          id: response.data.id,
           room: response.data.room,
         });
         console.log(response.data);
@@ -40,14 +39,14 @@ export default class AddTutorial extends Component {
       });
   }
 
-  newTutorial() {
+  newRoom() {
     this.setState({
-      id: null,
-      room: '',
+      room: "",
     });
   }
 
   render() {
+    const { room } = this.state;
     const currentUser = AuthService.getCurrentUser();
     return (
       <div className="submit-form">
@@ -59,14 +58,14 @@ export default class AddTutorial extends Component {
               className="form-control"
               id="room"
               required
-              value={this.state.room}
+              value={room}
               onChange={this.onChangeTitle}
               name="room"
             />
           </div>
-          <Link to={`/chat?name=${currentUser.id}&room=${this.state.room}`}>
+          <Link to={`/chat?name=${currentUser.id}&room=${room}`}>
             <button
-              onClick={this.saveTutorial}
+              onClick={this.saveRoom}
               className="btn btn-success"
               type="submit"
             >

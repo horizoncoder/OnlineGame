@@ -49,7 +49,7 @@ class Navibar extends Component {
               </Link>
             </li>
             <li className="nav-item">
-              <Link to="/tutorials" className="nav-link">
+              <Link to="/rooms" className="nav-link">
                 Rooms
               </Link>
             </li>

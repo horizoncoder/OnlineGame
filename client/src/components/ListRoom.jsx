@@ -1,48 +1,45 @@
-/* eslint-disable react/no-array-index-key */
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
-import TutorialDataService from "../services/room.service";
-import AuthService from '../services/auth.service';
+import RoomDataService from "../services/room.service";
+import AuthService from "../services/auth.service";
 
-export default class TutorialsList extends Component {
+export default class RoomsList extends Component {
   constructor(props) {
     super(props);
-    this.onChangeSearchTitle = this.onChangeSearchTitle.bind(this);
-    this.retrieveTutorials = this.retrieveTutorials.bind(this);
+    this.onChangeSearchRoom = this.onChangeSearchTitle.bind(this);
+    this.retrieveRooms = this.retrieveRooms.bind(this);
     this.refreshList = this.refreshList.bind(this);
-    this.setActiveTutorial = this.setActiveTutorial.bind(this);
-    this.removeAllTutorials = this.removeAllTutorials.bind(this);
-    this.searchTitle = this.searchTitle.bind(this);
-
+    this.setActiveRoom = this.setActiveRoom.bind(this);
+    this.removeAllRooms = this.removeAllRooms.bind(this);
+    this.searchRoom = this.searchTitle.bind(this);
+    this.deleteRoom = this.deleteRoom.bind(this);
     this.state = {
       rooms: [],
-      currentTutorial: null,
-      currentIndex: -1,
-      searchTitle: "",
+      currentRoom: null,
+      searchRoom: "",
     };
   }
 
   componentDidMount() {
-    this.retrieveTutorials();
+    this.retrieveRooms();
   }
 
   onChangeSearchTitle(e) {
-    const searchTitle = e.target.value;
+    const searchRoom = e.target.value;
 
     this.setState({
-      searchTitle,
+      searchRoom,
     });
   }
 
-  setActiveTutorial(room, index) {
+  setActiveRoom(room) {
     this.setState({
-      currentTutorial: room,
-      currentIndex: index,
+      currentRoom: room,
     });
   }
 
-  retrieveTutorials() {
-    TutorialDataService.getAll()
+  retrieveRooms() {
+    RoomDataService.getAll()
       .then((response) => {
         this.setState({
           rooms: response.data,
@@ -55,15 +52,14 @@ export default class TutorialsList extends Component {
   }
 
   refreshList() {
-    this.retrieveTutorials();
+    this.retrieveRooms();
     this.setState({
-      currentTutorial: null,
-      currentIndex: -1,
+      currentRoom: null,
     });
   }
 
-  removeAllTutorials() {
-    TutorialDataService.deleteAll()
+  removeAllRooms() {
+    RoomDataService.deleteAll()
       .then((response) => {
         console.log(response.data);
         this.refreshList();
@@ -74,12 +70,12 @@ export default class TutorialsList extends Component {
   }
 
   searchTitle() {
+    const { searchRoom } = this.state;
     this.setState({
-      currentTutorial: null,
-      currentIndex: -1,
+      currentRoom: null,
     });
 
-    TutorialDataService.findByTitle(this.state.searchTitle)
+    RoomDataService.findByTitle(searchRoom)
       .then((response) => {
         this.setState({
           rooms: response.data,
@@ -91,8 +87,20 @@ export default class TutorialsList extends Component {
       });
   }
 
+  deleteRoom() {
+    const { currentRoom } = this.state;
+    RoomDataService.delete(currentRoom.id)
+      .then((response) => {
+        console.log(response.data);
+        this.refreshList();
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+  }
+
   render() {
-    const { searchTitle, rooms, currentTutorial, currentIndex } = this.state;
+    const { searchTitle, rooms } = this.state;
     const currentUser = AuthService.getCurrentUser();
     return (
       <div className="list row">
@@ -123,12 +131,9 @@ export default class TutorialsList extends Component {
             {rooms &&
               rooms.map((room, index) => (
                 <li
-                  className={`list-group-item ${
-                    index === currentIndex ? "active" : ""
-                  }`}
-                  onKeyDown={() => this.setActiveTutorial(room, index)}
+                  className="list-group-item "
+                  onMouseEnter={() => this.setActiveRoom(room, index)}
                   key={index}
-                  role="presentation"
                 >
                   {room.room}
                   <Link to={`/chat?name=${currentUser.id}&room=${room.room}`}>
@@ -139,19 +144,25 @@ export default class TutorialsList extends Component {
                       connect
                     </button>
                   </Link>
+                  <button
+                    className="d-inline-flex m-2 bg-danger text-light"
+                    onClick={() => this.deleteRoom()}
+                    type="submit"
+                  >
+                    Delete
+                  </button>
                 </li>
               ))}
           </ul>
 
           <button
             className="m-3 btn btn-sm btn-danger"
-            onClick={this.removeAllTutorials}
+            onClick={this.removeAllRooms}
             type="submit"
           >
             Remove All
           </button>
         </div>
-        <div className="col-md-6"> </div>
       </div>
     );
   }

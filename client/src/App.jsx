@@ -17,7 +17,6 @@ import Logins from "./components/LoginS";
 import RegisterS from "./components/RegisterS";
 import ChooseRoom from "./components/ChooseRoom";
 import Room from "./components/Room";
-import Lobby from "./components/Lobby";
 import Chat from "./components/Chat";
 import BoardUser from "./components/BoardUser";
 import BoardAdmin from "./components/BoardAdmin";
@@ -44,7 +43,6 @@ function App() {
             <Route exact path="/game" component={Game} />
             <Route exact path="/chooseroom" component={ChooseRoom} />
             <Route exact path="/chat" component={Chat} />
-            <Route exact path="/lobby" component={Lobby} />
             <Route exact path="/registers" component={RegisterS} />
             <Route exact path="/profile" component={Profile} />
             <Route exact path="/home" component={Home} />
@@ -54,7 +52,7 @@ function App() {
             <Route path="/mod" component={BoardModerator} />
             <Route path="/admin" component={BoardAdmin} />
             <Route exact path="/stats" component={Stats} />
-            <Route exact path="/tutorials" component={TutorialsList} />
+            <Route exact path="/rooms" component={TutorialsList} />
             <Route exact path="/add" component={AddTutorial} />
             <Router path="/" exact>
               <ChooseRoom />
