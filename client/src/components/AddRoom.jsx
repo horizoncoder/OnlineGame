@@ -24,20 +24,11 @@ export default class AddRoom extends Component {
 
   saveRoom() {
     const currentUser = AuthService.getCurrentUser();
-<<<<<<< HEAD
     const { room } = this.state;
 
     const data = {
       room,
       userid1: currentUser.id,
-=======
-    const { room,userid1,userid2 } = this.state;
-    
-    const data = {
-      room,
-       userid1:currentUser.id ,
-
->>>>>>> de0a04b72e41915e5429ad4a311859de942cf193
     };
 
     RoomDataService.create(data)
@@ -51,6 +42,7 @@ export default class AddRoom extends Component {
         console.log(e);
       });
   }
+
   newRoom() {
     this.setState({
       room: "",
