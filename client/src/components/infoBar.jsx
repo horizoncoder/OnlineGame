@@ -6,8 +6,9 @@ function InfoBar({ room }) {
     <div className="infoBar">
       <div className="leftInnerContainer">
         <h3>{room}</h3>
+        <button type="submit">exit</button>
       </div>
-      <div className="rightInnerContainer"></div>
+      <div className="rightInnerContainer" />
     </div>
   );
 }

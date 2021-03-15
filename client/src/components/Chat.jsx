@@ -7,12 +7,16 @@ import InfoBar from "./infoBar";
 import InputMessage from "./InputMessage";
 import Messages from "./Messages";
 import TextContainer from "./TextContainer";
+import RoomDataService from "../services/room.service";
+import { drop, map, clone } from "lodash";
+import AuthService from "../services/auth.service";
 
 let socket;
 
 const Chat = ({ location }) => {
   const [name, setName] = useState("");
   const [room, setRoom] = useState("");
+  const [addroom, setAddroom] = useState("");
   const [users, setUsers] = useState([]);
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState([]);
@@ -46,7 +50,40 @@ const Chat = ({ location }) => {
       socket.emit("sendMessage", message, () => setMessage(""));
     }
   };
-  console.log(`dd ${users}`);
+  const saveRoom = () => {
+    const currentUser = AuthService.getCurrentUser();
+    // const { room } = this.state;
+
+    const data = {
+      room,
+      userid1: currentUser.id,
+    };
+
+    RoomDataService.create(data)
+      .then((response) => {
+        setAddroom({
+          room: response.data.room,
+        });
+        console.log(response.data);
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+  };
+  let test = false;
+  switch (users.length) {
+    case 1:
+      test = true;
+      console.log(test);
+      break;
+    default:
+      test = false;
+      console.log(test);
+  }
+  if (test === true) {
+    console.log("УРА");
+  }
+  //console.log(users.length);
   return (
     <div className="outContainer">
       <div className="container">

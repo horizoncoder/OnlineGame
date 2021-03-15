@@ -9,9 +9,10 @@ export default class AddRoom extends Component {
     this.onChangeTitle = this.onChangeTitle.bind(this);
     this.saveRoom = this.saveRoom.bind(this);
     this.newRoom = this.newRoom.bind(this);
-
+    const currentUser = AuthService.getCurrentUser();
     this.state = {
       room: "",
+      userid1: currentUser.id,
     };
   }
 
@@ -22,9 +23,12 @@ export default class AddRoom extends Component {
   }
 
   saveRoom() {
+    const currentUser = AuthService.getCurrentUser();
     const { room } = this.state;
+
     const data = {
       room,
+      userid1: currentUser.id,
     };
 
     RoomDataService.create(data)

@@ -11,11 +11,14 @@ export default class RoomsList extends Component {
     this.refreshList = this.refreshList.bind(this);
     this.setActiveRoom = this.setActiveRoom.bind(this);
     this.removeAllRooms = this.removeAllRooms.bind(this);
+    this.saveRoom = this.saveRoom.bind(this);
     this.searchRoom = this.searchTitle.bind(this);
+    this.updateTutorial = this.updateTutorial.bind(this);
     this.deleteRoom = this.deleteRoom.bind(this);
     this.state = {
       rooms: [],
       currentRoom: null,
+      userid2: "",
       searchRoom: "",
     };
   }
@@ -33,9 +36,48 @@ export default class RoomsList extends Component {
   }
 
   setActiveRoom(room) {
+    const currentUser = AuthService.getCurrentUser();
     this.setState({
       currentRoom: room,
+      userid2: currentUser.id,
     });
+  }
+
+  saveRoom() {
+    const currentUser = AuthService.getCurrentUser();
+    const { room, userid1, userid2 } = this.state;
+
+    const data = {
+      userid2: currentUser.id,
+    };
+    console.log(userid2);
+    RoomDataService.create(data)
+      .then((response) => {
+        this.setState({
+          room: response.data.room,
+        });
+        console.log(response.data);
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+  }
+
+  updateTutorial() {
+    const currentUser = AuthService.getCurrentUser();
+    const data = {
+      userid2: currentUser.id,
+    };
+    RoomDataService.update(data)
+      .then((response) => {
+        console.log(response.data);
+        this.setState({
+          message: "The tutorial was updated successfully!",
+        });
+      })
+      .catch((e) => {
+        console.log(e);
+      });
   }
 
   retrieveRooms() {
@@ -100,7 +142,7 @@ export default class RoomsList extends Component {
   }
 
   render() {
-    const { searchTitle, rooms } = this.state;
+    const { searchTitle, rooms, userid2 } = this.state;
     const currentUser = AuthService.getCurrentUser();
     return (
       <div className="list row">
@@ -136,8 +178,9 @@ export default class RoomsList extends Component {
                   key={index}
                 >
                   {room.room}
-                  <Link to={`/chat?name=${currentUser.id}&room=${room.room}`}>
+                  <Link to={`/chat?name=${userid2}&room=${room.room}`}>
                     <button
+                      onClick={() => this.deleteRoom()}
                       className="d-inline-flex m-2 bg-success text-light"
                       type="submit"
                     >

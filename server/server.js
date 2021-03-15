@@ -74,6 +74,11 @@ io.on('connection', (socket) => {
       user: 'admin',
       text: `${user.name} Welcome to the room:${user.room}`,
     });
+
+    let count=[];
+    count.push(user.name);
+    count = [...user.name];
+    console.log(count);
     socket.broadcast
       .to(user.room)
       .emit('message', { user: 'admin', text: `${user} ,has joined` });
