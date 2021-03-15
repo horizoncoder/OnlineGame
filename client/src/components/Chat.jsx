@@ -52,7 +52,7 @@ const Chat = ({ location }) => {
   };
   const saveRoom = () => {
     const currentUser = AuthService.getCurrentUser();
-    // const { room } = this.state;
+    // const { room } = this.statess;
 
     const data = {
       room,
