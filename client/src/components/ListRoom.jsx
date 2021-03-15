@@ -18,7 +18,11 @@ export default class RoomsList extends Component {
     this.state = {
       rooms: [],
       currentRoom: null,
+<<<<<<< HEAD
       userid2: "",
+=======
+      userid2:"" ,
+>>>>>>> de0a04b72e41915e5429ad4a311859de942cf193
       searchRoom: "",
     };
   }
@@ -39,8 +43,51 @@ export default class RoomsList extends Component {
     const currentUser = AuthService.getCurrentUser();
     this.setState({
       currentRoom: room,
+<<<<<<< HEAD
       userid2: currentUser.id,
+=======
+      userid2:currentUser.id
+>>>>>>> de0a04b72e41915e5429ad4a311859de942cf193
     });
+    
+  }
+
+  saveRoom() {
+    const currentUser = AuthService.getCurrentUser();
+    const { room,userid1,userid2 } = this.state;
+    
+    const data = {
+       userid2:currentUser.id ,
+
+    };
+console.log(userid2);
+    RoomDataService.create(data)
+      .then((response) => {
+        this.setState({
+          room: response.data.room,
+        });
+        console.log(response.data);
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+  }
+  updateTutorial() {
+    const currentUser = AuthService.getCurrentUser();
+    const data = {
+      userid2:currentUser.id ,
+
+   };
+   RoomDataService.update(data)
+      .then(response => {
+        console.log(response.data);
+        this.setState({
+          message: "The tutorial was updated successfully!"
+        });
+      })
+      .catch(e => {
+        console.log(e);
+      });
   }
 
   saveRoom() {
@@ -183,6 +230,7 @@ export default class RoomsList extends Component {
                       onClick={() => this.deleteRoom()}
                       className="d-inline-flex m-2 bg-success text-light"
                       type="submit"
+                      onClick={this.updateTutorial}
                     >
                       connect
                     </button>

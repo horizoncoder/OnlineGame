@@ -50,6 +50,7 @@ const Chat = ({ location }) => {
       socket.emit("sendMessage", message, () => setMessage(""));
     }
   };
+<<<<<<< HEAD
   const saveRoom = () => {
     const currentUser = AuthService.getCurrentUser();
     // const { room } = this.statess;
@@ -84,6 +85,9 @@ const Chat = ({ location }) => {
     console.log("УРА");
   }
   //console.log(users.length);
+=======
+console.log(name, room)
+>>>>>>> de0a04b72e41915e5429ad4a311859de942cf193
   return (
     <div className="outContainer">
       <div className="container">
