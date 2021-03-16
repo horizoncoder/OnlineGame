@@ -9,6 +9,9 @@ module.exports = (sequelize, Sequelize) => {
     room: {
       type: Sequelize.STRING,
     },
+    status: {
+      type: Sequelize.STRING,
+    },
   });
 
   return Room;

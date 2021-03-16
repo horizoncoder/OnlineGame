@@ -25,6 +25,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 // database
 const db = require('./models');
+const tutorials = require('./controllers/room.controller');
 
 db.sequelize.sync();
 const Role = db.role;
@@ -67,14 +68,16 @@ app.get('/', (req, res) => {
   res.sendFile(`${__dirname}/index.html`);
 });
 io.on('connect', (socket) => {
-  socket.on('join', ({ name, room }, callback) => {
-    const { error, user } = addUser({ id: socket.id, name, room });
+  socket.on('join', ({ name, room, roomid}, callback) => {
+    const { error, user } = addUser({
+      id: socket.id, name, room, roomid,
+    });
 
     if (error) return callback(error);
 
     socket.join(user.room);
 
-    socket.emit('message', { user: 'admin', text: `${user.name}, welcome to room ${user.room}.`});
+    socket.emit('message', { user: 'admin', text: `${user.name}, welcome to room ${user.room} ${user.roomid}.`});
     socket.broadcast.to(user.room).emit('message', { user: 'admin', text: `${user.name} has joined!` });
 
     io.to(user.room).emit('roomData', { room: user.room, users: getUsersInRoom(user.room) });
@@ -92,12 +95,15 @@ io.on('connect', (socket) => {
 
   socket.on('disconnect', () => {
     const user = removeUser(socket.id);
-
+    const Tutorial = db.rooms;
     if (user) {
       io.to(user.room).emit('message', { user: 'Admin', text: `${user.name} has left.` });
       io.to(user.room).emit('roomData', { room: user.room, users: getUsersInRoom(user.room) });
       console.log(user);
     }
+    Tutorial.destroy({
+      where: { id: 98 },
+    });
   });
 });
 

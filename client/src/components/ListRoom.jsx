@@ -3,17 +3,18 @@ import { Link } from "react-router-dom";
 import RoomDataService from "../services/room.service";
 import AuthService from "../services/auth.service";
 import InfoBar from "./infoBar";
+import AddRoom from "./AddRoom"
 
 export default class RoomsList extends Component {
   constructor(props) {
     super(props);
-    this.onChangeSearchRoom = this.onChangeSearchTitle.bind(this);
+    this.onChangeSearchRoom = this.onChangeSearchRoom.bind(this);
     this.retrieveRooms = this.retrieveRooms.bind(this);
     this.refreshList = this.refreshList.bind(this);
     this.setActiveRoom = this.setActiveRoom.bind(this);
     this.removeAllRooms = this.removeAllRooms.bind(this);
     this.saveRoom = this.saveRoom.bind(this);
-    this.searchRoom = this.searchTitle.bind(this);
+    this.searchRoom = this.searchRoom.bind(this);
     this.updateTutorial = this.updateTutorial.bind(this);
     this.deleteRoom = this.deleteRoom.bind(this);
     this.state = {
@@ -21,6 +22,7 @@ export default class RoomsList extends Component {
       currentRoom: null,
       userid2: "",
       searchRoom: "",
+      status: "",
     };
   }
 
@@ -28,7 +30,7 @@ export default class RoomsList extends Component {
     this.retrieveRooms();
   }
 
-  onChangeSearchTitle(e) {
+  onChangeSearchRoom(e) {
     const searchRoom = e.target.value;
 
     this.setState({
@@ -55,7 +57,7 @@ export default class RoomsList extends Component {
     RoomDataService.create(data)
       .then((response) => {
         this.setState({
-          room: response.data.room,
+          rooms: response.data.room,
         });
         console.log(response.data);
       })
@@ -65,11 +67,13 @@ export default class RoomsList extends Component {
   }
 
   updateTutorial() {
+    const { currentRoom } = this.state;
     const currentUser = AuthService.getCurrentUser();
     const data = {
       userid2: currentUser.id,
+      status: "game started",
     };
-    RoomDataService.update(data)
+    RoomDataService.update(currentRoom.id, data)
       .then((response) => {
         console.log(response.data);
         this.setState({
@@ -112,7 +116,7 @@ export default class RoomsList extends Component {
       });
   }
 
-  searchTitle() {
+  searchRoom() {
     const { searchRoom } = this.state;
     this.setState({
       currentRoom: null,
@@ -143,10 +147,12 @@ export default class RoomsList extends Component {
   }
 
   render() {
-    const { searchTitle, rooms, userid2 } = this.state;
+    const { searchRoom, rooms, userid2, currentRoom, status } = this.state;
+    // alert(rooms.id);
     const currentUser = AuthService.getCurrentUser();
     return (
       <>
+        <AddRoom roomsid={rooms.id} />
         <div className="list row">
           <div className="col-md-8">
             <div className="input-group mb-3">
@@ -154,14 +160,14 @@ export default class RoomsList extends Component {
                 type="text"
                 className="form-control"
                 placeholder="Search by title"
-                value={searchTitle}
-                onChange={this.onChangeSearchTitle}
+                value={searchRoom}
+                onChange={this.onChangeSearchRoom}
               />
               <div className="input-group-append">
                 <button
                   className="btn btn-outline-secondary"
                   type="button"
-                  onClick={this.searchTitle}
+                  onClick={this.searchRoom}
                 >
                   Search
                 </button>
@@ -180,9 +186,11 @@ export default class RoomsList extends Component {
                     key={index}
                   >
                     {room.room}
-                    <Link to={`/chat?name=${userid2}&room=${room.room}`}>
+                    <Link
+                      to={`/chat?name=${userid2}&room=${room.room}&roomid=${room.id}`}
+                    >
                       <button
-                        onClick={() => this.deleteRoom()}
+                        // onClick={() => this.updateTutorial()}
                         className="d-inline-flex m-2 bg-success text-light"
                         type="submit"
                       >
@@ -191,7 +199,7 @@ export default class RoomsList extends Component {
                     </Link>
                     <button
                       className="d-inline-flex m-2 bg-danger text-light"
-                      //onClick={() => this.deleteRoom()}
+                      onClick={() => this.deleteRoom()}
                       type="submit"
                     >
                       Delete

@@ -17,6 +17,7 @@ exports.create = (req, res) => {
     userid1: req.body.userid1,
     userid2: req.body.userid2,
     room: req.body.room,
+    status: req.body.status,
   };
 
   // Save Tutorial in the database
@@ -34,10 +35,10 @@ exports.create = (req, res) => {
 
 // Retrieve all Tutorials from the database.
 exports.findAll = (req, res) => {
-  const room = req.query.room;
-  let condition = room ? { room: { [Op.iLike]: `%${room}%` } } : null;
+  // const room = req.query.room;
+  // const condition = room ? { room: { [Op.iLike]: `%${room}%` } } : null;
 
-  Tutorial.findAll({ where: condition })
+  Tutorial.findAll({ where: { status: 'wait' } })
     .then((data) => {
       res.send(data);
     })
@@ -133,14 +134,14 @@ exports.deleteAll = (req, res) => {
 
 // find all published Tutorial
 exports.findAllPublished = (req, res) => {
-  Tutorial.findAll({ where: { published: true } })
-    .then((data) => {
-      res.send(data);
-    })
-    .catch((err) => {
-      res.status(500).send({
-        message:
-          err.message || 'Some error occurred while retrieving roomss.',
-      });
-    });
+  // Tutorial.findAll({ where: { published: true } })
+  //   .then((data) => {
+  //     res.send(data);
+  //   })
+  //   .catch((err) => {
+  //     res.status(500).send({
+  //       message:
+  //         err.message || 'Some error occurred while retrieving roomss.',
+  //     });
+  //   });
 };

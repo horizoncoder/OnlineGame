@@ -12,35 +12,41 @@ export default class AddRoom extends Component {
     const currentUser = AuthService.getCurrentUser();
     this.state = {
       room: "",
+      rooms: [],
+      roomid: "",
       userid1: currentUser.id,
+      status: "",
     };
   }
 
   onChangeTitle(e) {
     this.setState({
       room: e.target.value,
+      roomid: "",
     });
   }
 
   saveRoom() {
     const currentUser = AuthService.getCurrentUser();
-    const { room } = this.state;
+    const { room, rooms, roomid } = this.state;
 
     const data = {
       room,
       userid1: currentUser.id,
+      status: "wait",
     };
 
     RoomDataService.create(data)
       .then((response) => {
         this.setState({
-          room: response.data.room,
+          rooms: rooms.push(response.data)
         });
-        console.log(response.data);
+        rooms.push(response.data);
       })
       .catch((e) => {
         console.log(e);
       });
+    console.log(rooms);
   }
 
   newRoom() {
@@ -50,7 +56,9 @@ export default class AddRoom extends Component {
   }
 
   render() {
-    const { room } = this.state;
+    const { room, roomid } = this.state;
+    const { rooms} = this.state;
+    console.log({ rooms });
     const currentUser = AuthService.getCurrentUser();
     return (
       <div className="submit-form">
@@ -65,16 +73,19 @@ export default class AddRoom extends Component {
               value={room}
               onChange={this.onChangeTitle}
               name="room"
+              roomid="room"
             />
           </div>
-          <Link to={`/chat?name=${currentUser.id}&room=${room}`}>
-            <button
-              onClick={this.saveRoom}
-              className="btn btn-success"
-              type="submit"
-            >
-              CreateRoom
-            </button>
+          <Link
+            to={`/chat?name=${currentUser.id}&room=${room}&roomid=${rooms.id}`}
+          >
+          <button
+            onClick={this.saveRoom}
+            className="btn btn-success"
+            type="submit"
+          >
+            CreateRoom
+          </button>
           </Link>
         </div>
       </div>
