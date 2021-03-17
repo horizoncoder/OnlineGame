@@ -57,31 +57,41 @@ require('./routes/room.routes')(app);
 
 app.use(cors(corsOptions));
 const router = require('./router');
-const {
-  addUser, removeUser, getUser, getUsersInRoom,
+const { addUser, removeUser, getUser, getUsersInRoom, getRoomIdInRoom 
 } = require('./user');
 
 const port = 5000;
-http.listen(port, () => {
-});
+http.listen(port, () => {});
 app.get('/', (req, res) => {
   res.sendFile(`${__dirname}/index.html`);
 });
 io.on('connect', (socket) => {
-  socket.on('join', ({ name, room, roomid}, callback) => {
+  socket.on('join', ({ name, room, roomid }, callback) => {
     const { error, user } = addUser({
-      id: socket.id, name, room, roomid,
+      id: socket.id,
+      name,
+      room,
+      roomid: 100,
     });
-
+    console.log(user);
     if (error) return callback(error);
 
     socket.join(user.room);
 
-    socket.emit('message', { user: 'admin', text: `${user.name}, welcome to room ${user.room} ${user.roomid}.`});
-    socket.broadcast.to(user.room).emit('message', { user: 'admin', text: `${user.name} has joined!` });
+    socket.emit('message', {
+      user: 'admin',
+      text: `${user.name}, welcome to room ${user.room} ${user.roomid}.`,
+    });
+    socket.broadcast
+      .to(user.room)
+      .emit('message', { user: 'admin', text: `${user.name} has joined!` });
 
-    io.to(user.room).emit('roomData', { room: user.room, users: getUsersInRoom(user.room) });
-
+    io.to(user.room).emit('roomData', {
+      room: user.room,
+      roomid: 100,
+      users: getUsersInRoom(user.room),
+    });
+    console.log(user);
     callback();
   });
 
@@ -97,18 +107,28 @@ io.on('connect', (socket) => {
     const user = removeUser(socket.id);
     const Tutorial = db.rooms;
     if (user) {
-      io.to(user.room).emit('message', { user: 'Admin', text: `${user.name} has left.` });
-      io.to(user.room).emit('roomData', { room: user.room, users: getUsersInRoom(user.room) });
+      io.to(user.room).emit('message', {
+        user: 'Admin',
+        text: `${user.name} has left.`,
+      });
+      io.to(user.room).emit('roomData', {
+        room: user.room,
+        users: getUsersInRoom(user.room),
+      });
       console.log(user);
+      Tutorial.update({ status: 'game stoped' }, {
+        where: {
+          room: user.room,
+        },
+      }).then((res) => {
+        console.log(res);
+      });
     }
-    Tutorial.destroy({
-      where: { id: 98 },
-    });
   });
+
+  app.use(bodyParser.json());
+
+  app.use(cors());
+  app.use(express.json());
+  app.use(router);
 });
-
-app.use(bodyParser.json());
-
-app.use(cors());
-app.use(express.json());
-app.use(router);

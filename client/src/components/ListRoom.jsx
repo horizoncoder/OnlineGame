@@ -42,7 +42,7 @@ export default class RoomsList extends Component {
     const currentUser = AuthService.getCurrentUser();
     this.setState({
       currentRoom: room,
-      userid2: currentUser.id,
+      userid2: currentUser.username,
     });
   }
 
@@ -70,7 +70,7 @@ export default class RoomsList extends Component {
     const { currentRoom } = this.state;
     const currentUser = AuthService.getCurrentUser();
     const data = {
-      userid2: currentUser.id,
+      userid2: currentUser.username,
       status: "game started",
     };
     RoomDataService.update(currentRoom.id, data)
@@ -190,7 +190,7 @@ export default class RoomsList extends Component {
                       to={`/chat?name=${userid2}&room=${room.room}&roomid=${room.id}`}
                     >
                       <button
-                        // onClick={() => this.updateTutorial()}
+                        onClick={() => this.updateTutorial()}
                         className="d-inline-flex m-2 bg-success text-light"
                         type="submit"
                       >

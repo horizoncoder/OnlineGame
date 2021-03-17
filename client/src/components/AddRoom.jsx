@@ -13,8 +13,8 @@ export default class AddRoom extends Component {
     this.state = {
       room: "",
       rooms: [],
-      roomid: "",
-      userid1: currentUser.id,
+      roomid: 100,
+      userid1: currentUser.username,
       status: "",
     };
   }
@@ -22,7 +22,6 @@ export default class AddRoom extends Component {
   onChangeTitle(e) {
     this.setState({
       room: e.target.value,
-      roomid: "",
     });
   }
 
@@ -32,14 +31,15 @@ export default class AddRoom extends Component {
 
     const data = {
       room,
-      userid1: currentUser.id,
+      userid1: currentUser.username,
       status: "wait",
+      roomid: 100,
     };
 
     RoomDataService.create(data)
       .then((response) => {
         this.setState({
-          rooms: rooms.push(response.data)
+          rooms: rooms.push(response.data),
         });
         rooms.push(response.data);
       })
@@ -56,9 +56,7 @@ export default class AddRoom extends Component {
   }
 
   render() {
-    const { room, roomid } = this.state;
-    const { rooms} = this.state;
-    console.log({ rooms });
+    const { room, roomid, userid1 } = this.state;
     const currentUser = AuthService.getCurrentUser();
     return (
       <div className="submit-form">
@@ -73,19 +71,16 @@ export default class AddRoom extends Component {
               value={room}
               onChange={this.onChangeTitle}
               name="room"
-              roomid="room"
             />
           </div>
-          <Link
-            to={`/chat?name=${currentUser.id}&room=${room}&roomid=${rooms.id}`}
-          >
-          <button
-            onClick={this.saveRoom}
-            className="btn btn-success"
-            type="submit"
-          >
-            CreateRoom
-          </button>
+          <Link to={`/chat?name=${userid1}&room=${room}&roomid=${roomid}`}>
+            <button
+              onClick={this.saveRoom}
+              className="btn btn-success"
+              type="submit"
+            >
+              CreateRoom
+            </button>
           </Link>
         </div>
       </div>

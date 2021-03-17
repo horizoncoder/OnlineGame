@@ -5,7 +5,7 @@ const addUser = ({ id, name, room, roomid }) => {
   room = room.trim().toLowerCase();
   roomid = room.trim().toLowerCase();
 
-  const existingUser = users.find((user) => user.room === room && user.name === name);
+  const existingUser = users.find((user) => user.room === room && user.name === name && user.roomid === roomid);
 
   if (!name || !room) return { error: 'Username and room are required.' };
   if (existingUser) return { error: 'Username is taken.' };
@@ -13,7 +13,7 @@ const addUser = ({ id, name, room, roomid }) => {
   const user = { id, name, room, roomid };
 
   users.push(user);
-
+  console.log(user);
   return { user };
 };
 
@@ -26,7 +26,8 @@ const removeUser = (id) => {
 const getUser = (id) => users.find((user) => user.id === id);
 
 const getUsersInRoom = (room) => users.filter((user) => user.room === room);
+const getRoomIdInRoom = (room) => users.filter((roomid) => roomid.room === room);
 
 module.exports = {
-  addUser, removeUser, getUser, getUsersInRoom,
+  addUser, removeUser, getUser, getUsersInRoom, getRoomIdInRoom
 };
