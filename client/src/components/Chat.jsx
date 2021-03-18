@@ -1,35 +1,33 @@
-import React, { useState, useEffect } from "react";
-import queryString from "query-string";
-import io from "socket.io-client";
-
-import "./App.css";
-import InfoBar from "./infoBar";
-import InputMessage from "./InputMessage";
-import Messages from "./Messages";
-import TextContainer from "./TextContainer";
+import React, { useState, useEffect } from 'react';
+import queryString from 'query-string';
+import io from 'socket.io-client';
+import PropTypes from 'prop-types';
+import './App.css';
+import InfoBar from './infoBar';
+import InputMessage from './InputMessage';
+import Messages from './Messages';
+import TextContainer from './TextContainer';
+import Game from './Game';
 
 let socket;
 
 const Chat = ({ location }) => {
-  const [name, setName] = useState("");
-  const [room, setRoom] = useState("");
-  const [roomid, setRoomid] = useState("");
-  const [users, setUsers] = useState("");
-  const [message, setMessage] = useState("");
+  const [name, setName] = useState('');
+  const [room, setRoom] = useState('');
+  const [users, setUsers] = useState('');
+  const [message, setMessage] = useState('');
   const [messages, setMessages] = useState([]);
-  const ENDPOINT = "localhost:5000";
+  const ENDPOINT = 'localhost:5000';
 
   useEffect(() => {
-    const { name, room,roomid} = queryString.parse(location.search);
+    const { name, room } = queryString.parse(location.search);
 
     socket = io(ENDPOINT);
 
     setName(name);
     setRoom(room);
-    setRoomid(roomid);
-
-    socket.emit("join", { name, room, roomid }, () => {});
-    socket.on("roomData", ({ users })=>{
+    socket.emit('join', { name, room }, () => {});
+    socket.on('roomData', ({ users }) => {
       setUsers(users);
     });
     return () => {
@@ -37,7 +35,7 @@ const Chat = ({ location }) => {
     };
   }, [ENDPOINT, location.search]);
   useEffect(() => {
-    socket.on("message", (message) => {
+    socket.on('message', (message) => {
       setMessages([...messages, message]);
     });
   }, [messages]);
@@ -45,15 +43,21 @@ const Chat = ({ location }) => {
     e.preventDefault();
 
     if (message) {
-      socket.emit("sendMessage", message, () => setMessage(""));
+      socket.emit('sendMessage', message, () => sendMessage());
     }
+  };
+  const test = (e) => {
+    e.preventDefault();
+
+    socket.emit("users", message, () => alert("dsdds"));
   };
 
   console.log(message, messages);
   return (
     <div className="outContainer">
       <div className="container">
-        <InfoBar room={room} users={users}/>
+        <Game />
+        <InfoBar room={room} users={users} />
         <Messages messages={messages} name={name} />
         <InputMessage
           message={message}
@@ -61,9 +65,16 @@ const Chat = ({ location }) => {
           sendMessage={sendMessage}
         />
       </div>
+      <button className="sendButton" onClick={(e) => test(e)}>
+        test
+      </button>
       <TextContainer users={users} />
     </div>
   );
 };
 
 export default Chat;
+Chat.propTypes = {
+  search: PropTypes.string.isRequired,
+  location: PropTypes.string.isRequired,
+};

@@ -5,6 +5,7 @@ import {
   SWITCH_TURN,
   PUTLINE,
   GET_LINE_COORDS,
+  FETCH_USERS,
 } from "../actions";
 
 const getLineCoords = (x, y, p) => {
@@ -108,6 +109,9 @@ const initialState = {
 
 export default (state = initialState, action) => {
   switch (action.type) {
+    case FETCH_USERS:
+      return [{ ...state, ...action.payload }];
+
     case SET_BOARD_SIZE:
       return { ...state, count: action.size, ...pushCoords(action.size) };
     case SWITCH_TURN:

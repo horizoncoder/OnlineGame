@@ -11,6 +11,7 @@ import {
   checkSquare,
   putLine,
   pushCoords,
+  getAllUsers
 } from "../actions";
 
 class Game extends React.Component {
@@ -134,6 +135,7 @@ class Game extends React.Component {
       turn,
       numBlue,
       numRed,
+      getAllUsers,
     } = this.props;
     const board = `Размер поля ${count} на ${count}`;
     return (
@@ -194,7 +196,7 @@ class Game extends React.Component {
             id="small"
             type="submit"
             onClick={() => {
-              setBoardSizeAction(8);
+              getAllUsers();
             }}
           >
             test
@@ -213,6 +215,7 @@ const mapDispatchToProps = (dispatch) => {
   return {
     setBoardSize: (size) => dispatch(setBoardSize(size)),
     switchTurn: () => dispatch(switchTurn()),
+    getAllUsers: () => dispatch(getAllUsers()),
     pushCoords: () => dispatch(pushCoords()),
     calcSCore: () => dispatch(calcSCore()),
     checkSquare: (y, z) => dispatch(checkSquare(y, z)),

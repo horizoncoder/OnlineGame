@@ -57,7 +57,12 @@ require('./routes/room.routes')(app);
 
 app.use(cors(corsOptions));
 const router = require('./router');
-const { addUser, removeUser, getUser, getUsersInRoom, getRoomIdInRoom 
+const {
+  addUser,
+  removeUser,
+  getUser,
+  getUsersInRoom,
+  getRoomIdInRoom,
 } = require('./user');
 
 const port = 5000;
@@ -65,6 +70,11 @@ http.listen(port, () => {});
 app.get('/', (req, res) => {
   res.sendFile(`${__dirname}/index.html`);
 });
+app.get('/users', (req, res) => {
+  const users = [{ id: 1, firstName: 'john', lastName: 'Doe' }];
+  res.json(users);
+});
+
 io.on('connect', (socket) => {
   socket.on('join', ({ name, room, roomid }, callback) => {
     const { error, user } = addUser({
@@ -95,13 +105,26 @@ io.on('connect', (socket) => {
     callback();
   });
 
-  socket.on('sendMessage', (message, callback) => {
-    const user = getUser(socket.id);
+  socket.on(
+    'sendMessage',
+    (message, callback) => {
+      const user = getUser(socket.id);
 
-    io.to(user.room).emit('message', { user: user.name, text: message });
+      io.to(user.room).emit('message', { user: user.name, text: message });
 
-    callback();
-  });
+      callback();
+    },
+  );
+  socket.on(
+    'users',
+    (message, callback) => {
+      const user = getUser(socket.id);
+
+      io.to(user.room).emit('message', { user: user.name, text: message });
+
+      callback();
+    },
+  );
 
   socket.on('disconnect', () => {
     const user = removeUser(socket.id);
@@ -116,11 +139,14 @@ io.on('connect', (socket) => {
         users: getUsersInRoom(user.room),
       });
       console.log(user);
-      Tutorial.update({ status: 'game stoped' }, {
-        where: {
-          room: user.room,
-        },
-      }).then((res) => {
+      Tutorial.update(
+        { status: 'game stoped' },
+        {
+          where: {
+            room: user.room,
+          },
+        }
+      ).then((res) => {
         console.log(res);
       });
     }
