@@ -1,8 +1,8 @@
-import http from './http-common';
+import http from "./http-common";
 
 class TutorialDataService {
   getAll() {
-    return http.get('/rooms');
+    return http.get("/rooms");
   }
 
   get(id) {
@@ -10,7 +10,7 @@ class TutorialDataService {
   }
 
   create(data) {
-    return http.post('/rooms', data);
+    return http.post("/rooms", data);
   }
 
   update(id, data) {

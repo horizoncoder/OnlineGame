@@ -1,6 +1,5 @@
-import React from 'react';
-
-
+import React from "react";
+import PropTypes from "prop-types";
 import "./App.css";
 
 const Message = ({ message: { text, user }, name }) => {
@@ -29,3 +28,7 @@ const Message = ({ message: { text, user }, name }) => {
 };
 
 export default Message;
+Message.propTypes = {
+  message: PropTypes.string.isRequired,
+  name: PropTypes.string.isRequired,
+};

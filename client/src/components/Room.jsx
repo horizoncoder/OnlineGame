@@ -31,7 +31,7 @@ export default function () {
       socket.off("roomData", handler);
       socket.disconnect();
     };
-  }, [id]);
+  }, [id, roomId, username]);
   useEffect(() => {
     const handler = (data) => {
       console.log(data);
@@ -58,14 +58,14 @@ export default function () {
       <div>
         <h1>Users</h1>
         <div>
-          {users.map((user, index) => (
+          {users.map((user) => (
             <div>{user}</div>
           ))}
         </div>
       </div>
       <div>
         <div style={{ height: "500px", overflowY: "auto" }}>
-          {messages.map((message, index) => (
+          {messages.map((message) => (
             <div>
               {message.username}
               say:

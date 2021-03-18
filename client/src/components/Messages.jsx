@@ -1,6 +1,6 @@
-import React from 'react';
-
-import ScrollToBottom from 'react-scroll-to-bottom';
+import React from "react";
+import PropTypes from "prop-types";
+import ScrollToBottom from "react-scroll-to-bottom";
 
 import Message from "./Message";
 import "./App.css";
@@ -16,3 +16,7 @@ const Messages = ({ messages, name }) => (
 );
 
 export default Messages;
+Messages.propTypes = {
+  messages: PropTypes.string.isRequired,
+  name: PropTypes.string.isRequired,
+};

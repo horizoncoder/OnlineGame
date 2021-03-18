@@ -27,7 +27,7 @@ export default class AddRoom extends Component {
 
   saveRoom() {
     const currentUser = AuthService.getCurrentUser();
-    const { room, rooms, roomid } = this.state;
+    const { room, rooms } = this.state;
 
     const data = {
       room,
@@ -57,12 +57,11 @@ export default class AddRoom extends Component {
 
   render() {
     const { room, roomid, userid1 } = this.state;
-    const currentUser = AuthService.getCurrentUser();
     return (
       <div className="submit-form">
         <div>
           <div className="form-group">
-            <label htmlFor="room">RoomName</label>
+            <h2>RoomName</h2>
             <input
               type="text"
               className="form-control"

@@ -4,7 +4,6 @@ import Form from "react-validation/build/form";
 import Input from "react-validation/build/input";
 import CheckButton from "react-validation/build/button";
 import { isEmail } from "validator";
-import PropTypes from "prop-types";
 import AuthService from "../services/auth.service";
 
 const required = (value) => {
@@ -27,6 +26,7 @@ const email = (value) => {
   }
 };
 
+// eslint-disable-next-line consistent-return
 const vusername = (value) => {
   if (value.length < 3 || value.length > 20) {
     return (
@@ -134,7 +134,7 @@ export default class Register extends Component {
             {!successful && (
               <div>
                 <div className="form-group">
-                  <label htmlFor="username">Username</label>
+                  <h1>Username</h1>
                   <Input
                     type="text"
                     className="form-control"
@@ -146,7 +146,7 @@ export default class Register extends Component {
                 </div>
 
                 <div className="form-group">
-                  <label htmlFor="email">Email</label>
+                  <h1>Email</h1>
                   <Input
                     type="text"
                     className="form-control"
@@ -158,7 +158,7 @@ export default class Register extends Component {
                 </div>
 
                 <div className="form-group">
-                  <label htmlFor="password">Password</label>
+                  <h1>Password</h1>
                   <Input
                     type="password"
                     className="form-control"

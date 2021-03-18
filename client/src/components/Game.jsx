@@ -11,7 +11,7 @@ import {
   checkSquare,
   putLine,
   pushCoords,
-  getAllUsers
+  getAllUsers,
 } from "../actions";
 
 class Game extends React.Component {

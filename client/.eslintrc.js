@@ -21,6 +21,12 @@ module.exports = {
   },
   plugins: ["react"],
   rules: {
+    "no-underscore-dangle": "off",
+    "consistent-return": "off",
+    "no-shadow": "off",
+    "react/no-unused-state": "off",
+    "class-methods-use-this": "off",
+    "next-line react/no-unused-state": "off",
     "prettier/prettier": "error",
     "arrow-body-style": "off",
     "prefer-arrow-callback": "off",

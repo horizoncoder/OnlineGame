@@ -2,8 +2,7 @@ import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import RoomDataService from "../services/room.service";
 import AuthService from "../services/auth.service";
-import InfoBar from "./infoBar";
-import AddRoom from "./AddRoom"
+import AddRoom from "./AddRoom";
 
 export default class RoomsList extends Component {
   constructor(props) {
@@ -48,7 +47,7 @@ export default class RoomsList extends Component {
 
   saveRoom() {
     const currentUser = AuthService.getCurrentUser();
-    const { room, userid1, userid2 } = this.state;
+    const { userid2 } = this.state;
 
     const data = {
       userid2: currentUser.id,
@@ -147,9 +146,7 @@ export default class RoomsList extends Component {
   }
 
   render() {
-    const { searchRoom, rooms, userid2, currentRoom, status } = this.state;
-    // alert(rooms.id);
-    const currentUser = AuthService.getCurrentUser();
+    const { searchRoom, rooms, userid2 } = this.state;
     return (
       <>
         <AddRoom roomsid={rooms.id} />
