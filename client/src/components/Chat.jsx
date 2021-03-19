@@ -25,6 +25,8 @@ const Chat = ({ location }) => {
 
     socket = io(ENDPOINT);
 
+    socket.on("message8", (params) => console.log("mess8", params));
+
     setName(name);
     setRoom(room);
     socket.emit("join", { name, room }, () => {});
@@ -44,15 +46,13 @@ const Chat = ({ location }) => {
     e.preventDefault();
 
     if (message) {
-      socket.emit("sendMessage", message, () => sendMessage());
+      socket.emit("sendMessage", message, () => setMessage(""));
     }
   };
   const test = (e) => {
     e.preventDefault();
-
-    socket.emit("sendMessage", message, () => alert("dsdds"));
+    socket.emit("users", message);
   };
-
   console.log(message, messages);
   return (
     <div className="outContainer">

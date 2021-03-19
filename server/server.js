@@ -70,8 +70,14 @@ http.listen(port, () => {});
 app.get('/', (req, res) => {
   res.sendFile(`${__dirname}/index.html`);
 });
+
+let socketInstance;
+
 app.get('/users', (req, res) => {
   const users = [{ id: 1, firstName: 'john', lastName: 'Doe' }];
+  if (socketInstance) {
+    socketInstance.emit('message8', users);
+  }
   res.json(users);
 });
 
@@ -90,17 +96,18 @@ io.on('connect', (socket) => {
 
     socket.emit('message', {
       user: 'admin',
-      text: `${user.name}, welcome to room ${user.room} ${user.roomid}.`,
+      text: `${user.name}, welcome to room ${user.room}.`,
     });
     socket.broadcast
       .to(user.room)
       .emit('message', { user: 'admin', text: `${user.name} has joined!` });
-
     io.to(user.room).emit('roomData', {
       room: user.room,
       roomid: 100,
       users: getUsersInRoom(user.room),
     });
+    // socket.roomdata(socketInstance);
+    //
     console.log(user);
     callback();
   });
@@ -108,8 +115,9 @@ io.on('connect', (socket) => {
   socket.on(
     'sendMessage',
     (message, callback) => {
+      socketInstance = socket;
       const user = getUser(socket.id);
-
+      socketInstance = socket;
       io.to(user.room).emit('message', { user: user.name, text: message });
 
       callback();
@@ -117,12 +125,13 @@ io.on('connect', (socket) => {
   );
   socket.on(
     'users',
-    (message, callback) => {
+    () => {
+      socketInstance = socket;
       const user = getUser(socket.id);
+      const users = [{ id: 1, firstName: 'john', lastName: 'Doe' }];
+      io.to(user.room).emit('message8', users);
 
-      io.to(user.room).emit('message', { user: user.name, text: message });
-
-      callback();
+      //callback();
     },
   );
 
@@ -145,7 +154,7 @@ io.on('connect', (socket) => {
           where: {
             room: user.room,
           },
-        }
+        },
       ).then((res) => {
         console.log(res);
       });

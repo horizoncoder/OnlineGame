@@ -34,7 +34,5 @@ export const getAllUsers = () => {
       payload: users,
     });
     console.log(users);
-    console.log(typeof users);
-    alert(users.firstName);
   };
 };

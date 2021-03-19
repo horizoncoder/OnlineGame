@@ -12,11 +12,12 @@ export default function () {
   const [roomId, setRoomId] = useState(null);
   useEffect(() => {
     socket = io("http://localhost:5000");
-
+    socket.on("message8", (params) => console.log("mess8", params));
     socket.emit("join-room", {
       roomId: id,
       username,
     });
+    socket.emit("message8", (params) => console.log("mess8", params));
     console.log(username);
     const handler = (data) => {
       setUsers(data.users);

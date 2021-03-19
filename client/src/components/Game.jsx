@@ -3,6 +3,7 @@ import "./App.css";
 import { connect } from "react-redux";
 import PropTypes, { string } from "prop-types";
 import { drop, map, clone } from "lodash";
+import io from "socket.io-client";
 import Stats from "./Stats";
 import {
   setBoardSize,
@@ -17,8 +18,19 @@ import {
 class Game extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = {
+      message:""
+    };
   }
+
+  test = (e) => {
+    let socket;
+    const ENDPOINT = "localhost:5000";
+    socket = io(ENDPOINT);
+    socket.on("message8", (params) => console.log("mess8", params));
+    e.preventDefault();
+    socket.emit("users", this.state.message);
+  };
 
   makeBoard = () => {
     const {
