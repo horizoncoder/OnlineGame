@@ -23,15 +23,6 @@ class Game extends React.Component {
     };
   }
 
-  test = (e) => {
-    let socket;
-    const ENDPOINT = "localhost:5000";
-    socket = io(ENDPOINT);
-    socket.on("message8", (params) => console.log("mess8", params));
-    e.preventDefault();
-    socket.emit("users", this.state.message);
-  };
-
   makeBoard = () => {
     const {
       count,
@@ -141,6 +132,9 @@ class Game extends React.Component {
   };
 
   render() {
+    const test = () => {
+      alert("ddd")
+    }
     const {
       setBoardSize: setBoardSizeAction,
       count,

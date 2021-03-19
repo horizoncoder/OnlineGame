@@ -73,15 +73,17 @@ app.get('/', (req, res) => {
 
 let socketInstance;
 
-app.get('/users', (req, res) => {
-  const users = [{ id: 1, firstName: 'john', lastName: 'Doe' }];
-  if (socketInstance) {
-    socketInstance.emit('message8', users);
-  }
-  res.json(users);
-});
-
 io.on('connect', (socket) => {
+  app.get('/users', (req, res) => {
+    const users = [{ id: 1, firstName: 'john', lastName: 'Doe' }];
+    if (socketInstance) {
+      socketInstance = socket;
+      const user = getUser(socket.id);
+      io.emit('action', { type: 'users8', users });
+    }
+    res.json(users);
+  });
+
   socket.on('join', ({ name, room, roomid }, callback) => {
     const { error, user } = addUser({
       id: socket.id,
@@ -129,9 +131,7 @@ io.on('connect', (socket) => {
       socketInstance = socket;
       const user = getUser(socket.id);
       const users = [{ id: 1, firstName: 'john', lastName: 'Doe' }];
-      io.to(user.room).emit('message8', users);
-
-      //callback();
+      io.to(user.room).emit('action', { type: 'users8', users });
     },
   );
 

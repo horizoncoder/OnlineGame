@@ -1,4 +1,5 @@
 import { map, clone } from "lodash";
+import io from "socket.io-client";
 import {
   CALC_SCORE,
   SET_BOARD_SIZE,
@@ -7,6 +8,8 @@ import {
   GET_LINE_COORDS,
   FETCH_USERS,
 } from "../actions";
+
+const socket = io("http://localhost:3000");
 
 const getLineCoords = (x, y, p) => {
   // получаем координаты линии
@@ -109,8 +112,12 @@ const initialState = {
 
 export default (state = initialState, action) => {
   switch (action.type) {
+    case "user8":
+      console.log({ action });
+      return { ...state };
+
     case FETCH_USERS:
-      return [{ ...state, ...action.payload }];
+      return { ...state, ...action.payload };
 
     case SET_BOARD_SIZE:
       return { ...state, count: action.size, ...pushCoords(action.size) };
