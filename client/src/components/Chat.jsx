@@ -51,8 +51,9 @@ const Chat = ({ location }) => {
   };
   const test = (e) => {
     e.preventDefault();
-    socket.emit("users", message);
+    socket.emit("users");
   };
+
   console.log(message, messages);
   return (
     <div className="outContainer">

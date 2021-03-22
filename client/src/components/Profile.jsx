@@ -40,16 +40,6 @@ export default class Profile extends Component {
                   Profile
                 </h3>
               </header>
-              <p>
-                <strong>Id:</strong>
-
-                {currentUser.id}
-              </p>
-              <p>
-                <strong>Email:</strong>
-
-                {currentUser.email}
-              </p>
               <strong>Authorities:</strong>
               <ul>
                 {currentUser.roles &&

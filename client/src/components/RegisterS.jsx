@@ -142,6 +142,8 @@ export default class Register extends Component {
                     value={username}
                     onChange={this.onChangeUsername}
                     validations={[required, vusername]}
+                    title="Разрешено использовать только латинские буквы"
+                    pattern="[a-zA-Z\s]+$"
                   />
                 </div>
 
@@ -154,6 +156,8 @@ export default class Register extends Component {
                     value={this.state.email}
                     onChange={this.onChangeEmail}
                     validations={[required, email]}
+                    title="Разрешено использовать только латинские буквы"
+                    pattern="[a-zA-Z\s]+$"
                   />
                 </div>
 
@@ -166,6 +170,8 @@ export default class Register extends Component {
                     value={password}
                     onChange={this.onChangePassword}
                     validations={[required, vpassword]}
+                    title="Разрешено использовать только латинские буквы"
+                    pattern="[a-zA-Z\s]+$"
                   />
                 </div>
 

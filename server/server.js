@@ -64,7 +64,8 @@ const {
   getUsersInRoom,
   getRoomIdInRoom,
 } = require('./user');
-
+const { test, shouldSetLine, getLineCoords } = require('./game');
+const { basename } = require('path');
 const port = 5000;
 http.listen(port, () => {});
 app.get('/', (req, res) => {
@@ -76,12 +77,11 @@ let socketInstance;
 io.on('connect', (socket) => {
   app.get('/users', (req, res) => {
     const users = [{ id: 1, firstName: 'john', lastName: 'Doe' }];
+    //res.json(users);
+    // получаем координаты линии
     if (socketInstance) {
       socketInstance = socket;
-      const user = getUser(socket.id);
-      io.emit('action', { type: 'users8', users });
     }
-    res.json(users);
   });
 
   socket.on('join', ({ name, room, roomid }, callback) => {
@@ -114,26 +114,90 @@ io.on('connect', (socket) => {
     callback();
   });
 
-  socket.on(
-    'sendMessage',
-    (message, callback) => {
-      socketInstance = socket;
-      const user = getUser(socket.id);
-      socketInstance = socket;
-      io.to(user.room).emit('message', { user: user.name, text: message });
+  socket.on('sendMessage', (message, callback) => {
+    socketInstance = socket;
+    const user = getUser(socket.id);
+    socketInstance = socket;
+    io.to(user.room).emit('message', { user: user.name, text: message });
 
-      callback();
-    },
-  );
-  socket.on(
-    'users',
-    () => {
-      socketInstance = socket;
-      const user = getUser(socket.id);
-      const users = [{ id: 1, firstName: 'john', lastName: 'Doe' }];
-      io.to(user.room).emit('action', { type: 'users8', users });
-    },
-  );
+    callback();
+  });
+  // socket.on(
+  //   'users',
+  //   () => {
+  //   },
+  // );
+
+  // socket.on(
+  //   'users',
+  //   () => {
+  //     socketInstance = socket;
+  //     const user = getUser(socket.id);
+  //     const users = [{ id: 1, firstName: 'john', lastName: 'Doe' }];
+  //     io.to(user.room).emit('action', { type: 'users8', users });
+  //   },
+  // );
+  socket.on('users', () => {
+    const getLineCoords = (x, y, p) => {
+      // получаем координаты линии
+      if (p === 0 && x > 0) {
+        return [`${x - 1}${y}${2}`, `${x}${y}${p}`];
+      }
+      if (p === 1 && y > 0) {
+        return [`${x}${y - 1}${3}`, `${x}${y}${p}`];
+      }
+      return [`${x}${y}${p}`];
+    };
+
+    const shouldSetLine = (count, x, y, p) => {
+      if (p === 2 && x + 1 < count) return false;
+      if (p === 3 && y + 1 < count) return false;
+      return true;
+    };
+    socketInstance = socket;
+    const count = 2;
+    const boxesCoords = [];
+    const coordsV = [];
+    const coordsH = [];
+    for (let y = 0; y < count; y += 1) {
+      for (let x = 0; x < count; x += 1) {
+        boxesCoords.push(`${x}${y}`);
+        for (let p = 0; p < 4; p += 1) {
+          if (shouldSetLine(count, x, y, p)) {
+            (p % 2 === 0 ? coordsV : coordsH).push(getLineCoords(x, y, p));
+          }
+        }
+      }
+    }
+    const dd = ['dd', 'dd'];
+    io.emit('action', {
+      type: 'users8', boxesCoords, coordsH, coordsV,
+    });
+    let BoxsCoord = []; // сортировка координат
+    BoxsCoord = [...boxesCoords];
+    const sortedCoordsH = [];
+    for (let i = 0; i < count; i += 1) {
+      for (let j = i * count; j < i * count + count * 20; j += 1) {
+        const s = j > count ? j - count : j;
+        const lineP = j > count ? 3 : 1;
+        const boxC = boxesCoords[s];
+        const lineIdx = coordsH.findIndex((c) =>
+          c.find((item) => item === `${boxC}${lineP}`),
+        );
+        sortedCoordsH.push(coordsH[lineIdx]);
+      }
+      return {
+        BoxsCoord,
+        coordsV,
+        coordsH: sortedCoordsH,
+      };
+    }
+    const user = getUser(socket.id);
+    const users = [{ id: 1, firstName: 'john', lastName: 'Doe' }];
+    io.to(user.room).emit('message8', users);
+
+    // callback();
+  });
 
   socket.on('disconnect', () => {
     const user = removeUser(socket.id);
@@ -154,7 +218,7 @@ io.on('connect', (socket) => {
           where: {
             room: user.room,
           },
-        },
+        }
       ).then((res) => {
         console.log(res);
       });

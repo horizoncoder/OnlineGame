@@ -1,10 +1,10 @@
-import React from "react";
-import "./App.css";
-import { connect } from "react-redux";
-import PropTypes, { string } from "prop-types";
-import { drop, map, clone } from "lodash";
-import io from "socket.io-client";
-import Stats from "./Stats";
+import React from 'react';
+import './App.css';
+import { connect } from 'react-redux';
+import PropTypes, { string } from 'prop-types';
+import { drop, map, clone } from 'lodash';
+import io from 'socket.io-client';
+import Stats from './Stats';
 import {
   setBoardSize,
   calcSCore,
@@ -13,13 +13,13 @@ import {
   putLine,
   pushCoords,
   getAllUsers,
-} from "../actions";
+} from '../actions';
 
 class Game extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      message:""
+      message: '',
     };
   }
 
@@ -45,7 +45,7 @@ class Game extends React.Component {
         lines.push(
           <div
             className={`lineH line${
-              lineCoordinates[coord[0]] || "black"
+              lineCoordinates[coord[0]] || 'black'
             } turn${turn}`}
             onClick={() => {
               putLineAction(coord);
@@ -68,7 +68,7 @@ class Game extends React.Component {
         llinesVertical.push(
           <div
             className={`lineV line${
-              lineCoordinates[coord[0]] || "black"
+              lineCoordinates[coord[0]] || 'black'
             } turn${turn}`}
             onClick={() => {
               putLineAction(coord);
@@ -81,8 +81,8 @@ class Game extends React.Component {
         if (i < count) {
           llinesVertical.push(
             <div
-              className={"box1 ".concat(
-                boxColors[`${box}`] ? boxColors[`${box}`] : "black"
+              className={'box1 '.concat(
+                boxColors[`${box}`] ? boxColors[`${box}`] : 'black'
               )}
               coords={box}
             />
@@ -95,7 +95,7 @@ class Game extends React.Component {
       llinesVertical.push(
         <div
           className={`lineV line${
-            lineCoordinates[coord[0]] || "black"
+            lineCoordinates[coord[0]] || 'black'
           } turn${turn}`}
           onClick={() => {
             putLineAction(coord);
@@ -133,8 +133,10 @@ class Game extends React.Component {
 
   render() {
     const test = () => {
-      alert("ddd")
-    }
+      const ENDPOINT = "localhost:5000";
+      const socket = io(ENDPOINT);
+      socket.emit("users");
+    };
     const {
       setBoardSize: setBoardSizeAction,
       count,
@@ -202,7 +204,7 @@ class Game extends React.Component {
             id="small"
             type="submit"
             onClick={() => {
-              getAllUsers();
+              test();
             }}
           >
             test

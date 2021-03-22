@@ -112,7 +112,7 @@ const initialState = {
 
 export default (state = initialState, action) => {
   switch (action.type) {
-    case "user8":
+    case "users8":
       console.log({ action });
       return { ...state };
 
