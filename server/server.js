@@ -75,13 +75,14 @@ app.get('/', (req, res) => {
 let socketInstance;
 
 io.on('connect', (socket) => {
-  app.get('/users', (req, res) => {
-    const users = [{ id: 1, firstName: 'john', lastName: 'Doe' }];
+  app.get('/items', (req, res) => {
+    const items = { id: 1, firstName: 'john', lastName: 'Doe' };
     //res.json(users);
     // получаем координаты линии
     if (socketInstance) {
       socketInstance = socket;
     }
+    res.json(items);
   });
 
   socket.on('join', ({ name, room, roomid }, callback) => {
@@ -171,7 +172,7 @@ io.on('connect', (socket) => {
     }
     const dd = ['dd', 'dd'];
     io.emit('action', {
-      type: 'users8', boxesCoords, coordsH, coordsV,
+      type: 'users8', boxesCoords, coordsH, coordsV, count,
     });
     let BoxsCoord = []; // сортировка координат
     BoxsCoord = [...boxesCoords];

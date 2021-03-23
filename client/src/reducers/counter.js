@@ -110,11 +110,18 @@ const initialState = {
   coordsH: {},
 };
 
-export default (state = initialState, action) => {
+export default (state = initialState, action, BoxsCoord) => {
   switch (action.type) {
     case "users8":
       console.log({ action });
-      return { ...state };
+      //action: action.push(BoxsCoord)
+      return {
+        ...state,
+        BoxsCoord: action.boxesCoords,
+        coordsH: action.coordsH,
+        coordsV: action.coordsV,
+        count: action.count,
+      };
 
     case FETCH_USERS:
       return { ...state, ...action.payload };
