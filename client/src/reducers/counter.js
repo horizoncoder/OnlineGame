@@ -110,23 +110,20 @@ const initialState = {
   coordsH: {},
 };
 
-export default (state = initialState, action, BoxsCoord) => {
+export default (state = initialState, action) => {
   switch (action.type) {
     case "users8":
       console.log({ action });
-      //action: action.push(BoxsCoord)
       return {
         ...state,
-        BoxsCoord: action.boxesCoords,
-        coordsH: action.coordsH,
+        BoxsCoord: action.BoxsCoord,
+        coordsH: action.sortedCoordsH,
         coordsV: action.coordsV,
         count: action.count,
       };
-
-    case FETCH_USERS:
-      return { ...state, ...action.payload };
-
-    case SET_BOARD_SIZE:
+    case "switchturn":
+      return { ...state, turn: state.turn === "red" ? "blue" : "red" };
+    case "setboard":
       return { ...state, count: action.size, ...pushCoords(action.size) };
     case SWITCH_TURN:
       return { ...state, turn: state.turn === "red" ? "blue" : "red" };
@@ -152,6 +149,34 @@ export default (state = initialState, action, BoxsCoord) => {
           ...checkBoxes(newLineState),
         },
       };
+
+      return {
+        ...state,
+        ...newLineState,
+        ...newBoxState,
+        ...calcScore(newBoxState),
+        ...EndGame(newBoxState),
+      };
+    }
+    case "putline": {
+      const newCoords = action.coord.reduce((acc, coord) => {
+        if (!state.lineCoordinates[coord]) {
+          acc[coord] = state.turn;
+        }
+        return acc;
+      }, {});
+      const newLineState = {
+        ...state,
+        lineCoordinates: { ...state.lineCoordinates, ...newCoords },
+      };
+      const newBoxState = {
+        ...newLineState,
+        boxColors: {
+          ...newLineState.boxColors,
+          ...checkBoxes(newLineState),
+        },
+      };
+
       return {
         ...state,
         ...newLineState,

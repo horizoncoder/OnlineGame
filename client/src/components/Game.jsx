@@ -24,14 +24,15 @@ class Game extends React.Component {
   }
 
   makeBoard = () => {
-    const {
-      count,
-      turn,
-      lineCoordinates,
-      putLine: putLineAction,
-      switchTurn: switchTurnAction,
-      boxColors,
-    } = this.props;
+    const swithtest = () => {
+      const socket = io("localhost:5000");
+      socket.emit("switch");
+    };
+    const putline = (coord) => {
+      const socket = io("localhost:5000");
+      socket.emit("put", coord);
+    };
+    const { count, turn, lineCoordinates, boxColors } = this.props;
     const { BoxsCoord, coordsV, coordsH } = this.props;
     const llines = [];
     let cCoordsH = map(coordsH, clone);
@@ -48,8 +49,8 @@ class Game extends React.Component {
               lineCoordinates[coord[0]] || "black"
             } turn${turn}`}
             onClick={() => {
-              putLineAction(coord);
-              switchTurnAction();
+              putline(coord);
+              swithtest();
             }}
             role="presentation"
             coords={coord}
@@ -71,8 +72,8 @@ class Game extends React.Component {
               lineCoordinates[coord[0]] || "black"
             } turn${turn}`}
             onClick={() => {
-              putLineAction(coord);
-              switchTurnAction();
+              putline(coord);
+              swithtest();
             }}
             role="presentation"
             coords={coord}
@@ -98,8 +99,8 @@ class Game extends React.Component {
             lineCoordinates[coord[0]] || "black"
           } turn${turn}`}
           onClick={() => {
-            putLineAction(coord);
-            switchTurnAction();
+            putline(coord);
+            swithtest();
           }}
           role="presentation"
           coords={coord}
@@ -133,18 +134,18 @@ class Game extends React.Component {
 
   render() {
     const test = () => {
-      const ENDPOINT = "localhost:5000";
-      const socket = io(ENDPOINT);
+      const socket = io("localhost:5000");
       socket.emit("users");
     };
-    const {
-      setBoardSize: setBoardSizeAction,
-      count,
-      turn,
-      numBlue,
-      numRed,
-      getAllUsers,
-    } = this.props;
+    const setboard = (size) => {
+      const socket = io("localhost:5000");
+      socket.emit("board", size);
+    };
+    const swithtest = () => {
+      const socket = io("localhost:5000");
+      socket.emit("switch");
+    };
+    const { count, turn, numBlue, numRed } = this.props;
     const board = `Размер поля ${count} на ${count}`;
     return (
       <div id="game">
@@ -169,7 +170,7 @@ class Game extends React.Component {
           <button
             type="submit"
             onClick={() => {
-              setBoardSizeAction(2);
+              setboard(2);
             }}
           >
             2x2
@@ -177,7 +178,7 @@ class Game extends React.Component {
           <button
             type="submit"
             onClick={() => {
-              setBoardSizeAction(4);
+              setboard(4);
             }}
           >
             4x4
@@ -186,7 +187,7 @@ class Game extends React.Component {
             id="small"
             type="submit"
             onClick={() => {
-              setBoardSizeAction(6);
+              setboard(6);
             }}
           >
             6x6
@@ -195,7 +196,7 @@ class Game extends React.Component {
             id="small"
             type="submit"
             onClick={() => {
-              setBoardSizeAction(8);
+              setboard(8);
             }}
           >
             8x8
@@ -208,6 +209,15 @@ class Game extends React.Component {
             }}
           >
             test
+          </button>
+          <button
+            id="small"
+            type="submit"
+            onClick={() => {
+              swithtest();
+            }}
+          >
+            testswitch
           </button>
           <br />
           {board}

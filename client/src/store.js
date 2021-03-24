@@ -6,7 +6,10 @@ import thunk from "redux-thunk";
 import reducers from "./reducers";
 
 const socket = io("http://localhost:5000");
-socket.on("action", (data) => console.log({ data }));
+socket.on("action", (data) => {
+  console.log({ data });
+});
+
 let socketIoMiddleware = createSocketIoMiddleware(socket, "server/");
 
 const logger = createLogger({

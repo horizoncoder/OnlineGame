@@ -77,8 +77,6 @@ let socketInstance;
 io.on('connect', (socket) => {
   app.get('/items', (req, res) => {
     const items = { id: 1, firstName: 'john', lastName: 'Doe' };
-    //res.json(users);
-    // получаем координаты линии
     if (socketInstance) {
       socketInstance = socket;
     }
@@ -119,26 +117,13 @@ io.on('connect', (socket) => {
     socketInstance = socket;
     const user = getUser(socket.id);
     socketInstance = socket;
-    io.to(user.room).emit('message', { user: user.name, text: message });
-
+    // console.log(user.room);
+    io.in(user.room).emit('message', { user: user.name, text: message });
     callback();
   });
-  // socket.on(
-  //   'users',
-  //   () => {
-  //   },
-  // );
 
-  // socket.on(
-  //   'users',
-  //   () => {
-  //     socketInstance = socket;
-  //     const user = getUser(socket.id);
-  //     const users = [{ id: 1, firstName: 'john', lastName: 'Doe' }];
-  //     io.to(user.room).emit('action', { type: 'users8', users });
-  //   },
-  // );
-  socket.on('users', () => {
+  socket.on('users', (callback) => {
+    const user = getUser(socket.id);
     const getLineCoords = (x, y, p) => {
       // получаем координаты линии
       if (p === 0 && x > 0) {
@@ -170,10 +155,6 @@ io.on('connect', (socket) => {
         }
       }
     }
-    const dd = ['dd', 'dd'];
-    io.emit('action', {
-      type: 'users8', boxesCoords, coordsH, coordsV, count,
-    });
     let BoxsCoord = []; // сортировка координат
     BoxsCoord = [...boxesCoords];
     const sortedCoordsH = [];
@@ -182,22 +163,34 @@ io.on('connect', (socket) => {
         const s = j > count ? j - count : j;
         const lineP = j > count ? 3 : 1;
         const boxC = boxesCoords[s];
-        const lineIdx = coordsH.findIndex((c) =>
-          c.find((item) => item === `${boxC}${lineP}`),
-        );
+        const lineIdx = coordsH.findIndex((c) => c.find((item) => item === `${boxC}${lineP}`));
         sortedCoordsH.push(coordsH[lineIdx]);
       }
-      return {
-        BoxsCoord,
-        coordsV,
-        coordsH: sortedCoordsH,
-      };
+      io.emit('action', {
+        type: 'users8', BoxsCoord, sortedCoordsH, coordsV, count,
+      });
     }
-    const user = getUser(socket.id);
-    const users = [{ id: 1, firstName: 'john', lastName: 'Doe' }];
-    io.to(user.room).emit('message8', users);
 
     // callback();
+  });
+  socket.on('board', (size) => {
+    io.emit('action', {
+      type: 'setboard',
+      size,
+    });
+  });
+
+  socket.on('switch', () => {
+    io.emit('action', {
+      type: 'switchturn',
+    });
+  });
+
+  socket.on('put', (coord) => {
+    io.emit('action', {
+      type: 'putline',
+      coord,
+    });
   });
 
   socket.on('disconnect', () => {
@@ -219,7 +212,7 @@ io.on('connect', (socket) => {
           where: {
             room: user.room,
           },
-        }
+        },
       ).then((res) => {
         console.log(res);
       });
