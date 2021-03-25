@@ -1,15 +1,8 @@
-import { map, clone } from "lodash";
-import io from "socket.io-client";
-import {
-  CALC_SCORE,
-  SET_BOARD_SIZE,
-  SWITCH_TURN,
-  PUTLINE,
-  GET_LINE_COORDS,
-  FETCH_USERS,
-} from "../actions";
+import { map, clone } from 'lodash';
+import io from 'socket.io-client';
+import { CALC_SCORE, SWITCH_TURN, PUTLINE, GET_LINE_COORDS } from '../actions';
 
-const socket = io("http://localhost:3000");
+const socket = io('http://localhost:3000');
 
 const getLineCoords = (x, y, p) => {
   // получаем координаты линии
@@ -64,15 +57,15 @@ const pushCoords = (count) => {
 const calcScore = (state) => ({
   Color: state.turn ? state.numRed : state.numBlue,
   // подсчет очков
-  numRed: Object.values(state.boxColors).filter((color) => color === "red")
+  numRed: Object.values(state.boxColors).filter((color) => color === 'red')
     .length, // считаем очки
-  numBlue: Object.values(state.boxColors).filter((color) => color === "blue")
+  numBlue: Object.values(state.boxColors).filter((color) => color === 'blue')
     .length,
 });
 
 const EndGame = (state) => {
   if (Object.keys(state.boxColors).length === state.count ** 2) {
-    alert("Игра завершина");
+    alert('Игра завершина');
     document.location.reload();
   }
 };
@@ -80,7 +73,7 @@ const checkBoxes = (state) => {
   const { lineCoordinates, boxColors } = state;
   const filledBoxes = {};
   Object.keys(lineCoordinates).forEach((coord) => {
-    const splitCoord = coord.split("");
+    const splitCoord = coord.split('');
     const x = splitCoord[0]; // x кордината
     const y = splitCoord[1]; // y кордината
     const boxCount = filledBoxes[`${x}${y}`];
@@ -98,8 +91,8 @@ const checkBoxes = (state) => {
 
 const initialState = {
   count: 0,
-  boxClass: " box1 ",
-  turn: "red",
+  boxClass: ' box1 ',
+  turn: 'red',
   numBlue: 0,
   numRed: 0,
   errorMessage: null,
@@ -112,7 +105,7 @@ const initialState = {
 
 export default (state = initialState, action) => {
   switch (action.type) {
-    case "users8":
+    case 'users8':
       console.log({ action });
       return {
         ...state,
@@ -121,12 +114,17 @@ export default (state = initialState, action) => {
         coordsV: action.coordsV,
         count: action.count,
       };
-    case "switchturn":
-      return { ...state, turn: state.turn === "red" ? "blue" : "red" };
-    case "setboard":
+    case "message":
+      console.log({ action });
+      return {
+        ...state,
+      };
+    case 'switchturn':
+      return { ...state, turn: state.turn === 'red' ? 'blue' : 'red' };
+    case 'setboard':
       return { ...state, count: action.size, ...pushCoords(action.size) };
     case SWITCH_TURN:
-      return { ...state, turn: state.turn === "red" ? "blue" : "red" };
+      return { ...state, turn: state.turn === 'red' ? 'blue' : 'red' };
     case CALC_SCORE:
       return { ...state, ...calcScore(state) };
     case GET_LINE_COORDS:
@@ -158,7 +156,7 @@ export default (state = initialState, action) => {
         ...EndGame(newBoxState),
       };
     }
-    case "putline": {
+    case 'putline': {
       const newCoords = action.coord.reduce((acc, coord) => {
         if (!state.lineCoordinates[coord]) {
           acc[coord] = state.turn;

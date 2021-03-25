@@ -25,8 +25,6 @@ const Chat = ({ location }) => {
 
     socket = io(ENDPOINT);
 
-    socket.on("message8", (params) => console.log("mess8", params));
-
     setName(name);
     setRoom(room);
     socket.emit("join", { name, room }, () => {});

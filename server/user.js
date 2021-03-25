@@ -14,6 +14,8 @@ const addUser = ({ id, name, room, roomid }) => {
 
   users.push(user);
   console.log(user);
+  console.log("users", users);
+
   return { user };
 };
 

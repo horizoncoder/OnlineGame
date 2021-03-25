@@ -5,15 +5,7 @@ import PropTypes, { string } from "prop-types";
 import { drop, map, clone } from "lodash";
 import io from "socket.io-client";
 import Stats from "./Stats";
-import {
-  setBoardSize,
-  calcSCore,
-  switchTurn,
-  checkSquare,
-  putLine,
-  pushCoords,
-  getAllUsers,
-} from "../actions";
+import { calcSCore, checkSquare } from "../actions";
 
 class Game extends React.Component {
   constructor(props) {
@@ -133,17 +125,9 @@ class Game extends React.Component {
   };
 
   render() {
-    const test = () => {
-      const socket = io("localhost:5000");
-      socket.emit("users");
-    };
-    const setboard = (size) => {
-      const socket = io("localhost:5000");
-      socket.emit("board", size);
-    };
-    const swithtest = () => {
-      const socket = io("localhost:5000");
-      socket.emit("switch");
+    const socket = io("localhost:5000");
+    const test = (count) => {
+      socket.emit("users", count);
     };
     const { count, turn, numBlue, numRed } = this.props;
     const board = `Размер поля ${count} на ${count}`;
@@ -170,7 +154,7 @@ class Game extends React.Component {
           <button
             type="submit"
             onClick={() => {
-              setboard(2);
+              test(2);
             }}
           >
             2x2
@@ -178,7 +162,7 @@ class Game extends React.Component {
           <button
             type="submit"
             onClick={() => {
-              setboard(4);
+              test(4);
             }}
           >
             4x4
@@ -187,7 +171,7 @@ class Game extends React.Component {
             id="small"
             type="submit"
             onClick={() => {
-              setboard(6);
+              test(6);
             }}
           >
             6x6
@@ -196,48 +180,23 @@ class Game extends React.Component {
             id="small"
             type="submit"
             onClick={() => {
-              setboard(8);
+              test(8);
             }}
           >
             8x8
-          </button>
-          <button
-            id="small"
-            type="submit"
-            onClick={() => {
-              test();
-            }}
-          >
-            test
-          </button>
-          <button
-            id="small"
-            type="submit"
-            onClick={() => {
-              swithtest();
-            }}
-          >
-            testswitch
           </button>
           <br />
           {board}
         </div>
         <div id="board">{this.makeBoard()}</div>
-
-        <Stats numBlue={numBlue} numRed={numRed} />
       </div>
     );
   }
 }
 const mapDispatchToProps = (dispatch) => {
   return {
-    setBoardSize: (size) => dispatch(setBoardSize(size)),
-    switchTurn: () => dispatch(switchTurn()),
-    getAllUsers: () => dispatch(getAllUsers()),
-    pushCoords: () => dispatch(pushCoords()),
     calcSCore: () => dispatch(calcSCore()),
     checkSquare: (y, z) => dispatch(checkSquare(y, z)),
-    putLine: (coord) => dispatch(putLine(coord)),
   };
 };
 

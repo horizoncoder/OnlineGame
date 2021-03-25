@@ -28,27 +28,27 @@ const db = require('./models');
 const tutorials = require('./controllers/room.controller');
 
 db.sequelize.sync();
-const Role = db.role;
-function initial() {
-  Role.create({
-    id: 1,
-    name: 'user',
-  });
+// const Role = db.role;
+// function initial() {
+//   Role.create({
+//     id: 1,
+//     name: 'user',
+//   });
 
-  Role.create({
-    id: 2,
-    name: 'moderator',
-  });
+//   Role.create({
+//     id: 2,
+//     name: 'moderator',
+//   });
 
-  Role.create({
-    id: 3,
-    name: 'admin',
-  });
-}
+//   Role.create({
+//     id: 3,
+//     name: 'admin',
+//   });
+// }
 // force: true will drop the table if it already exists
-db.sequelize.sync({ force: false }).then(() => {
-  initial();
-});
+// db.sequelize.sync({ force: false }).then(() => {
+//   initial();
+// });
 
 // routes
 require('./routes/auth.routes')(app);
@@ -57,15 +57,8 @@ require('./routes/room.routes')(app);
 
 app.use(cors(corsOptions));
 const router = require('./router');
-const {
-  addUser,
-  removeUser,
-  getUser,
-  getUsersInRoom,
-  getRoomIdInRoom,
-} = require('./user');
-const { test, shouldSetLine, getLineCoords } = require('./game');
-const { basename } = require('path');
+const { addUser, removeUser, getUser, getUsersInRoom } = require('./user');
+
 const port = 5000;
 http.listen(port, () => {});
 app.get('/', (req, res) => {
@@ -73,7 +66,6 @@ app.get('/', (req, res) => {
 });
 
 let socketInstance;
-
 io.on('connect', (socket) => {
   app.get('/items', (req, res) => {
     const items = { id: 1, firstName: 'john', lastName: 'Doe' };
@@ -114,15 +106,12 @@ io.on('connect', (socket) => {
   });
 
   socket.on('sendMessage', (message, callback) => {
-    socketInstance = socket;
     const user = getUser(socket.id);
-    socketInstance = socket;
-    // console.log(user.room);
-    io.in(user.room).emit('message', { user: user.name, text: message });
+    //console.log(user.room);
+    io.to('dima').emit('message', { user: user.name, text: message });
     callback();
   });
-
-  socket.on('users', (callback) => {
+  socket.on('users', (count, callback) => {
     const user = getUser(socket.id);
     const getLineCoords = (x, y, p) => {
       // получаем координаты линии
@@ -141,7 +130,6 @@ io.on('connect', (socket) => {
       return true;
     };
     socketInstance = socket;
-    const count = 2;
     const boxesCoords = [];
     const coordsV = [];
     const coordsH = [];
@@ -163,25 +151,27 @@ io.on('connect', (socket) => {
         const s = j > count ? j - count : j;
         const lineP = j > count ? 3 : 1;
         const boxC = boxesCoords[s];
-        const lineIdx = coordsH.findIndex((c) => c.find((item) => item === `${boxC}${lineP}`));
+        const lineIdx = coordsH.findIndex((c) =>
+          c.find((item) => item === `${boxC}${lineP}`)
+        );
         sortedCoordsH.push(coordsH[lineIdx]);
       }
+      const room = 'xs';
+      console.log(`${room}`);
       io.emit('action', {
-        type: 'users8', BoxsCoord, sortedCoordsH, coordsV, count,
+        type: 'users8',
+        BoxsCoord,
+        sortedCoordsH,
+        coordsV,
+        count,
       });
     }
-
-    // callback();
-  });
-  socket.on('board', (size) => {
-    io.emit('action', {
-      type: 'setboard',
-      size,
-    });
   });
 
   socket.on('switch', () => {
-    io.emit('action', {
+    const user = removeUser(socket.id);
+    console.log('sjdhhsdh');
+    io.to('dima').emit('action', {
       type: 'switchturn',
     });
   });
@@ -207,12 +197,12 @@ io.on('connect', (socket) => {
       });
       console.log(user);
       Tutorial.update(
-        { status: 'game stoped' },
+        { status: 'stoped' },
         {
           where: {
             room: user.room,
           },
-        },
+        }
       ).then((res) => {
         console.log(res);
       });

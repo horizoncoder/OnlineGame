@@ -1,103 +1,134 @@
 import React, { Component } from "react";
-import PropTypes from "prop-types";
+import { Link } from "react-router-dom";
+import RoomDataService from "../services/room.service";
+import AuthService from "../services/auth.service";
+import AddRoom from "./AddRoom";
 
-export default class Stats extends Component {
+export default class RoomsList extends Component {
   constructor(props) {
     super(props);
-
-    this.input = React.createRef();
-    this.addTask = this.addTask.bind(this);
-    this.deleteItem = this.deleteItem.bind(this);
+    this.onChangeSearchRoom = this.onChangeSearchRoom.bind(this);
+    this.retrieveRooms = this.retrieveRooms.bind(this);
+    this.refreshList = this.refreshList.bind(this);
+    this.setActiveRoom = this.setActiveRoom.bind(this);
     this.state = {
-      list: [],
+      rooms: [],
+      currentRoom: null,
+      userid2: "",
+      searchRoom: "",
+      status: "",
     };
   }
 
   componentDidMount() {
-    const list = window.localStorage.getItem("list");
-    const parsedList = JSON.parse(list);
-
-    if (list == null) {
-      return false;
-    }
-    return this.setState({
-      list: parsedList,
-    });
-  }
-
-  deleteItem(event) {
-    const index = event.target.getAttribute("data-key");
-    const listValue = JSON.parse(localStorage.getItem("list"));
-    listValue.splice(index, 1);
-    this.setState({ list: listValue });
-    localStorage.setItem("list", JSON.stringify(listValue));
-  }
-
-  addTask() {
-    const { numBlue } = this.props;
-    const { numRed } = this.props;
-
-    const items = {
-      value: (this.input = `Синий ${JSON.stringify(
-        numBlue
-      )} Красный ${JSON.stringify(numRed)}`),
-      Date: new Date().toUTCString(),
+    this.retrieveRooms();
+    const a = ["ds"];
+    const requestOptions = {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ title: "React POST Request Example" }),
     };
+    fetch("https://jsonplaceholder.typicode.com/posts", requestOptions)
+      .then((response) => response.json())
+      .then((data) => this.setState({ postId: data.id }));
+  }
 
-    if (localStorage.getItem("list") == null) {
-      const list = [];
-      list.push(items);
-      localStorage.setItem("list", JSON.stringify(list));
-    } else {
-      const list = JSON.parse(localStorage.getItem("list"));
-      list.push(items);
-      localStorage.setItem("list", JSON.stringify(list));
-    }
+  onChangeSearchRoom(e) {
+    const searchRoom = e.target.value;
+
     this.setState({
-      list: JSON.parse(localStorage.getItem("list")),
+      searchRoom,
     });
+  }
+
+  setActiveRoom(room, userid2) {
+    const currentUser = AuthService.getCurrentUser();
+    this.setState({
+      currentRoom: room,
+      userid2: currentUser.username,
+    });
+  }
+
+  saveRoom() {
+    const currentUser = AuthService.getCurrentUser();
+    const { userid2 } = this.state;
+
+    const data = {
+      userid2: currentUser.id,
+    };
+    console.log(userid2);
+    RoomDataService.create(data)
+      .then((response) => {
+        this.setState({
+          rooms: response.data.room,
+        });
+        console.log(response.data);
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+  }
+
+  retrieveRooms() {
+    const currentUser = AuthService.getCurrentUser();
+    const { rooms } = this.state;
+    RoomDataService.findAllPublished(currentUser.accessToken)
+      .then((response) => {
+        this.setState({
+          rooms: response.data,
+        });
+        console.log(response.data);
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+  }
+
+  refreshList() {
+    this.retrieveRooms();
+    this.setState({
+      currentRoom: null,
+    });
+  }
+
+  test() {
+    const { searchRoom, rooms, userid2 } = this.state;
+    console.log(rooms);
   }
 
   render() {
-    const { list } = this.state;
+    const { searchRoom, rooms, userid2 } = this.state;
     return (
       <>
-        <div className="main-container">
-          <h1>Сохранить результат</h1>
-          <hr />
-          <div className="container">
-            <button type="submit" onClick={this.addTask}>
-              Сохранить
-            </button>
-
-            <br />
-            <br />
-            <ol>
-              {list.map((item, index) => {
-                return (
-                  <li key={item.id}>
-                    {" "}
-                    {item.value}
-                    <button
-                      className="button"
-                      type="button"
-                      value="delete"
-                      data-key={index}
-                      onClick={this.deleteItem}
-                    >
-                      Удалить
-                    </button>
-                  </li>
-                );
-              })}
-            </ol>
-          </div>
+        <h4 className="d-flex justify-content-center">Stats</h4>
+        <br />
+        <div className="d-flex justify-content-center">
+          <br />
+          <table className="table">
+            <thead className="thead-light">
+              <tr>
+                <th scope="col">id</th>
+                <th scope="col">room</th>
+                <th scope="col">PlayerRed</th>
+                <th scope="col">PlayerBlue</th>
+                <th scope="col">Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {rooms &&
+                rooms.map((room) => (
+                  <tr>
+                    <td>{room.id}</td>
+                    <td>{room.room}</td>
+                    <td>{room.userid1}</td>
+                    <td>{room.userid2}</td>
+                    <td>{room.status}</td>
+                  </tr>
+                ))}
+            </tbody>
+          </table>
         </div>
       </>
     );
   }
 }
-Stats.propTypes = {
-  numBlue: PropTypes.number.isRequired,
-  numRed: PropTypes.number.isRequired,
-};
