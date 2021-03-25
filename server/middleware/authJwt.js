@@ -19,8 +19,11 @@ verifyToken = (req, res, next) => {
         message: 'Unauthorized!',
       });
     }
-    req.userId = decoded.id;
-    next();
+    User.findByPk(decoded.id).then((user) => {
+      req.user=user
+      next();
+    })
+    
   });
 };
 

@@ -58,6 +58,11 @@ class Navibar extends Component {
                 add
               </Link>
             </li>
+            <li className="nav-item">
+              <Link to="/stats" className="nav-link">
+                Stats
+              </Link>
+            </li>
             {showModeratorBoard && (
               <li className="nav-item">
                 <Link to="/mod" className="nav-link">

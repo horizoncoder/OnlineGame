@@ -5,6 +5,13 @@ class TutorialDataService {
     return http.get("/rooms");
   }
 
+  findAllPublished(token) {
+    console.log(token);
+    return http.get("/rooms/published", { headers: {
+        "x-access-token": token,
+    } });
+  }
+
   get(id) {
     return http.get(`/rooms/${id}`);
   }

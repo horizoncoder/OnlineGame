@@ -35,10 +35,7 @@ exports.create = (req, res) => {
 
 // Retrieve all Tutorials from the database.
 exports.findAll = (req, res) => {
-  // const room = req.query.room;
-  // const condition = room ? { room: { [Op.iLike]: `%${room}%` } } : null;
-
-  Tutorial.findAll({ where: { status: 'wait' } })
+  Tutorial.findAll({ where: { status: ['wait'] } })
     .then((data) => {
       res.send(data);
     })
@@ -73,7 +70,7 @@ exports.update = (req, res) => {
     where: { id: id },
   })
     .then((num) => {
-      if (num == 1) {
+      if (num === 1) {
         res.send({
           message: 'Tutorial was updated successfully.',
         });
@@ -95,7 +92,7 @@ exports.delete = (req, res) => {
   const id = req.params.id;
 
   Tutorial.destroy({
-    where: { id: id },
+    where: { id:id },
   })
     .then((num) => {
       if (num == 1) {
@@ -134,14 +131,15 @@ exports.deleteAll = (req, res) => {
 
 // find all published Tutorial
 exports.findAllPublished = (req, res) => {
-  // Tutorial.findAll({ where: { published: true } })
-  //   .then((data) => {
-  //     res.send(data);
-  //   })
-  //   .catch((err) => {
-  //     res.status(500).send({
-  //       message:
-  //         err.message || 'Some error occurred while retrieving roomss.',
-  //     });
-  //   });
+  console.log('req.user', req.user.username);
+  Tutorial.findAll({ where: { userid1: req.user.username } })
+    .then((data) => {
+      res.send(data);
+    })
+    .catch((err) => {
+      res.status(500).send({
+        message:
+          err.message || 'Some error occurred while retrieving roomss.',
+      });
+    });
 };

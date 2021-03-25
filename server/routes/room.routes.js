@@ -1,5 +1,6 @@
 module.exports = (app) => {
   const tutorials = require('../controllers/room.controller');
+  const { authJwt } = require('../middleware');
 
   const router = require('express').Router();
 
@@ -10,7 +11,7 @@ module.exports = (app) => {
   router.get('/', tutorials.findAll);
 
   // Retrieve all published Tutorials
-  router.get('/published', tutorials.findAllPublished);
+  router.get('/published', [authJwt.verifyToken], tutorials.findAllPublished);
 
   // Retrieve a single Tutorial with id
   router.get('/:id', tutorials.findOne);

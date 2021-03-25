@@ -70,7 +70,7 @@ export default class RoomsList extends Component {
     const currentUser = AuthService.getCurrentUser();
     const data = {
       userid2: currentUser.username,
-      status: "game started",
+      status: "started",
     };
     RoomDataService.update(currentRoom.id, data)
       .then((response) => {
