@@ -67,6 +67,27 @@ app.get('/', (req, res) => {
 
 let socketInstance;
 io.on('connect', (socket) => {
+  console.log(socket.id);
+  socket.on('join_room', (data) => {
+    socket.join(data);
+    console.log('User Joined Room: ' + data);
+  });
+
+  socket.on('send_message', (data) => {
+    console.log(data);
+    socket.to(data.room).emit('receive_message', data.content);
+  });
+
+  socket.on('switch', (data) => {
+    io.in(data.room).emit('action', {
+      type: 'switchturn',
+    }, data.content);
+    console.log(data);
+  });
+  socket.on('disconnect_user', () => {
+    console.log('USER DISCONNECTED');
+  });
+
   app.get('/items', (req, res) => {
     const items = { id: 1, firstName: 'john', lastName: 'Doe' };
     if (socketInstance) {
@@ -82,6 +103,7 @@ io.on('connect', (socket) => {
       room,
       roomid: 100,
     });
+
     console.log(user);
     if (error) return callback(error);
 
@@ -91,6 +113,7 @@ io.on('connect', (socket) => {
       user: 'admin',
       text: `${user.name}, welcome to room ${user.room}.`,
     });
+
     socket.broadcast
       .to(user.room)
       .emit('message', { user: 'admin', text: `${user.name} has joined!` });
@@ -107,10 +130,12 @@ io.on('connect', (socket) => {
 
   socket.on('sendMessage', (message, callback) => {
     const user = getUser(socket.id);
-    //console.log(user.room);
-    io.to('dima').emit('message', { user: user.name, text: message });
+    io.to(user.room).emit('message', { user: user.name, text: message });
+    io.to(user.room).emit('action', 'sdklskd');
+    console.log(user.room);
     callback();
   });
+
   socket.on('users', (count, callback) => {
     const user = getUser(socket.id);
     const getLineCoords = (x, y, p) => {
@@ -168,20 +193,18 @@ io.on('connect', (socket) => {
     }
   });
 
-  socket.on('switch', () => {
-    const user = removeUser(socket.id);
-    console.log('sjdhhsdh');
-    io.to('dima').emit('action', {
-      type: 'switchturn',
-    });
-  });
-
   socket.on('put', (coord) => {
     io.emit('action', {
       type: 'putline',
       coord,
     });
   });
+
+  // socket.on('switch', () => {
+  //   io.emit('action', {
+  //     type: 'switchturn',
+  //   });
+  // });
 
   socket.on('disconnect', () => {
     const user = removeUser(socket.id);
