@@ -81,10 +81,71 @@ io.on('connect', (socket) => {
   socket.on('switch', (data) => {
     io.in(data.room).emit('action', {
       type: 'switchturn',
-    }, data.content);
+    }, data);
     console.log(data);
   });
-  socket.on('disconnect_user', () => {
+  socket.on('put', (coord,data) => {
+    io.in(data.room).emit('action', {
+      type: 'putline',
+      coord,
+    }, data);
+  });
+  socket.on('users', (count, data) => {
+    const getLineCoords = (x, y, p) => {
+      // получаем координаты линии
+      if (p === 0 && x > 0) {
+        return [`${x - 1}${y}${2}`, `${x}${y}${p}`];
+      }
+      if (p === 1 && y > 0) {
+        return [`${x}${y - 1}${3}`, `${x}${y}${p}`];
+      }
+      return [`${x}${y}${p}`];
+    };
+
+    const shouldSetLine = (count, x, y, p) => {
+      if (p === 2 && x + 1 < count) return false;
+      if (p === 3 && y + 1 < count) return false;
+      return true;
+    };
+    socketInstance = socket;
+    const boxesCoords = [];
+    const coordsV = [];
+    const coordsH = [];
+    for (let y = 0; y < count; y += 1) {
+      for (let x = 0; x < count; x += 1) {
+        boxesCoords.push(`${x}${y}`);
+        for (let p = 0; p < 4; p += 1) {
+          if (shouldSetLine(count, x, y, p)) {
+            (p % 2 === 0 ? coordsV : coordsH).push(getLineCoords(x, y, p));
+          }
+        }
+      }
+    }
+    let BoxsCoord = []; // сортировка координат
+    BoxsCoord = [...boxesCoords];
+    const sortedCoordsH = [];
+    for (let i = 0; i < count; i += 1) {
+      for (let j = i * count; j < i * count + count * 20; j += 1) {
+        const s = j > count ? j - count : j;
+        const lineP = j > count ? 3 : 1;
+        const boxC = boxesCoords[s];
+        const lineIdx = coordsH.findIndex((c) =>
+          c.find((item) => item === `${boxC}${lineP}`)
+        );
+        sortedCoordsH.push(coordsH[lineIdx]);
+      }
+      const room = 'xs';
+      console.log(`${room}`);
+      io.in(data.room).emit('action', {
+        type: 'users8',
+        BoxsCoord,
+        sortedCoordsH,
+        coordsV,
+        count,
+      }, data);
+    }
+  });
+  socket.on('disconnect', () => {
     console.log('USER DISCONNECTED');
   });
 
@@ -134,70 +195,6 @@ io.on('connect', (socket) => {
     io.to(user.room).emit('action', 'sdklskd');
     console.log(user.room);
     callback();
-  });
-
-  socket.on('users', (count, callback) => {
-    const user = getUser(socket.id);
-    const getLineCoords = (x, y, p) => {
-      // получаем координаты линии
-      if (p === 0 && x > 0) {
-        return [`${x - 1}${y}${2}`, `${x}${y}${p}`];
-      }
-      if (p === 1 && y > 0) {
-        return [`${x}${y - 1}${3}`, `${x}${y}${p}`];
-      }
-      return [`${x}${y}${p}`];
-    };
-
-    const shouldSetLine = (count, x, y, p) => {
-      if (p === 2 && x + 1 < count) return false;
-      if (p === 3 && y + 1 < count) return false;
-      return true;
-    };
-    socketInstance = socket;
-    const boxesCoords = [];
-    const coordsV = [];
-    const coordsH = [];
-    for (let y = 0; y < count; y += 1) {
-      for (let x = 0; x < count; x += 1) {
-        boxesCoords.push(`${x}${y}`);
-        for (let p = 0; p < 4; p += 1) {
-          if (shouldSetLine(count, x, y, p)) {
-            (p % 2 === 0 ? coordsV : coordsH).push(getLineCoords(x, y, p));
-          }
-        }
-      }
-    }
-    let BoxsCoord = []; // сортировка координат
-    BoxsCoord = [...boxesCoords];
-    const sortedCoordsH = [];
-    for (let i = 0; i < count; i += 1) {
-      for (let j = i * count; j < i * count + count * 20; j += 1) {
-        const s = j > count ? j - count : j;
-        const lineP = j > count ? 3 : 1;
-        const boxC = boxesCoords[s];
-        const lineIdx = coordsH.findIndex((c) =>
-          c.find((item) => item === `${boxC}${lineP}`)
-        );
-        sortedCoordsH.push(coordsH[lineIdx]);
-      }
-      const room = 'xs';
-      console.log(`${room}`);
-      io.emit('action', {
-        type: 'users8',
-        BoxsCoord,
-        sortedCoordsH,
-        coordsV,
-        count,
-      });
-    }
-  });
-
-  socket.on('put', (coord) => {
-    io.emit('action', {
-      type: 'putline',
-      coord,
-    });
   });
 
   // socket.on('switch', () => {

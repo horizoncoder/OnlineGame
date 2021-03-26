@@ -6,6 +6,7 @@ import { drop, map, clone } from "lodash";
 import io from "socket.io-client";
 import Stats from "./Stats";
 import { calcSCore, checkSquare } from "../actions";
+import { socket } from "../store";
 
 class Game extends React.Component {
   constructor(props) {
@@ -16,13 +17,20 @@ class Game extends React.Component {
   }
 
   makeBoard = () => {
-    const swithtest = () => {
-      const socket = io("localhost:5000");
-      socket.emit("switch");
+    const putline = async (coord) => {
+      const { room } = this.props;
+      const roomname = {
+        room,
+      };
+      socket.emit("put", coord, roomname);
     };
-    const putline = (coord) => {
-      const socket = io("localhost:5000");
-      socket.emit("put", coord);
+    const switchT = async () => {
+      const { room } = this.props;
+      const roomname = {
+        room,
+      };
+
+      await socket.emit("switch", roomname);
     };
     const { count, turn, lineCoordinates, boxColors } = this.props;
     const { BoxsCoord, coordsV, coordsH } = this.props;
@@ -42,7 +50,7 @@ class Game extends React.Component {
             } turn${turn}`}
             onClick={() => {
               putline(coord);
-              swithtest();
+              switchT();
             }}
             role="presentation"
             coords={coord}
@@ -65,7 +73,7 @@ class Game extends React.Component {
             } turn${turn}`}
             onClick={() => {
               putline(coord);
-              swithtest();
+              switchT();
             }}
             role="presentation"
             coords={coord}
@@ -92,7 +100,7 @@ class Game extends React.Component {
           } turn${turn}`}
           onClick={() => {
             putline(coord);
-            swithtest();
+            switchT();
           }}
           role="presentation"
           coords={coord}
@@ -125,10 +133,23 @@ class Game extends React.Component {
   };
 
   render() {
-    const socket = io("localhost:5000");
-    const test = (count) => {
-      socket.emit("users", count);
+    const test = async (count) => {
+      const { room } = this.props;
+      const roomname = {
+        room,
+      };
+      await socket.emit("users", count, roomname);
     };
+
+    const sendMessage = async () => {
+      const { room } = this.props;
+      const messageContent = {
+        room,
+      };
+
+      await socket.emit("switch", messageContent);
+    };
+
     const { count, turn, numBlue, numRed } = this.props;
     const board = `Размер поля ${count} на ${count}`;
     return (
@@ -137,7 +158,7 @@ class Game extends React.Component {
           <h1>Точки и квадраты</h1>
 
           <div className="row">
-            <div className="col col-lg-2">
+            <div className="col col-lg-6">
               Сейчас ход:
               {turn}
             </div>
@@ -188,7 +209,11 @@ class Game extends React.Component {
           <br />
           {board}
         </div>
-        <div id="board">{this.makeBoard()}</div>
+        <div className="row">
+          <div id="board" className="d-flex justify-content-center">
+            {this.makeBoard()}
+          </div>
+        </div>
       </div>
     );
   }

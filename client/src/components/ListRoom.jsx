@@ -183,9 +183,7 @@ export default class RoomsList extends Component {
                     key={index}
                   >
                     {room.room}
-                    <Link
-                      to={`/chat?name=${userid2}&room=${room.room}&roomid=${room.id}`}
-                    >
+                    <Link to="/chat2">
                       <button
                         onClick={() => this.updateTutorial()}
                         className="d-inline-flex m-2 bg-success text-light"
