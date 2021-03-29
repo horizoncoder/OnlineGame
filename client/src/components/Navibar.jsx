@@ -54,11 +54,6 @@ class Navibar extends Component {
               </Link>
             </li>
             <li className="nav-item">
-              <Link to="/add" className="nav-link">
-                add
-              </Link>
-            </li>
-            <li className="nav-item">
               <Link to="/stats" className="nav-link">
                 Stats
               </Link>
@@ -68,29 +63,14 @@ class Navibar extends Component {
                 Chat2
               </Link>
             </li>
-            {showModeratorBoard && (
-              <li className="nav-item">
-                <Link to="/mod" className="nav-link">
-                  Moderator Board
-                </Link>
-              </li>
-            )}
 
-            {showAdminBoard && (
-              <li className="nav-item">
-                <Link to="/admin" className="nav-link">
-                  Admin Board
-                </Link>
-              </li>
-            )}
-
-            {currentUser && (
+            {/* {currentUser && (
               <li className="nav-item">
                 <Link to="/user" className="nav-link">
                   User
                 </Link>
-              </li>
-            )}
+              </li> */}
+            {/* )} */}
           </div>
 
           {currentUser ? (

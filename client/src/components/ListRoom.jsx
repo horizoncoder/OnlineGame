@@ -2,7 +2,9 @@ import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import RoomDataService from "../services/room.service";
 import AuthService from "../services/auth.service";
-import AddRoom from "./AddRoom";
+import BluePlayerconnect from "./BluePlayerconnect";
+import counter from '../reducers/counter'
+import Chat2 from "./Chat2";
 
 export default class RoomsList extends Component {
   constructor(props) {
@@ -146,10 +148,10 @@ export default class RoomsList extends Component {
   }
 
   render() {
+    const { currentRoom } = this.state;
     const { searchRoom, rooms, userid2 } = this.state;
     return (
       <>
-        <AddRoom roomsid={rooms.id} />
         <div className="list row">
           <div className="col-md-8">
             <div className="input-group mb-3">
@@ -182,16 +184,8 @@ export default class RoomsList extends Component {
                     onMouseEnter={() => this.setActiveRoom(room, index)}
                     key={index}
                   >
-                    {room.room}
-                    <Link to="/chat2">
-                      <button
-                        onClick={() => this.updateTutorial()}
-                        className="d-inline-flex m-2 bg-success text-light"
-                        type="submit"
-                      >
-                        connect
-                      </button>
-                    </Link>
+                    <BluePlayerconnect roomsi={room.room} roomid={room.id} />
+                    <Chat2 roomid={room.id} />
                     <button
                       className="d-inline-flex m-2 bg-danger text-light"
                       onClick={() => this.deleteRoom()}

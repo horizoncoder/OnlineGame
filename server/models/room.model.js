@@ -12,6 +12,15 @@ module.exports = (sequelize, Sequelize) => {
     status: {
       type: Sequelize.STRING,
     },
+    rednum: {
+      type: Sequelize.STRING,
+    },
+    bluenum: {
+      type: Sequelize.STRING,
+    },
+    win: {
+      type: Sequelize.STRING,
+    },
   });
 
   return Room;

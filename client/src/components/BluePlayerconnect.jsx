@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from "react";
+import io from "socket.io-client";
 import "./App.css";
-import { connect } from "react-redux";
+import ScrollToBottom from "react-scroll-to-bottom";
 import Game from "./Game";
 import { socket } from "../store";
 import AuthService from "../services/auth.service";
 import RoomDataService from "../services/room.service";
+import { updateTutorial } from "./ListRoom";
 
-function Chat2() {
-  const updateTutorial = (props) => {
+function BluePlayerconnect(props) {
+  const updateTutorial = () => {
     const currentUser = AuthService.getCurrentUser();
     const data = {
       userid2: currentUser.username,
@@ -21,25 +23,27 @@ function Chat2() {
         console.log(e);
       });
   };
+  console.log(props);
+  // console.log(romsi)
   // Before Login
   const [loggedIn, setLoggedIn] = useState(false);
   const [room, setRoom] = useState("");
   const [userName, setUserName] = useState("");
 
   // After Login
+  const [message, setMessage] = useState("");
+  const [messageList, setMessageList] = useState([]);
   const currentUser = AuthService.getCurrentUser();
-
   const connectToRoom = () => {
     setLoggedIn(true);
     socket.emit("join_room", room);
   };
-
   const disconnectToRoom = () => {
     setLoggedIn(false);
     setRoom("sdjsj");
-    updateTutorial();
     socket.emit("unjoin_room", room);
   };
+
   const sendMessage = async () => {};
   const saveRoom = () => {
     const currentUser = AuthService.getCurrentUser();
@@ -59,9 +63,12 @@ function Chat2() {
       });
     console.log(rooms);
   };
-  const add = () => {
+  const add = (rooms) => {
+    setRoom(props.roomsi);
+    setUserName(currentUser.username);
     connectToRoom();
-    saveRoom();
+    console.log(rooms);
+    updateTutorial();
   };
 
   return (
@@ -73,8 +80,9 @@ function Chat2() {
               <input
                 type="text"
                 placeholder="Room..."
-                onChange={(e) => {
-                  setRoom(e.target.value);
+                value={props.roomsi}
+                onMouseEnter={(e) => {
+                  setRoom(props.roomsi);
                   setUserName(currentUser.username);
                 }}
               />
@@ -93,11 +101,5 @@ function Chat2() {
     </>
   );
 }
-const mapStateToProps = ({ Counter }) => {
-  const { numBlue, numRed } = Counter;
-  return {
-    numBlue,
-    numRed,
-  };
-};
-export default connect(mapStateToProps)(Chat2);
+
+export default BluePlayerconnect;

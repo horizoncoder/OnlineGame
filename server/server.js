@@ -20,7 +20,6 @@ const corsOptions = {
 };
 app.use(bodyParser.json());
 
-// parse requests of content-type - application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: true }));
 
 // database
@@ -65,12 +64,37 @@ app.get('/', (req, res) => {
   res.sendFile(`${__dirname}/index.html`);
 });
 
-let socketInstance;
 io.on('connect', (socket) => {
-  console.log(socket.id);
+  const state = {
+    count: 0,
+    boxClass: ' box1 ',
+    turn: 'red',
+    numBlue: 0,
+    numRed: 0,
+    lineCoordinates: {},
+    boxColors: {},
+    BoxsCoord: {},
+    coordsV: {},
+    coordsH: {},
+  };
   socket.on('join_room', (data) => {
     socket.join(data);
-    console.log('User Joined Room: ' + data);
+    console.log(`User Joined Room: ${data} ||   ${socket.id}`);
+  });
+  socket.on('unjoin_room', (data) => {
+    const Tutorial = db.rooms;
+    socket.join(data);
+    console.log(`User LEfT Room: ${data} ||   ${socket.id}`);
+    Tutorial.update(
+      { status: 'stoped' },
+      {
+        where: {
+          room: data,
+        },
+      }
+    ).then((res) => {
+      console.log(res);
+    });
   });
 
   socket.on('send_message', (data) => {
@@ -79,16 +103,99 @@ io.on('connect', (socket) => {
   });
 
   socket.on('switch', (data) => {
-    io.in(data.room).emit('action', {
-      type: 'switchturn',
-    }, data);
+    io.in(data.room).emit(
+      'action',
+      {
+        type: 'switchturn',
+      },
+      data,
+    );
     console.log(data);
   });
-  socket.on('put', (coord,data) => {
-    io.in(data.room).emit('action', {
-      type: 'putline',
-      coord,
-    }, data);
+  socket.on('calcscore', (data) => {
+    io.in(data.room).emit(
+      'action',
+      {
+        type: 'calc',
+      },
+      data,
+    );
+    console.log(data);
+  });
+  const calcScore = () => ({
+    Color: state.turn ? state.numRed : state.numBlue,
+    // подсчет очков
+    numRed: Object.values(state.boxColors).filter((color) => color === 'red')
+      .length, // считаем очки
+    numBlue: Object.values(state.boxColors).filter((color) => color === 'blue')
+      .length,
+  });
+  const EndGame = () => {
+    if (Object.keys(state.boxColors).length === state.count ** 2) {
+      console.log('Buhfds');
+    }
+  };
+  const checkBoxes = () => {
+    const { lineCoordinates, boxColors } = state;
+    const filledBoxes = {};
+    Object.keys(lineCoordinates).forEach((coord) => {
+      const splitCoord = coord.split('');
+      const x = splitCoord[0]; // x кордината
+      const y = splitCoord[1]; // y кордината
+      const boxCount = filledBoxes[`${x}${y}`];
+      if (!boxColors[`${x}${y}`]) {
+        filledBoxes[`${x}${y}`] = boxCount ? boxCount + 1 : 1;
+      }
+    });
+    return Object.keys(filledBoxes).reduce((acc, key) => {
+      if (filledBoxes[key] === 4) {
+        acc[key] = state.turn;
+      }
+      return acc;
+    }, {});
+  };
+  socket.on('put', (coord, data) => {
+    const newCoords = coord.reduce((acc, coord) => {
+      if (!state.lineCoordinates[coord]) {
+        acc[coord] = state.turn;
+      }
+      return acc;
+    }, {});
+    const newLineState = {
+      ...state,
+      lineCoordinates: { ...state.lineCoordinates, ...newCoords },
+    };
+    const newBoxState = {
+      ...newLineState,
+      boxColors: {
+        ...newLineState.boxColors,
+        ...checkBoxes(newLineState),
+      },
+    };
+    const score = {
+      Color: state.turn ? state.numRed : state.numBlue,
+      // подсчет очков
+      numRed: Object.values(state.boxColors).filter((color) => color === 'red')
+        .length, // считаем очки
+      numBlue: Object.values(state.boxColors).filter((color) => color === 'blue')
+        .length,
+    };
+
+    io.in(data.room).emit(
+      'action',
+      {
+        type: 'putline',
+        coord,
+        newLineState,
+        ...state,
+        score,
+        ...newLineState,
+        ...newBoxState,
+        ...calcScore(newBoxState),
+        ...EndGame(newBoxState),
+      },
+      data,
+    );
   });
   socket.on('users', (count, data) => {
     const getLineCoords = (x, y, p) => {
@@ -107,7 +214,6 @@ io.on('connect', (socket) => {
       if (p === 3 && y + 1 < count) return false;
       return true;
     };
-    socketInstance = socket;
     const boxesCoords = [];
     const coordsV = [];
     const coordsH = [];
@@ -134,98 +240,17 @@ io.on('connect', (socket) => {
         );
         sortedCoordsH.push(coordsH[lineIdx]);
       }
-      const room = 'xs';
-      console.log(`${room}`);
-      io.in(data.room).emit('action', {
-        type: 'users8',
-        BoxsCoord,
-        sortedCoordsH,
-        coordsV,
-        count,
-      }, data);
-    }
-  });
-  socket.on('disconnect', () => {
-    console.log('USER DISCONNECTED');
-  });
-
-  app.get('/items', (req, res) => {
-    const items = { id: 1, firstName: 'john', lastName: 'Doe' };
-    if (socketInstance) {
-      socketInstance = socket;
-    }
-    res.json(items);
-  });
-
-  socket.on('join', ({ name, room, roomid }, callback) => {
-    const { error, user } = addUser({
-      id: socket.id,
-      name,
-      room,
-      roomid: 100,
-    });
-
-    console.log(user);
-    if (error) return callback(error);
-
-    socket.join(user.room);
-
-    socket.emit('message', {
-      user: 'admin',
-      text: `${user.name}, welcome to room ${user.room}.`,
-    });
-
-    socket.broadcast
-      .to(user.room)
-      .emit('message', { user: 'admin', text: `${user.name} has joined!` });
-    io.to(user.room).emit('roomData', {
-      room: user.room,
-      roomid: 100,
-      users: getUsersInRoom(user.room),
-    });
-    // socket.roomdata(socketInstance);
-    //
-    console.log(user);
-    callback();
-  });
-
-  socket.on('sendMessage', (message, callback) => {
-    const user = getUser(socket.id);
-    io.to(user.room).emit('message', { user: user.name, text: message });
-    io.to(user.room).emit('action', 'sdklskd');
-    console.log(user.room);
-    callback();
-  });
-
-  // socket.on('switch', () => {
-  //   io.emit('action', {
-  //     type: 'switchturn',
-  //   });
-  // });
-
-  socket.on('disconnect', () => {
-    const user = removeUser(socket.id);
-    const Tutorial = db.rooms;
-    if (user) {
-      io.to(user.room).emit('message', {
-        user: 'Admin',
-        text: `${user.name} has left.`,
-      });
-      io.to(user.room).emit('roomData', {
-        room: user.room,
-        users: getUsersInRoom(user.room),
-      });
-      console.log(user);
-      Tutorial.update(
-        { status: 'stoped' },
+      io.in(data.room).emit(
+        'action',
         {
-          where: {
-            room: user.room,
-          },
-        }
-      ).then((res) => {
-        console.log(res);
-      });
+          type: 'users8',
+          BoxsCoord,
+          sortedCoordsH,
+          coordsV,
+          count,
+        },
+        data,
+      );
     }
   });
 

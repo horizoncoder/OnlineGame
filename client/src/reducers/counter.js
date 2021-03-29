@@ -1,8 +1,6 @@
-import { map, clone } from 'lodash';
-import io from 'socket.io-client';
-import { CALC_SCORE, SWITCH_TURN, PUTLINE, GET_LINE_COORDS } from '../actions';
-
-const socket = io('http://localhost:3000');
+import { map, clone } from "lodash";
+import { CALC_SCORE } from "../actions";
+import RoomDataService from "../services/room.service";
 
 const getLineCoords = (x, y, p) => {
   // получаем координаты линии
@@ -57,23 +55,38 @@ const pushCoords = (count) => {
 const calcScore = (state) => ({
   Color: state.turn ? state.numRed : state.numBlue,
   // подсчет очков
-  numRed: Object.values(state.boxColors).filter((color) => color === 'red')
+  numRed: Object.values(state.boxColors).filter((color) => color === "red")
     .length, // считаем очки
-  numBlue: Object.values(state.boxColors).filter((color) => color === 'blue')
+  numBlue: Object.values(state.boxColors).filter((color) => color === "blue")
     .length,
 });
-
-const EndGame = (state) => {
+const EndGame = (state, props) => {
   if (Object.keys(state.boxColors).length === state.count ** 2) {
-    alert('Игра завершина');
-    document.location.reload();
+    alert("Buhf");
+    console.log(props);
+    // document.location.reload();
+    const data = {
+      status: "started",
+      rednum: state.numRed,
+      bluenum: state.numBlue,
+    };
+    RoomDataService.update(23, data)
+      .then((response) => {
+        console.log(response.data);
+        this.setState({
+          message: "The tutorial was updated successfully!",
+        });
+      })
+      .catch((e) => {
+        console.log(e);
+      });
   }
 };
 const checkBoxes = (state) => {
   const { lineCoordinates, boxColors } = state;
   const filledBoxes = {};
   Object.keys(lineCoordinates).forEach((coord) => {
-    const splitCoord = coord.split('');
+    const splitCoord = coord.split("");
     const x = splitCoord[0]; // x кордината
     const y = splitCoord[1]; // y кордината
     const boxCount = filledBoxes[`${x}${y}`];
@@ -91,8 +104,8 @@ const checkBoxes = (state) => {
 
 const initialState = {
   count: 0,
-  boxClass: ' box1 ',
-  turn: 'red',
+  boxClass: " box1 ",
+  turn: "red",
   numBlue: 0,
   numRed: 0,
   errorMessage: null,
@@ -101,11 +114,12 @@ const initialState = {
   BoxsCoord: {},
   coordsV: {},
   coordsH: {},
+  score: {},
 };
 
 export default (state = initialState, action) => {
   switch (action.type) {
-    case 'users8':
+    case "users8":
       console.log({ action });
       return {
         ...state,
@@ -119,44 +133,16 @@ export default (state = initialState, action) => {
       return {
         ...state,
       };
-    case 'switchturn':
-      return { ...state, turn: state.turn === 'red' ? 'blue' : 'red' };
-    case 'setboard':
+    case "switchturn":
+      return { ...state, turn: state.turn === "red" ? "blue" : "red" };
+    case "setboard":
       return { ...state, count: action.size, ...pushCoords(action.size) };
-    case SWITCH_TURN:
-      return { ...state, turn: state.turn === 'red' ? 'blue' : 'red' };
     case CALC_SCORE:
-      return { ...state, ...calcScore(state) };
-    case GET_LINE_COORDS:
-      return { ...state, ...getLineCoords() };
-    case PUTLINE: {
-      const newCoords = action.coord.reduce((acc, coord) => {
-        if (!state.lineCoordinates[coord]) {
-          acc[coord] = state.turn;
-        }
-        return acc;
-      }, {});
-      const newLineState = {
-        ...state,
-        lineCoordinates: { ...state.lineCoordinates, ...newCoords },
-      };
-      const newBoxState = {
-        ...newLineState,
-        boxColors: {
-          ...newLineState.boxColors,
-          ...checkBoxes(newLineState),
-        },
-      };
+      return { ...state, numRed: action.numRed, ...calcScore(state) };
 
-      return {
-        ...state,
-        ...newLineState,
-        ...newBoxState,
-        ...calcScore(newBoxState),
-        ...EndGame(newBoxState),
-      };
-    }
-    case 'putline': {
+    case "calc":
+      return { ...state, ...calcScore(state) };
+    case "putline": {
       const newCoords = action.coord.reduce((acc, coord) => {
         if (!state.lineCoordinates[coord]) {
           acc[coord] = state.turn;

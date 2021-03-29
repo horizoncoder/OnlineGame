@@ -18,6 +18,9 @@ exports.create = (req, res) => {
     userid2: req.body.userid2,
     room: req.body.room,
     status: req.body.status,
+    rednum: req.body.rednum,
+    bluenum: req.body.bluenum,
+    win: req.body.win,
   };
 
   // Save Tutorial in the database
@@ -41,8 +44,7 @@ exports.findAll = (req, res) => {
     })
     .catch((err) => {
       res.status(500).send({
-        message:
-          err.message || 'Some error occurred while retrieving roomss.',
+        message: err.message || 'Some error occurred while retrieving roomss.',
       });
     });
 };
@@ -92,7 +94,7 @@ exports.delete = (req, res) => {
   const id = req.params.id;
 
   Tutorial.destroy({
-    where: { id:id },
+    where: { id: id },
   })
     .then((num) => {
       if (num == 1) {
@@ -132,14 +134,17 @@ exports.deleteAll = (req, res) => {
 // find all published Tutorial
 exports.findAllPublished = (req, res) => {
   console.log('req.user', req.user.username);
-  Tutorial.findAll({ where: { userid1: req.user.username } })
+  Tutorial.findAll({
+    where: {
+      [Op.or]: [{ userid1: req.user.username }, { userid2: req.user.username }],
+    },
+  })
     .then((data) => {
       res.send(data);
     })
     .catch((err) => {
       res.status(500).send({
-        message:
-          err.message || 'Some error occurred while retrieving roomss.',
+        message: err.message || 'Some error occurred while retrieving roomss.',
       });
     });
 };

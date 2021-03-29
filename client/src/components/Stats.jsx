@@ -2,7 +2,6 @@ import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import RoomDataService from "../services/room.service";
 import AuthService from "../services/auth.service";
-import AddRoom from "./AddRoom";
 
 export default class RoomsList extends Component {
   constructor(props) {
@@ -112,6 +111,9 @@ export default class RoomsList extends Component {
                 <th scope="col">PlayerRed</th>
                 <th scope="col">PlayerBlue</th>
                 <th scope="col">Status</th>
+                <th scope="col">BlueNum</th>
+                <th scope="col">RedNum</th>
+                <th scope="col">win</th>
               </tr>
             </thead>
             <tbody>
@@ -123,6 +125,9 @@ export default class RoomsList extends Component {
                     <td>{room.userid1}</td>
                     <td>{room.userid2}</td>
                     <td>{room.status}</td>
+                    <td>{room.rednum}</td>
+                    <td>{room.bluenum}</td>
+                    <td>{room.win}</td>
                   </tr>
                 ))}
             </tbody>

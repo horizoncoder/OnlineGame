@@ -140,16 +140,13 @@ class Game extends React.Component {
       };
       await socket.emit("users", count, roomname);
     };
-
-    const sendMessage = async () => {
+    const calc = async () => {
       const { room } = this.props;
-      const messageContent = {
+      const roomname = {
         room,
       };
-
-      await socket.emit("switch", messageContent);
+      await socket.emit("calcscore", roomname);
     };
-
     const { count, turn, numBlue, numRed } = this.props;
     const board = `Размер поля ${count} на ${count}`;
     return (
@@ -187,6 +184,14 @@ class Game extends React.Component {
             }}
           >
             4x4
+          </button>
+          <button
+            type="submit"
+            onClick={() => {
+              calc(4);
+            }}
+          >
+            dsl;dls
           </button>
           <button
             id="small"
