@@ -115,6 +115,7 @@ const initialState = {
   coordsV: {},
   coordsH: {},
   score: {},
+  rooomid: 0,
 };
 
 export default (state = initialState, action) => {
@@ -163,6 +164,7 @@ export default (state = initialState, action) => {
 
       return {
         ...state,
+        rooomid: action.coord,
         ...newLineState,
         ...newBoxState,
         ...calcScore(newBoxState),

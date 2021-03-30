@@ -8,13 +8,21 @@ import AuthService from "../services/auth.service";
 import RoomDataService from "../services/room.service";
 
 function Chat2() {
+  // Before Login
+  const [loggedIn, setLoggedIn] = useState(false);
+  const [room, setRoom] = useState("");
+  const [datas, setDatas] = useState({});
+  const [userName, setUserName] = useState("");
+
+  // After Login
+  const currentUser = AuthService.getCurrentUser();
   const updateTutorial = (props) => {
     const currentUser = AuthService.getCurrentUser();
     const data = {
       userid2: currentUser.username,
-      status: "started",
+      status: "stoped",
     };
-    RoomDataService.update(props.roomid, data)
+    RoomDataService.update(datas.id, data)
       .then((response) => {
         console.log(response.data);
       })
@@ -22,14 +30,6 @@ function Chat2() {
         console.log(e);
       });
   };
-  // Before Login
-  const [loggedIn, setLoggedIn] = useState(false);
-  const [room, setRoom] = useState("");
-  const [userName, setUserName] = useState("");
-
-  // After Login
-  const currentUser = AuthService.getCurrentUser();
-
   const connectToRoom = () => {
     setLoggedIn(true);
     socket.emit("join_room", room);
@@ -48,20 +48,22 @@ function Chat2() {
       room,
       userid1: currentUser.username,
       status: "wait",
-      roomid: 100,
     };
     RoomDataService.create(data)
       .then((response) => {
         rooms.push(response.data);
+        setDatas(response.data);
       })
       .catch((e) => {
         console.log(e);
       });
-    console.log(rooms);
+    console.log(rooms.length);
+    console.log(rooms.id);
   };
   const add = () => {
     connectToRoom();
     saveRoom();
+    console.log(datas);
   };
 
   return (
@@ -85,8 +87,9 @@ function Chat2() {
           </div>
         ) : (
           <div>
-            <Game room={room} />
+            <Game userred={userName} room={room} />
             <div>{room}</div>
+            <div>{datas.id}</div>
             <div>{userName}</div>
             <button type="submit" onClick={disconnectToRoom}>
               Exit

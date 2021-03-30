@@ -71,7 +71,7 @@ function BluePlayerconnect(props) {
           </div>
         ) : (
           <div>
-            <Game room={room} />
+            <Game userblue={currentUser.username} room={room} />
             <div>{room}</div>
             <div>{userName}</div>
             <button type="submit" onClick={disconnectToRoom}>

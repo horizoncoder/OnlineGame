@@ -118,7 +118,7 @@ export default class Register extends Component {
   }
 
   render() {
-    const { password, username, message, successful, email } = this.state;
+    const { password, username, message, successful } = this.state;
 
     return (
       <div className="col-md-12">

@@ -5,6 +5,7 @@ import PropTypes, { string } from "prop-types";
 import { drop, map, clone } from "lodash";
 import { calcSCore, checkSquare } from "../actions";
 import { socket } from "../store";
+import AuthService from "../services/auth.service";
 
 class Game extends React.Component {
   constructor(props) {
@@ -16,19 +17,40 @@ class Game extends React.Component {
 
   makeBoard = () => {
     const putline = async (coord) => {
-      const { room } = this.props;
-      const roomname = {
-        room,
-      };
-      socket.emit("put", coord, roomname);
+      const { turn, userred, userblue } = this.props;
+      const currentUser = AuthService.getCurrentUser();
+      if (turn === "red" && userred === currentUser.username) {
+        const { room } = this.props;
+        const roomname = {
+          room,
+        };
+        socket.emit("put", coord, roomname);
+      }
+      if (turn === "blue" && userblue === currentUser.username) {
+        const { room } = this.props;
+        const roomname = {
+          room,
+        };
+        socket.emit("put", coord, roomname);
+      }
     };
     const switchT = async () => {
-      const { room } = this.props;
-      const roomname = {
-        room,
-      };
-
-      await socket.emit("switch", roomname);
+      const { turn, userred, userblue } = this.props;
+      const currentUser = AuthService.getCurrentUser();
+      if (turn === "red" && userred === currentUser.username) {
+        const { room } = this.props;
+        const roomname = {
+          room,
+        };
+        await socket.emit("switch", roomname);
+      }
+      if (turn === "blue" && userblue === currentUser.username) {
+        const { room } = this.props;
+        const roomname = {
+          room,
+        };
+        await socket.emit("switch", roomname);
+      }
     };
     const { count, turn, lineCoordinates, boxColors } = this.props;
     const { BoxsCoord, coordsV, coordsH } = this.props;
@@ -133,14 +155,14 @@ class Game extends React.Component {
       await socket.emit("users", count, roomname);
     };
 
-    const { count, turn, numBlue, numRed } = this.props;
+    const { count, turn, numBlue, numRed, roomid } = this.props;
     const board = `Размер поля ${count} на ${count}`;
     const info = `Сейчас ход ${turn} Красный: ${numRed} Синий:${numBlue}`;
     return (
       <div id="game">
         <div id="header">
           <h1>Точки и квадраты</h1>
-
+         dsdsd {roomid}
           <button
             type="submit"
             onClick={() => {
@@ -180,7 +202,6 @@ class Game extends React.Component {
           <br />
           {board}
           <br />
-
           <div className="form-row text-center">
             <div className="col-12">
               <div className="btn">{this.makeBoard()}</div>
@@ -201,6 +222,7 @@ const mapDispatchToProps = (dispatch) => {
 const mapStateToProps = ({ Counter }) => {
   const {
     turn,
+    roomid,
     getLineCoords,
     mBoard,
     numBlue,
@@ -214,6 +236,7 @@ const mapStateToProps = ({ Counter }) => {
   } = Counter;
   return {
     count,
+    roomid,
     mBoard,
     numBlue,
     numRed,
@@ -229,6 +252,8 @@ const mapStateToProps = ({ Counter }) => {
 
 Game.propTypes = {
   count: PropTypes.number.isRequired,
+  userred: PropTypes.string.isRequired,
+  userblue: PropTypes.string.isRequired,
   lineCoordinates: PropTypes.objectOf(string).isRequired,
   boxColors: PropTypes.objectOf(string).isRequired,
   numBlue: PropTypes.number.isRequired,
