@@ -1,29 +1,29 @@
 module.exports = (app) => {
-  const tutorials = require('../controllers/room.controller');
+  const rooms = require('../controllers/room.controller');
   const { authJwt } = require('../middleware');
 
   const router = require('express').Router();
 
-  // Create a new Tutorial
-  router.post('/', tutorials.create);
+  // Create a new Room
+  router.post('/', rooms.create);
 
-  // Retrieve all Tutorials
-  router.get('/', tutorials.findAll);
+  // Retrieve all rooms
+  router.get('/', rooms.findAll);
 
-  // Retrieve all published Tutorials
-  router.get('/published', [authJwt.verifyToken], tutorials.findAllPublished);
+  // Retrieve all published rooms
+  router.get('/published', [authJwt.verifyToken], rooms.findAllPublished);
 
-  // Retrieve a single Tutorial with id
-  router.get('/:id', tutorials.findOne);
+  // Retrieve a single Room with id
+  router.get('/:id', rooms.findOne);
 
-  // Update a Tutorial with id
-  router.put('/:id', tutorials.update);
+  // Update a Room with id
+  router.put('/:id', rooms.update);
 
-  // Delete a Tutorial with id
-  router.delete('/:id', tutorials.delete);
+  // Delete a Room with id
+  router.delete('/:id', rooms.delete);
 
-  // Create a new Tutorial
-  router.delete('/', tutorials.deleteAll);
+  // Create a new Room
+  router.delete('/', rooms.deleteAll);
 
   app.use('/api/rooms', router);
 };

@@ -24,7 +24,6 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 // database
 const db = require('./models');
-const tutorials = require('./controllers/room.controller');
 
 db.sequelize.sync();
 // const Role = db.role;
@@ -32,16 +31,6 @@ db.sequelize.sync();
 //   Role.create({
 //     id: 1,
 //     name: 'user',
-//   });
-
-//   Role.create({
-//     id: 2,
-//     name: 'moderator',
-//   });
-
-//   Role.create({
-//     id: 3,
-//     name: 'admin',
 //   });
 // }
 // force: true will drop the table if it already exists
@@ -56,7 +45,6 @@ require('./routes/room.routes')(app);
 
 app.use(cors(corsOptions));
 const router = require('./router');
-const { addUser, removeUser, getUser, getUsersInRoom } = require('./user');
 
 const port = 5000;
 http.listen(port, () => {});
@@ -84,14 +72,14 @@ io.on('connect', (socket) => {
   socket.on('unjoin_room', (data) => {
     const Tutorial = db.rooms;
     socket.join(data);
-    console.log(`User LEfT Room: ${data} ||   ${socket.id}`);
+    console.log(`User Left Room: ${data} ||   ${socket.id}`);
     Tutorial.update(
       { status: 'stoped' },
       {
         where: {
           room: data,
         },
-      }
+      },
     ).then((res) => {
       console.log(res);
     });
@@ -107,16 +95,6 @@ io.on('connect', (socket) => {
       'action',
       {
         type: 'switchturn',
-      },
-      data,
-    );
-    console.log(data);
-  });
-  socket.on('calcscore', (data) => {
-    io.in(data.room).emit(
-      'action',
-      {
-        type: 'calc',
       },
       data,
     );
@@ -235,9 +213,7 @@ io.on('connect', (socket) => {
         const s = j > count ? j - count : j;
         const lineP = j > count ? 3 : 1;
         const boxC = boxesCoords[s];
-        const lineIdx = coordsH.findIndex((c) =>
-          c.find((item) => item === `${boxC}${lineP}`)
-        );
+        const lineIdx = coordsH.findIndex((c) => c.find((item) => item === `${boxC}${lineP}`));
         sortedCoordsH.push(coordsH[lineIdx]);
       }
       io.in(data.room).emit(
