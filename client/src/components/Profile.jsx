@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import { Redirect } from "react-router-dom";
 import AuthService from "../services/auth.service";
-import Game from "./Game";
 
 export default class Profile extends Component {
   constructor(props) {
@@ -40,15 +39,9 @@ export default class Profile extends Component {
                   Profile
                 </h3>
               </header>
-              <strong>Authorities:</strong>
-              <ul>
-                {currentUser.roles &&
-                  currentUser.roles.map((role) => <li>{role}</li>)}
-              </ul>
             </div>
           ) : null}
         </div>
-        <Game />
       </>
     );
   }

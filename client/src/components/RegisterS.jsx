@@ -118,7 +118,7 @@ export default class Register extends Component {
   }
 
   render() {
-    const { password, username, message, successful } = this.state;
+    const { password, username, message, successful, email } = this.state;
 
     return (
       <div className="col-md-12">
@@ -140,8 +140,8 @@ export default class Register extends Component {
                     value={username}
                     onChange={this.onChangeUsername}
                     validations={[required, vusername]}
-                    title="Разрешено использовать только латинские буквы"
-                    // pattern="[a-zA-Z\s]+$"
+                    title="Разрешено использовать только латинские буквы и первая буква должна быть большой"
+                    pattern="([A-Z])\w+"
                   />
                 </div>
 
@@ -155,7 +155,7 @@ export default class Register extends Component {
                     onChange={this.onChangeEmail}
                     validations={[required, email]}
                     title="Разрешено использовать только латинские буквы"
-                    // pattern="[a-zA-Z\s]+$"
+                    pattern="^[a-z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-z0-9-]+(?:\.[a-z0-9-]+)*$"
                   />
                 </div>
 
@@ -169,7 +169,7 @@ export default class Register extends Component {
                     onChange={this.onChangePassword}
                     validations={[required, vpassword]}
                     title="Разрешено использовать только латинские буквы"
-                    // pattern="[a-zA-Z\s]+$"
+                    pattern="[a-zA-Z\s]+$"
                   />
                 </div>
 

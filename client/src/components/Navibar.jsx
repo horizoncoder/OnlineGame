@@ -47,11 +47,6 @@ class Navibar extends Component {
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="mr-auto">
-              <li className="nav-item">
-                <Link to="/home" className="nav-link">
-                  Home
-                </Link>
-              </li>
               {currentUser && (
                 <li className="nav-item">
                   <Link to="/rooms" className="nav-link">
@@ -88,6 +83,12 @@ class Navibar extends Component {
                 </div>
               ) : (
                 <div className="navbar-nav ml-auto">
+                  <li className="nav-item">
+                    <Link to="/home" className="nav-link">
+                      Home
+                    </Link>
+                  </li>
+
                   <li className="nav-item">
                     <Link to="/login" className="nav-link">
                       Login
