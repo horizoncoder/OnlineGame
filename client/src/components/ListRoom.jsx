@@ -1,10 +1,7 @@
 import React, { Component } from "react";
-import { Link } from "react-router-dom";
 import RoomDataService from "../services/room.service";
 import AuthService from "../services/auth.service";
 import BluePlayerconnect from "./BluePlayerconnect";
-import counter from '../reducers/counter'
-import Chat2 from "./Chat2";
 
 export default class RoomsList extends Component {
   constructor(props) {
@@ -148,8 +145,7 @@ export default class RoomsList extends Component {
   }
 
   render() {
-    const { currentRoom } = this.state;
-    const { searchRoom, rooms, userid2 } = this.state;
+    const { searchRoom, rooms } = this.state;
     return (
       <>
         <div className="list row">
@@ -182,9 +178,7 @@ export default class RoomsList extends Component {
                   <li
                     className="list-group-item "
                     onMouseEnter={() => this.setActiveRoom(room, index)}
-                    key={index}
                   >
-                    {room.room}
                     <BluePlayerconnect roomsi={room.room} roomid={room.id} />
                     {/* <Chat2 roomid={room.id} /> */}
                     <button

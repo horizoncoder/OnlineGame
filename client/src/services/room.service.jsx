@@ -35,7 +35,7 @@ class TutorialDataService {
   }
 
   findByTitle(room) {
-    return http.get(`/rooms?room=${room}`);
+    return http.get(room);
   }
 }
 

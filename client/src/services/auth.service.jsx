@@ -1,11 +1,10 @@
 import axios from "axios";
-
-const API_URL = "http://localhost:5000/api/auth/";
+import { AUTH_URL } from "../components/api";
 
 class AuthService {
   login(username, password) {
     return axios
-      .post(`${API_URL}signin`, {
+      .post(`${AUTH_URL}signin`, {
         username,
         password,
       })
@@ -23,7 +22,7 @@ class AuthService {
   }
 
   register(username, email, password) {
-    return axios.post(`${API_URL}signup`, {
+    return axios.post(`${AUTH_URL}signup`, {
       username,
       email,
       password,
