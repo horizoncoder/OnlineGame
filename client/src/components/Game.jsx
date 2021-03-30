@@ -3,8 +3,6 @@ import "./App.css";
 import { connect } from "react-redux";
 import PropTypes, { string } from "prop-types";
 import { drop, map, clone } from "lodash";
-import io from "socket.io-client";
-import Stats from "./Stats";
 import { calcSCore, checkSquare } from "../actions";
 import { socket } from "../store";
 
@@ -112,20 +110,14 @@ class Game extends React.Component {
     for (let i = 1; i < count * 2 + 2; i += 1) {
       if (i % 2 !== 0) {
         llines.push(
-          <div className="container-fluid ">
-            <div className="row ml-2">
-              <div className="dots row  " />
-              {Lineh()}
-              <div className="dots row ml-4  " />
-            </div>
+          <div className="row ml-2">
+            <div className="dots row  " />
+            {Lineh()}
+            <div className="dots row ml-4  " />
           </div>
         );
       } else {
-        llines.push(
-          <div className="container-fluid">
-            <div className="colon">{LineVboxes()}</div>
-          </div>
-        );
+        llines.push(<div className="colon">{LineVboxes()}</div>);
       }
     }
 
@@ -140,35 +132,15 @@ class Game extends React.Component {
       };
       await socket.emit("users", count, roomname);
     };
-    const calc = async () => {
-      const { room } = this.props;
-      const roomname = {
-        room,
-      };
-      await socket.emit("calcscore", roomname);
-    };
+
     const { count, turn, numBlue, numRed } = this.props;
     const board = `Размер поля ${count} на ${count}`;
+    const info = `Сейчас ход ${turn} Красный: ${numRed} Синий:${numBlue}`;
     return (
       <div id="game">
         <div id="header">
           <h1>Точки и квадраты</h1>
 
-          <div className="row">
-            <div className="col col-lg-6">
-              Сейчас ход:
-              {turn}
-            </div>
-            <div className="col-md-auto">
-              Красный:
-              {numRed}
-            </div>
-            <div className="col col-lg-2">
-              Синий:
-              {numBlue}
-            </div>
-            <br />
-          </div>
           <button
             type="submit"
             onClick={() => {
@@ -184,14 +156,6 @@ class Game extends React.Component {
             }}
           >
             4x4
-          </button>
-          <button
-            type="submit"
-            onClick={() => {
-              calc(4);
-            }}
-          >
-            dsl;dls
           </button>
           <button
             id="small"
@@ -212,11 +176,15 @@ class Game extends React.Component {
             8x8
           </button>
           <br />
+          {info}
+          <br />
           {board}
-        </div>
-        <div className="row">
-          <div id="board" className="d-flex justify-content-center">
-            {this.makeBoard()}
+          <br />
+
+          <div className="form-row text-center">
+            <div className="col-12">
+              <div className="btn">{this.makeBoard()}</div>
+            </div>
           </div>
         </div>
       </div>
@@ -265,10 +233,8 @@ Game.propTypes = {
   boxColors: PropTypes.objectOf(string).isRequired,
   numBlue: PropTypes.number.isRequired,
   numRed: PropTypes.number.isRequired,
-  setBoardSize: PropTypes.func.isRequired,
+  room: PropTypes.string.isRequired,
   turn: PropTypes.string.isRequired,
-  switchTurn: PropTypes.func.isRequired,
-  putLine: PropTypes.func.isRequired,
   BoxsCoord: PropTypes.objectOf(string).isRequired,
   coordsV: PropTypes.objectOf(string).isRequired,
   coordsH: PropTypes.objectOf(string).isRequired,

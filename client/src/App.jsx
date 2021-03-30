@@ -9,8 +9,6 @@ import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import socketClient from "socket.io-client";
 import Navibar from "./components/Navibar";
 
-import Game from "./components/Game";
-
 import Stats from "./components/Stats";
 import { Home } from "./router/Home";
 import Logins from "./components/LoginS";

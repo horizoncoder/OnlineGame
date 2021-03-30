@@ -1,7 +1,7 @@
 import { createStore, applyMiddleware, compose } from "redux";
 import { createLogger } from "redux-logger";
-import createSocketIoMiddleware from 'redux-socket.io';
-import io from 'socket.io-client';
+import createSocketIoMiddleware from "redux-socket.io";
+import io from "socket.io-client";
 import thunk from "redux-thunk";
 import reducers from "./reducers";
 
@@ -10,7 +10,7 @@ socket.on("action", (data) => {
   console.log({ data });
 });
 
-let socketIoMiddleware = createSocketIoMiddleware(socket, "server/");
+const socketIoMiddleware = createSocketIoMiddleware(socket, "server/");
 
 const logger = createLogger({
   collapsed: (getState, action, logEntry) => !logEntry.error,

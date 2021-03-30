@@ -7,9 +7,11 @@ class TutorialDataService {
 
   findAllPublished(token) {
     console.log(token);
-    return http.get("/rooms/published", { headers: {
+    return http.get("/rooms/published", {
+      headers: {
         "x-access-token": token,
-    } });
+      },
+    });
   }
 
   get(id) {

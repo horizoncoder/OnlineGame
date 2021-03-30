@@ -184,8 +184,9 @@ export default class RoomsList extends Component {
                     onMouseEnter={() => this.setActiveRoom(room, index)}
                     key={index}
                   >
+                    {room.room}
                     <BluePlayerconnect roomsi={room.room} roomid={room.id} />
-                    <Chat2 roomid={room.id} />
+                    {/* <Chat2 roomid={room.id} /> */}
                     <button
                       className="d-inline-flex m-2 bg-danger text-light"
                       onClick={() => this.deleteRoom()}

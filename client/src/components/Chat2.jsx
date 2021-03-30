@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import "./App.css";
 import { connect } from "react-redux";
+import PropTypes from "prop-types";
 import Game from "./Game";
 import { socket } from "../store";
 import AuthService from "../services/auth.service";
@@ -40,7 +41,6 @@ function Chat2() {
     updateTutorial();
     socket.emit("unjoin_room", room);
   };
-  const sendMessage = async () => {};
   const saveRoom = () => {
     const currentUser = AuthService.getCurrentUser();
     const rooms = [];
@@ -79,14 +79,18 @@ function Chat2() {
                 }}
               />
             </div>
-            <button onClick={add}>Enter Chat</button>
+            <button type="submit" onClick={add}>
+              Enter Chat
+            </button>
           </div>
         ) : (
           <div>
             <Game room={room} />
             <div>{room}</div>
             <div>{userName}</div>
-            <button onClick={disconnectToRoom}>Exit</button>
+            <button type="submit" onClick={disconnectToRoom}>
+              Exit
+            </button>
           </div>
         )}
       </div>
@@ -99,5 +103,8 @@ const mapStateToProps = ({ Counter }) => {
     numBlue,
     numRed,
   };
+};
+Chat2.propTypes = {
+  roomid: PropTypes.number.isRequired,
 };
 export default connect(mapStateToProps)(Chat2);

@@ -1,4 +1,3 @@
-/* eslint-disable react/no-unused-state */
 import React, { Component } from "react";
 import Form from "react-validation/build/form";
 import Input from "react-validation/build/input";
@@ -26,7 +25,6 @@ const email = (value) => {
   }
 };
 
-// eslint-disable-next-line consistent-return
 const vusername = (value) => {
   if (value.length < 3 || value.length > 20) {
     return (

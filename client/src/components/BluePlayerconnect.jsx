@@ -1,12 +1,10 @@
-import React, { useState, useEffect } from "react";
-import io from "socket.io-client";
+import React, { useState } from "react";
 import "./App.css";
-import ScrollToBottom from "react-scroll-to-bottom";
+import PropTypes from "prop-types";
 import Game from "./Game";
 import { socket } from "../store";
 import AuthService from "../services/auth.service";
 import RoomDataService from "../services/room.service";
-import { updateTutorial } from "./ListRoom";
 
 function BluePlayerconnect(props) {
   const updateTutorial = () => {
@@ -31,8 +29,6 @@ function BluePlayerconnect(props) {
   const [userName, setUserName] = useState("");
 
   // After Login
-  const [message, setMessage] = useState("");
-  const [messageList, setMessageList] = useState([]);
   const currentUser = AuthService.getCurrentUser();
   const connectToRoom = () => {
     setLoggedIn(true);
@@ -44,25 +40,6 @@ function BluePlayerconnect(props) {
     socket.emit("unjoin_room", room);
   };
 
-  const sendMessage = async () => {};
-  const saveRoom = () => {
-    const currentUser = AuthService.getCurrentUser();
-    const rooms = [];
-    const data = {
-      room,
-      userid1: currentUser.username,
-      status: "wait",
-      roomid: 100,
-    };
-    RoomDataService.create(data)
-      .then((response) => {
-        rooms.push(response.data);
-      })
-      .catch((e) => {
-        console.log(e);
-      });
-    console.log(rooms);
-  };
   const add = (rooms) => {
     setRoom(props.roomsi);
     setUserName(currentUser.username);
@@ -70,36 +47,44 @@ function BluePlayerconnect(props) {
     console.log(rooms);
     updateTutorial();
   };
-
+  const { roomsi } = props;
   return (
     <>
       <div className="App">
         {!loggedIn ? (
           <div className="logIn">
             <div className="inputs">
+              room:
               <input
                 type="text"
                 placeholder="Room..."
-                value={props.roomsi}
-                onMouseEnter={(e) => {
+                value={roomsi}
+                onMouseEnter={() => {
                   setRoom(props.roomsi);
                   setUserName(currentUser.username);
                 }}
               />
             </div>
-            <button onClick={add}>Enter Chat</button>
+            <button type="submit" onClick={add}>
+              Connect
+            </button>
           </div>
         ) : (
           <div>
             <Game room={room} />
             <div>{room}</div>
             <div>{userName}</div>
-            <button onClick={disconnectToRoom}>Exit</button>
+            <button type="submit" onClick={disconnectToRoom}>
+              Exit
+            </button>
           </div>
         )}
       </div>
     </>
   );
 }
-
+BluePlayerconnect.propTypes = {
+  roomsi: PropTypes.string.isRequired,
+  roomid: PropTypes.number.isRequired,
+};
 export default BluePlayerconnect;
