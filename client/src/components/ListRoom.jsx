@@ -153,10 +153,11 @@ export default class RoomsList extends Component {
 
             <ul className="list-group">
               {rooms &&
-                rooms.map((room, index) => (
+                rooms.map((room) => (
                   <li
+                    key={room.id}
                     className="list-group-item "
-                    onMouseEnter={() => this.setActiveRoom(room, index)}
+                    onMouseEnter={() => this.setActiveRoom(room)}
                   >
                     <BluePlayerconnect roomsi={room.room} roomid={room.id} />
                   </li>

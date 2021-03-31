@@ -10,14 +10,6 @@ class UserService {
   getUserBoard() {
     return axios.get(`${TEST_URL}user`, { headers: authHeader() });
   }
-
-  getModeratorBoard() {
-    return axios.get(`${TEST_URL}mod`, { headers: authHeader() });
-  }
-
-  getAdminBoard() {
-    return axios.get(`${TEST_URL}admin`, { headers: authHeader() });
-  }
 }
 
 export default new UserService();

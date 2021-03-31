@@ -1,57 +1,6 @@
-import { map, clone } from "lodash";
 import { CALC_SCORE, GET_ROOM_ID } from "../actions";
 import RoomDataService from "../services/room.service";
 
-const getLineCoords = (x, y, p) => {
-  // получаем координаты линии
-  if (p === 0 && x > 0) {
-    return [`${x - 1}${y}${2}`, `${x}${y}${p}`];
-  }
-  if (p === 1 && y > 0) {
-    return [`${x}${y - 1}${3}`, `${x}${y}${p}`];
-  }
-  return [`${x}${y}${p}`];
-};
-const shouldSetLine = (count, x, y, p) => {
-  if (p === 2 && x + 1 < count) return false;
-  if (p === 3 && y + 1 < count) return false;
-  return true;
-};
-const pushCoords = (count) => {
-  const boxesCoords = [];
-  const coordsV = [];
-  const coordsH = [];
-  for (let y = 0; y < count; y += 1) {
-    for (let x = 0; x < count; x += 1) {
-      boxesCoords.push(`${x}${y}`);
-      for (let p = 0; p < 4; p += 1) {
-        if (shouldSetLine(count, x, y, p)) {
-          (p % 2 === 0 ? coordsV : coordsH).push(getLineCoords(x, y, p));
-        }
-      }
-    }
-  }
-
-  let BoxsCoord = []; // сортировка координат
-  BoxsCoord = map(boxesCoords, clone);
-  const sortedCoordsH = [];
-  for (let i = 0; i < count; i += 1) {
-    for (let j = i * count; j < i * count + count * 20; j += 1) {
-      const s = j > count ? j - count : j;
-      const lineP = j > count ? 3 : 1;
-      const boxC = boxesCoords[s];
-      const lineIdx = coordsH.findIndex((c) =>
-        c.find((item) => item === `${boxC}${lineP}`)
-      );
-      sortedCoordsH.push(coordsH[lineIdx]);
-    }
-    return {
-      BoxsCoord,
-      coordsV,
-      coordsH: sortedCoordsH,
-    };
-  }
-};
 const calcScore = (state) => ({
   Color: state.turn ? state.numRed : state.numBlue,
   // подсчет очков
@@ -85,7 +34,7 @@ const EndGame = (state, props) => {
       .then((response) => {
         console.log(response.data);
         this.setState({
-          message: "The tutorial was updated successfully!",
+          message: "The room was updated successfully!",
         });
       })
       .catch((e) => {
@@ -140,15 +89,9 @@ export default (state = initialState, action) => {
         coordsV: action.coordsV,
         count: action.count,
       };
-    case "message":
-      console.log({ action });
-      return {
-        ...state,
-      };
     case "switchturn":
       return { ...state, turn: state.turn === "red" ? "blue" : "red" };
-    case "setboard":
-      return { ...state, count: action.size, ...pushCoords(action.size) };
+
     case CALC_SCORE:
       return { ...state, numRed: action.numRed, ...calcScore(state) };
 

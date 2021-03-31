@@ -3,7 +3,7 @@ import "./App.css";
 import { connect } from "react-redux";
 import PropTypes, { string } from "prop-types";
 import { drop, map, clone } from "lodash";
-import { calcSCore, checkSquare, getRoomid } from "../actions";
+import { getRoomid } from "../actions";
 import { socket } from "../store";
 import AuthService from "../services/auth.service";
 
@@ -159,6 +159,7 @@ class Game extends React.Component {
       }
     };
     const { count, turn, numBlue, numRed, getRoomid, roomids } = this.props;
+
     const board = `Размер поля ${count} на ${count}`;
     const info = `Сейчас ход ${turn} Красный: ${numRed} Синий:${numBlue}`;
     return (
@@ -220,9 +221,7 @@ class Game extends React.Component {
 }
 const mapDispatchToProps = (dispatch) => {
   return {
-    calcSCore: () => dispatch(calcSCore()),
     getRoomid: (id) => dispatch(getRoomid(id)),
-    checkSquare: (y, z) => dispatch(checkSquare(y, z)),
   };
 };
 
@@ -261,7 +260,7 @@ const mapStateToProps = ({ Counter }) => {
 
 Game.propTypes = {
   getRoomid: PropTypes.func.isRequired,
-  roomids: PropTypes.string.isRequired,
+  roomids: PropTypes.number.isRequired,
   count: PropTypes.number.isRequired,
   userred: PropTypes.string.isRequired,
   userblue: PropTypes.string.isRequired,
