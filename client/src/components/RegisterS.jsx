@@ -16,7 +16,7 @@ const required = (value) => {
 };
 
 const email = (value) => {
-  if (!isEmail(value)) {
+  if ((!isEmail(value) && value.length < 3) || value.length > 20) {
     return (
       <div className="alert alert-danger" role="alert">
         This is not a valid email.

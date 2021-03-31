@@ -147,7 +147,7 @@ class Game extends React.Component {
   };
 
   render() {
-    const test = async (count) => {
+    const setboard = async (count) => {
       const currentUser = AuthService.getCurrentUser();
       const { turn, userred } = this.props;
       if (turn === "red" && userred === currentUser.username) {
@@ -158,26 +158,17 @@ class Game extends React.Component {
         socket.emit("users", count, roomname);
       }
     };
-    const {
-      count,
-      turn,
-      numBlue,
-      numRed,
-      roomid,
-      getRoomid,
-      roomids,
-    } = this.props;
+    const { count, turn, numBlue, numRed, getRoomid, roomids } = this.props;
     const board = `Размер поля ${count} на ${count}`;
     const info = `Сейчас ход ${turn} Красный: ${numRed} Синий:${numBlue}`;
     return (
       <div id="game">
         <div id="header">
           <h1>Точки и квадраты</h1>
-          {roomid}
           <button
             type="submit"
             onClick={() => {
-              test(2);
+              setboard(2);
               getRoomid(roomids);
             }}
           >
@@ -186,7 +177,7 @@ class Game extends React.Component {
           <button
             type="submit"
             onClick={() => {
-              test(4);
+              setboard(4);
               getRoomid(roomids);
             }}
           >
@@ -196,7 +187,7 @@ class Game extends React.Component {
             id="small"
             type="submit"
             onClick={() => {
-              test(6);
+              setboard(6);
               getRoomid(roomids);
             }}
           >
@@ -206,7 +197,7 @@ class Game extends React.Component {
             id="small"
             type="submit"
             onClick={() => {
-              test(8);
+              setboard(8);
               getRoomid(roomids);
             }}
           >
@@ -216,7 +207,6 @@ class Game extends React.Component {
           {info}
           <br />
           {board}
-          {roomids}
           <br />
           <div className="form-row text-center">
             <div className="col-12">
@@ -270,6 +260,8 @@ const mapStateToProps = ({ Counter }) => {
 };
 
 Game.propTypes = {
+  getRoomid: PropTypes.func.isRequired,
+  roomids: PropTypes.string.isRequired,
   count: PropTypes.number.isRequired,
   userred: PropTypes.string.isRequired,
   userblue: PropTypes.string.isRequired,

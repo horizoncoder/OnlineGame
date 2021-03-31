@@ -6,7 +6,7 @@ import { socket } from "../store";
 import AuthService from "../services/auth.service";
 import RoomDataService from "../services/room.service";
 
-function BluePlayerconnect(props) {
+function JoinRoom(props) {
   const updateTutorial = () => {
     const currentUser = AuthService.getCurrentUser();
     const data = {
@@ -35,7 +35,6 @@ function BluePlayerconnect(props) {
     socket.emit("join_room", room);
   };
   const disconnectToRoom = () => {
-    setLoggedIn(false);
     document.location.reload();
     socket.emit("unjoin_room", room);
   };
@@ -83,8 +82,8 @@ function BluePlayerconnect(props) {
     </>
   );
 }
-BluePlayerconnect.propTypes = {
+JoinRoom.propTypes = {
   roomsi: PropTypes.string.isRequired,
   roomid: PropTypes.number.isRequired,
 };
-export default BluePlayerconnect;
+export default JoinRoom;

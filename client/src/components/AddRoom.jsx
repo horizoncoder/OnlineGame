@@ -5,7 +5,7 @@ import { socket } from "../store";
 import AuthService from "../services/auth.service";
 import RoomDataService from "../services/room.service";
 
-function Chat2() {
+function AddRoom() {
   // Before Login
   const [loggedIn, setLoggedIn] = useState(false);
   const [room, setRoom] = useState("");
@@ -78,7 +78,7 @@ function Chat2() {
               />
             </div>
             <button type="submit" onClick={add}>
-              Enter Chat
+              Create Room
             </button>
           </div>
         ) : (
@@ -97,4 +97,4 @@ function Chat2() {
   );
 }
 
-export default Chat2;
+export default AddRoom;

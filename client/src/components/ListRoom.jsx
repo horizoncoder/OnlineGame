@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import RoomDataService from "../services/room.service";
 import AuthService from "../services/auth.service";
-import BluePlayerconnect from "./BluePlayerconnect";
+import BluePlayerconnect from "./JoinRoom";
 
 export default class RoomsList extends Component {
   constructor(props) {
@@ -12,7 +12,6 @@ export default class RoomsList extends Component {
     this.setActiveRoom = this.setActiveRoom.bind(this);
     this.removeAllRooms = this.removeAllRooms.bind(this);
     this.saveRoom = this.saveRoom.bind(this);
-    this.searchRoom = this.searchRoom.bind(this);
     this.updateTutorial = this.updateTutorial.bind(this);
     this.deleteRoom = this.deleteRoom.bind(this);
     this.state = {
@@ -145,30 +144,10 @@ export default class RoomsList extends Component {
   }
 
   render() {
-    const { searchRoom, rooms } = this.state;
+    const { rooms } = this.state;
     return (
       <>
         <div className="list row">
-          <div className="col-md-8">
-            <div className="input-group mb-3">
-              <input
-                type="text"
-                className="form-control"
-                placeholder="Search by title"
-                value={searchRoom}
-                onChange={this.onChangeSearchRoom}
-              />
-              <div className="input-group-append">
-                <button
-                  className="btn btn-outline-secondary"
-                  type="button"
-                  onClick={this.searchRoom}
-                >
-                  Search
-                </button>
-              </div>
-            </div>
-          </div>
           <div className="col-md-6">
             <h4>Room List</h4>
 
@@ -180,13 +159,6 @@ export default class RoomsList extends Component {
                     onMouseEnter={() => this.setActiveRoom(room, index)}
                   >
                     <BluePlayerconnect roomsi={room.room} roomid={room.id} />
-                    <button
-                      className="d-inline-flex m-2 bg-danger text-light"
-                      onClick={() => this.deleteRoom()}
-                      type="submit"
-                    >
-                      Delete
-                    </button>
                   </li>
                 ))}
             </ul>

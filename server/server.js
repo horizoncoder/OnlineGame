@@ -26,19 +26,6 @@ app.use(bodyParser.urlencoded({ extended: true }));
 const db = require('./models');
 
 db.sequelize.sync();
-// const Role = db.role;
-// function initial() {
-//   Role.create({
-//     id: 1,
-//     name: 'user',
-//   });
-// }
-// force: true will drop the table if it already exists
-// db.sequelize.sync({ force: false }).then(() => {
-//   initial();
-// });
-
-// routes
 require('./routes/auth.routes')(app);
 require('./routes/user.routes')(app);
 require('./routes/room.routes')(app);
@@ -50,18 +37,6 @@ const port = 5000;
 http.listen(port, () => {});
 
 io.on('connect', (socket) => {
-  const state = {
-    count: 0,
-    boxClass: ' box1 ',
-    turn: 'red',
-    numBlue: 0,
-    numRed: 0,
-    lineCoordinates: {},
-    boxColors: {},
-    BoxsCoord: {},
-    coordsV: {},
-    coordsH: {},
-  };
   socket.on('join_room', (data) => {
     socket.join(data);
     console.log(`User Joined Room: ${data} ||   ${socket.id}`);
@@ -82,11 +57,6 @@ io.on('connect', (socket) => {
     });
   });
 
-  socket.on('send_message', (data) => {
-    console.log(data);
-    socket.to(data.room).emit('receive_message', data.content);
-  });
-
   socket.on('switch', (data) => {
     io.in(data.room).emit(
       'action',
@@ -97,77 +67,13 @@ io.on('connect', (socket) => {
     );
     console.log(data);
   });
-  const calcScore = () => ({
-    Color: state.turn ? state.numRed : state.numBlue,
-    // подсчет очков
-    numRed: Object.values(state.boxColors).filter((color) => color === 'red')
-      .length, // считаем очки
-    numBlue: Object.values(state.boxColors).filter((color) => color === 'blue')
-      .length,
-  });
-  const EndGame = () => {
-    if (Object.keys(state.boxColors).length === state.count ** 2) {
-      console.log('Buhfds');
-    }
-  };
-  const checkBoxes = () => {
-    const { lineCoordinates, boxColors } = state;
-    const filledBoxes = {};
-    Object.keys(lineCoordinates).forEach((coord) => {
-      const splitCoord = coord.split('');
-      const x = splitCoord[0]; // x кордината
-      const y = splitCoord[1]; // y кордината
-      const boxCount = filledBoxes[`${x}${y}`];
-      if (!boxColors[`${x}${y}`]) {
-        filledBoxes[`${x}${y}`] = boxCount ? boxCount + 1 : 1;
-      }
-    });
-    return Object.keys(filledBoxes).reduce((acc, key) => {
-      if (filledBoxes[key] === 4) {
-        acc[key] = state.turn;
-      }
-      return acc;
-    }, {});
-  };
-  socket.on('put', (coord, data) => {
-    const newCoords = coord.reduce((acc, coord) => {
-      if (!state.lineCoordinates[coord]) {
-        acc[coord] = state.turn;
-      }
-      return acc;
-    }, {});
-    const newLineState = {
-      ...state,
-      lineCoordinates: { ...state.lineCoordinates, ...newCoords },
-    };
-    const newBoxState = {
-      ...newLineState,
-      boxColors: {
-        ...newLineState.boxColors,
-        ...checkBoxes(newLineState),
-      },
-    };
-    const score = {
-      Color: state.turn ? state.numRed : state.numBlue,
-      // подсчет очков
-      numRed: Object.values(state.boxColors).filter((color) => color === 'red')
-        .length, // считаем очки
-      numBlue: Object.values(state.boxColors).filter((color) => color === 'blue')
-        .length,
-    };
 
+  socket.on('put', (coord, data) => {
     io.in(data.room).emit(
       'action',
       {
         type: 'putline',
         coord,
-        newLineState,
-        ...state,
-        score,
-        ...newLineState,
-        ...newBoxState,
-        ...calcScore(newBoxState),
-        ...EndGame(newBoxState),
       },
       data,
     );

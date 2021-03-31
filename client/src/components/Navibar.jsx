@@ -63,7 +63,7 @@ class Navibar extends Component {
               )}
               {currentUser && (
                 <li className="nav-item">
-                  <Link to="/chat2" className="nav-link">
+                  <Link to="/addroom" className="nav-link">
                     AddRooms
                   </Link>
                 </li>
