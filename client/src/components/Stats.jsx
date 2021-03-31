@@ -71,8 +71,8 @@ export default class RoomsList extends Component {
                   <td>{room.userid1}</td>
                   <td>{room.userid2}</td>
                   <td>{room.status}</td>
-                  <td>{room.rednum}</td>
                   <td>{room.bluenum}</td>
+                  <td>{room.rednum}</td>
                   <td>{room.win}</td>
                 </tr>
               ))}

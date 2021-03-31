@@ -1,7 +1,5 @@
 import React, { useState } from "react";
 import "./App.css";
-import { connect } from "react-redux";
-import PropTypes from "prop-types";
 import Game from "./Game";
 import { socket } from "../store";
 import AuthService from "../services/auth.service";
@@ -16,7 +14,7 @@ function Chat2() {
 
   // After Login
   const currentUser = AuthService.getCurrentUser();
-  const updateTutorial = (props) => {
+  const updateTutorial = () => {
     const currentUser = AuthService.getCurrentUser();
     const data = {
       userid2: currentUser.username,
@@ -37,8 +35,8 @@ function Chat2() {
 
   const disconnectToRoom = () => {
     setLoggedIn(false);
-    setRoom("sdjsj");
     updateTutorial();
+    document.location.reload();
     socket.emit("unjoin_room", room);
   };
   const saveRoom = () => {
@@ -57,13 +55,11 @@ function Chat2() {
       .catch((e) => {
         console.log(e);
       });
-    console.log(rooms.length);
-    console.log(rooms.id);
+    console.log(rooms);
   };
   const add = () => {
     connectToRoom();
     saveRoom();
-    console.log(datas);
   };
 
   return (
@@ -87,7 +83,7 @@ function Chat2() {
           </div>
         ) : (
           <div>
-            <Game userred={userName} room={room} />
+            <Game userred={userName} room={room} roomids={datas.id} />
             <div>{room}</div>
             <div>{datas.id}</div>
             <div>{userName}</div>
@@ -100,14 +96,5 @@ function Chat2() {
     </>
   );
 }
-const mapStateToProps = ({ Counter }) => {
-  const { numBlue, numRed } = Counter;
-  return {
-    numBlue,
-    numRed,
-  };
-};
-Chat2.propTypes = {
-  roomid: PropTypes.number.isRequired,
-};
-export default connect(mapStateToProps)(Chat2);
+
+export default Chat2;

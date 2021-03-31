@@ -11,7 +11,7 @@ function BluePlayerconnect(props) {
     const currentUser = AuthService.getCurrentUser();
     const data = {
       userid2: currentUser.username,
-      status: "started",
+      status: "player connected ",
     };
     RoomDataService.update(props.roomid, data)
       .then((response) => {
@@ -36,7 +36,7 @@ function BluePlayerconnect(props) {
   };
   const disconnectToRoom = () => {
     setLoggedIn(false);
-    setRoom("sdjsj");
+    document.location.reload();
     socket.emit("unjoin_room", room);
   };
 

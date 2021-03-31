@@ -48,9 +48,6 @@ const router = require('./router');
 
 const port = 5000;
 http.listen(port, () => {});
-app.get('/', (req, res) => {
-  res.sendFile(`${__dirname}/index.html`);
-});
 
 io.on('connect', (socket) => {
   const state = {

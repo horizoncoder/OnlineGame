@@ -1,5 +1,5 @@
 import { map, clone } from "lodash";
-import { CALC_SCORE } from "../actions";
+import { CALC_SCORE, GET_ROOM_ID } from "../actions";
 import RoomDataService from "../services/room.service";
 
 const getLineCoords = (x, y, p) => {
@@ -62,15 +62,26 @@ const calcScore = (state) => ({
 });
 const EndGame = (state, props) => {
   if (Object.keys(state.boxColors).length === state.count ** 2) {
-    alert("Buhf");
+    let winner = "Draw";
+    if (state.numRed > state.numBlue) {
+      winner = "PlayerRed";
+    }
+    if (state.numBlue > state.numRed) {
+      winner = "PlayerBlue";
+    }
+    if (state.numBlue === state.numRed) {
+      winner = "Draw";
+    }
+    alert("Игра закончена");
     console.log(props);
-    // document.location.reload();
+    document.location.reload();
     const data = {
-      status: "started",
+      status: "ending",
       rednum: state.numRed,
       bluenum: state.numBlue,
+      win: winner,
     };
-    RoomDataService.update(23, data)
+    RoomDataService.update(state.roomid, data)
       .then((response) => {
         console.log(response.data);
         this.setState({
@@ -115,7 +126,7 @@ const initialState = {
   coordsV: {},
   coordsH: {},
   score: {},
-  rooomid: 0,
+  roomid: 0,
 };
 
 export default (state = initialState, action) => {
@@ -140,6 +151,10 @@ export default (state = initialState, action) => {
       return { ...state, count: action.size, ...pushCoords(action.size) };
     case CALC_SCORE:
       return { ...state, numRed: action.numRed, ...calcScore(state) };
+
+    case GET_ROOM_ID:
+      console.log("sdhhs");
+      return { ...state, roomid: action.id };
 
     case "calc":
       return { ...state, ...calcScore(state) };

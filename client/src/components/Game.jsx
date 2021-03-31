@@ -3,7 +3,7 @@ import "./App.css";
 import { connect } from "react-redux";
 import PropTypes, { string } from "prop-types";
 import { drop, map, clone } from "lodash";
-import { calcSCore, checkSquare } from "../actions";
+import { calcSCore, checkSquare, getRoomid } from "../actions";
 import { socket } from "../store";
 import AuthService from "../services/auth.service";
 
@@ -148,25 +148,37 @@ class Game extends React.Component {
 
   render() {
     const test = async (count) => {
-      const { room } = this.props;
-      const roomname = {
-        room,
-      };
-      await socket.emit("users", count, roomname);
+      const currentUser = AuthService.getCurrentUser();
+      const { turn, userred } = this.props;
+      if (turn === "red" && userred === currentUser.username) {
+        const { room } = this.props;
+        const roomname = {
+          room,
+        };
+        socket.emit("users", count, roomname);
+      }
     };
-
-    const { count, turn, numBlue, numRed, roomid } = this.props;
+    const {
+      count,
+      turn,
+      numBlue,
+      numRed,
+      roomid,
+      getRoomid,
+      roomids,
+    } = this.props;
     const board = `Размер поля ${count} на ${count}`;
     const info = `Сейчас ход ${turn} Красный: ${numRed} Синий:${numBlue}`;
     return (
       <div id="game">
         <div id="header">
           <h1>Точки и квадраты</h1>
-         dsdsd {roomid}
+          {roomid}
           <button
             type="submit"
             onClick={() => {
               test(2);
+              getRoomid(roomids);
             }}
           >
             2x2
@@ -175,6 +187,7 @@ class Game extends React.Component {
             type="submit"
             onClick={() => {
               test(4);
+              getRoomid(roomids);
             }}
           >
             4x4
@@ -184,6 +197,7 @@ class Game extends React.Component {
             type="submit"
             onClick={() => {
               test(6);
+              getRoomid(roomids);
             }}
           >
             6x6
@@ -193,6 +207,7 @@ class Game extends React.Component {
             type="submit"
             onClick={() => {
               test(8);
+              getRoomid(roomids);
             }}
           >
             8x8
@@ -201,6 +216,7 @@ class Game extends React.Component {
           {info}
           <br />
           {board}
+          {roomids}
           <br />
           <div className="form-row text-center">
             <div className="col-12">
@@ -215,6 +231,7 @@ class Game extends React.Component {
 const mapDispatchToProps = (dispatch) => {
   return {
     calcSCore: () => dispatch(calcSCore()),
+    getRoomid: (id) => dispatch(getRoomid(id)),
     checkSquare: (y, z) => dispatch(checkSquare(y, z)),
   };
 };
@@ -224,6 +241,7 @@ const mapStateToProps = ({ Counter }) => {
     turn,
     roomid,
     getLineCoords,
+    getRoomid,
     mBoard,
     numBlue,
     numRed,
@@ -236,6 +254,7 @@ const mapStateToProps = ({ Counter }) => {
   } = Counter;
   return {
     count,
+    getRoomid,
     roomid,
     mBoard,
     numBlue,
