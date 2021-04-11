@@ -30,7 +30,7 @@ function AddRoom() {
   };
   const connectToRoom = () => {
     setLoggedIn(true);
-    socket.emit("join_room", room);
+    socket.emit("join_room", room,userName);
   };
 
   const disconnectToRoom = () => {
@@ -39,27 +39,9 @@ function AddRoom() {
     document.location.reload();
     socket.emit("unjoin_room", room);
   };
-  const saveRoom = () => {
-    const currentUser = AuthService.getCurrentUser();
-    const rooms = [];
-    const data = {
-      room,
-      userid1: currentUser.username,
-      status: "wait",
-    };
-    RoomDataService.create(data)
-      .then((response) => {
-        rooms.push(response.data);
-        setDatas(response.data);
-      })
-      .catch((e) => {
-        console.log(e);
-      });
-    console.log(rooms);
-  };
+
   const add = () => {
     connectToRoom();
-    saveRoom();
   };
 
   return (

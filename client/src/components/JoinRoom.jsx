@@ -7,20 +7,6 @@ import AuthService from "../services/auth.service";
 import RoomDataService from "../services/room.service";
 
 function JoinRoom(props) {
-  const updateTutorial = () => {
-    const currentUser = AuthService.getCurrentUser();
-    const data = {
-      userid2: currentUser.username,
-      status: "player connected ",
-    };
-    RoomDataService.update(props.roomid, data)
-      .then((response) => {
-        console.log(response.data);
-      })
-      .catch((e) => {
-        console.log(e);
-      });
-  };
   console.log(props);
   // console.log(romsi)
   // Before Login
@@ -32,7 +18,7 @@ function JoinRoom(props) {
   const currentUser = AuthService.getCurrentUser();
   const connectToRoom = () => {
     setLoggedIn(true);
-    socket.emit("join_room", room);
+    socket.emit("join_room2", room,userName);
   };
   const disconnectToRoom = () => {
     document.location.reload();
@@ -44,7 +30,7 @@ function JoinRoom(props) {
     setUserName(currentUser.username);
     connectToRoom();
     console.log(rooms);
-    updateTutorial();
+    // updateTutorial();
   };
   const { roomsi } = props;
   return (

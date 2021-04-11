@@ -25,7 +25,9 @@ app.use(bodyParser.urlencoded({ extended: true }));
 // database
 const db = require('./models');
 
-db.sequelize.sync();
+db.sequelize.sync({ force: false }).then(() => {
+  console.log("Drop and re-sync db.");
+});
 require('./routes/auth.routes')(app);
 require('./routes/user.routes')(app);
 require('./routes/room.routes')(app);
@@ -37,16 +39,52 @@ const port = 5000;
 http.listen(port, () => {});
 
 io.on('connect', (socket) => {
-  socket.on('join_room', (data) => {
+  socket.on('join_room', (data,userName) => {
+    const Tutorial = db.rooms;
     socket.join(data);
     console.log(`User Joined Room: ${data} ||   ${socket.id}`);
+    Tutorial.create(
+      { status: 'wait',
+        test: ["test1","test2"],
+        room: data,
+        userid1:userName
+
+     },
+      {
+        where: {
+          room: data,
+        },
+      },
+    ).then((res) => {
+      console.log(res);
+    });
+  });
+  socket.on('join_room2', (data,userName) => {
+    const Tutorial = db.rooms;
+    socket.join(data);
+    console.log(`User Joined Room: ${data} ||   ${socket.id}`);
+    Tutorial.update(
+      { status: 'wait',
+        userid2:userName
+
+     },
+      {
+        where: {
+          room: data,
+        },
+      },
+    ).then((res) => {
+      console.log(res);
+    });
   });
   socket.on('unjoin_room', (data) => {
     const Tutorial = db.rooms;
     socket.join(data);
     console.log(`User Left Room: ${data} ||   ${socket.id}`);
     Tutorial.update(
-      { status: 'stoped' },
+      { status: 'work2?',
+        test: ["test1","test2"]
+     },
       {
         where: {
           room: data,

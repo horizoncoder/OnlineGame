@@ -21,7 +21,19 @@ module.exports = (sequelize, Sequelize) => {
     win: {
       type: Sequelize.STRING,
     },
-  });
+    count:{
+      type: Sequelize.STRING,
 
+    },
+    states: {
+      type: Sequelize.ENUM,
+      values: ['active', 'pending', 'deleted']
+    },
+    test:{
+      type:Sequelize.ARRAY(Sequelize.STRING) 
+    }
+  });
+  console.log(Room.rawAttributes.states.values);
+  console.log("jdssjd")
   return Room;
 };

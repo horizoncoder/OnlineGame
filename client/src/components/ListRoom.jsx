@@ -88,7 +88,7 @@ export default class RoomsList extends Component {
         this.setState({
           rooms: response.data,
         });
-        console.log(response.data);
+        //console.log(response.data);
       })
       .catch((e) => {
         console.log(e);
@@ -145,6 +145,7 @@ export default class RoomsList extends Component {
 
   render() {
     const { rooms } = this.state;
+    console.log(rooms)
     return (
       <>
         <div className="list row">
@@ -159,6 +160,7 @@ export default class RoomsList extends Component {
                     className="list-group-item "
                     onMouseEnter={() => this.setActiveRoom(room)}
                   >
+                    {room.states}
                     <BluePlayerconnect roomsi={room.room} roomid={room.id} />
                   </li>
                 ))}

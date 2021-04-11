@@ -23,8 +23,11 @@ exports.create = (req, res) => {
     rednum: req.body.rednum,
     bluenum: req.body.bluenum,
     win: req.body.win,
-  };
-
+    test: req.body.test,
+    //LineT:req.body.LineT,
+    count:req.body.count,
+    states:req.body.states
+  }
   // Save Room in the database
   Room.create(rooms)
     .then((data) => {
