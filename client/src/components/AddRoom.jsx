@@ -14,20 +14,6 @@ function AddRoom() {
 
   // After Login
   const currentUser = AuthService.getCurrentUser();
-  const updateTutorial = () => {
-    const currentUser = AuthService.getCurrentUser();
-    const data = {
-      userid2: currentUser.username,
-      status: "stoped",
-    };
-    RoomDataService.update(datas.id, data)
-      .then((response) => {
-        console.log(response.data);
-      })
-      .catch((e) => {
-        console.log(e);
-      });
-  };
   const connectToRoom = () => {
     setLoggedIn(true);
     socket.emit("join_room", room,userName);
@@ -35,7 +21,7 @@ function AddRoom() {
 
   const disconnectToRoom = () => {
     setLoggedIn(false);
-    updateTutorial();
+    //updateTutorial();
     document.location.reload();
     socket.emit("unjoin_room", room);
   };

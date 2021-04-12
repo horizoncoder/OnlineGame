@@ -42,6 +42,18 @@ const EndGame = (state, props) => {
       });
   }
 };
+const retrieveRooms=(state) => {
+  RoomDataService.getAll()
+    .then((response) => {
+      this.setState({
+        rooms:response.data
+      });
+      //console.log(response.data);
+    })
+    .catch((e) => {
+      console.log(e);
+    });
+}
 const checkBoxes = (state) => {
   const { lineCoordinates, boxColors } = state;
   const filledBoxes = {};
@@ -75,6 +87,7 @@ const initialState = {
   coordsV: {},
   coordsH: {},
   score: {},
+  rooms:[],
   roomid: 0,
 };
 
@@ -82,12 +95,15 @@ export default (state = initialState, action) => {
   switch (action.type) {
     case "users8":
       console.log({ action });
+      console.log(action.turna)
       return {
         ...state,
-        BoxsCoord: action.BoxsCoord,
+        turn:action.turna,
+        BoxsCoord: action.arr,
         coordsH: action.sortedCoordsH,
         coordsV: action.coordsV,
         count: action.count,
+        ...retrieveRooms()
       };
     case "switchturn":
       return { ...state, turn: state.turn === "red" ? "blue" : "red" };
@@ -96,7 +112,6 @@ export default (state = initialState, action) => {
       return { ...state, numRed: action.numRed, ...calcScore(state) };
 
     case GET_ROOM_ID:
-      console.log("sdhhs");
       return { ...state, roomid: action.id };
 
     case "calc":

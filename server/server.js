@@ -40,12 +40,13 @@ http.listen(port, () => {});
 
 io.on('connect', (socket) => {
   socket.on('join_room', (data,userName) => {
+    let arr=["kdsksdk","weuu"]
     const Tutorial = db.rooms;
     socket.join(data);
     console.log(`User Joined Room: ${data} ||   ${socket.id}`);
     Tutorial.create(
       { status: 'wait',
-        test: ["test1","test2"],
+        // test: arr,
         room: data,
         userid1:userName
 
@@ -117,6 +118,8 @@ io.on('connect', (socket) => {
     );
   });
   socket.on('users', (count, data) => {
+    const Tutorial = db.rooms;
+    console.log(`c;ksd ${db}`)
     const getLineCoords = (x, y, p) => {
       // получаем координаты линии
       if (p === 0 && x > 0) {
@@ -157,17 +160,42 @@ io.on('connect', (socket) => {
         const lineIdx = coordsH.findIndex((c) => c.find((item) => item === `${boxC}${lineP}`));
         sortedCoordsH.push(coordsH[lineIdx]);
       }
-      io.in(data.room).emit(
-        'action',
+      Tutorial.update(
+        { status: 'wait',
+        test: BoxsCoord,
+        turn:"yellow"
+       },
         {
-          type: 'users8',
-          BoxsCoord,
-          sortedCoordsH,
-          coordsV,
-          count,
+          where: {
+            room: data.room,
+          },
         },
-        data,
-      );
+      ).then((res) => {
+        console.log(res.room)
+        console.log(data)
+        console.log(res);
+      });
+      Tutorial.findOne({
+        where: {room: data.room},
+      }).then(project => {
+     let arr=[]
+     let turna=project.turn
+     arr.push(project.test)
+     console.log("ksdks"+ arr)
+     io.in(data.room).emit(
+      'action',
+      {
+        type: 'users8',
+        arr,
+        turna,
+        sortedCoordsH,
+        coordsV,
+        count,
+      },
+      data,
+    );
+      })
+      
     }
   });
 

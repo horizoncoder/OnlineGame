@@ -160,7 +160,10 @@ export default class RoomsList extends Component {
                     className="list-group-item "
                     onMouseEnter={() => this.setActiveRoom(room)}
                   >
-                    {room.states}
+                    {room.test}
+                    <br/>
+
+                    {room.userid1}
                     <BluePlayerconnect roomsi={room.room} roomid={room.id} />
                   </li>
                 ))}

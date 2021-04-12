@@ -21,7 +21,7 @@ module.exports = (sequelize, Sequelize) => {
     win: {
       type: Sequelize.STRING,
     },
-    count:{
+    turn:{
       type: Sequelize.STRING,
 
     },

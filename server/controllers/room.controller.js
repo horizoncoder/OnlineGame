@@ -24,8 +24,7 @@ exports.create = (req, res) => {
     bluenum: req.body.bluenum,
     win: req.body.win,
     test: req.body.test,
-    //LineT:req.body.LineT,
-    count:req.body.count,
+    turn:req.body.count,
     states:req.body.states
   }
   // Save Room in the database
