@@ -31,9 +31,12 @@ module.exports = (sequelize, Sequelize) => {
     },
     test:{
       type:Sequelize.ARRAY(Sequelize.STRING) 
+    },
+
+    boxfield:{
+      type:Sequelize.ARRAY(Sequelize.STRING) 
     }
   });
   console.log(Room.rawAttributes.states.values);
-  console.log("jdssjd")
   return Room;
 };

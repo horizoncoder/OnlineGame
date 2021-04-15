@@ -19,32 +19,37 @@ class Game extends React.Component {
     const putline = async (coord) => {
       const { turn, userred, userblue } = this.props;
       const currentUser = AuthService.getCurrentUser();
-      if (turn === "red" && userred === currentUser.username) {
+      let user=currentUser.username
+     console.log(currentUser.username)
+      if (turn === "red") {
         const { room } = this.props;
         const roomname = {
           room,
         };
-        socket.emit("put", coord, roomname);
+        const username = {
+          
+        };
+        socket.emit("put", coord, roomname,user);
       }
-      if (turn === "blue" && userblue === currentUser.username) {
+      if (turn === "blue") {
         const { room } = this.props;
         const roomname = {
           room,
         };
-        socket.emit("put", coord, roomname);
+        socket.emit("put", coord, roomname,user);
       }
     };
     const switchT = async () => {
       const { turn, userred, userblue } = this.props;
       const currentUser = AuthService.getCurrentUser();
-      if (turn === "red" && userred === currentUser.username) {
+      if (turn === "red" ) {
         const { room } = this.props;
         const roomname = {
           room,
         };
         await socket.emit("switch", roomname);
       }
-      if (turn === "blue" && userblue === currentUser.username) {
+      if (turn === "blue" ) {
         const { room } = this.props;
         const roomname = {
           room,

@@ -2,11 +2,12 @@ import axios from "axios";
 import { AUTH_URL } from "../components/api";
 
 class AuthService {
-  login(username, password) {
+  login(username, password,id) {
     return axios
       .post(`${AUTH_URL}signin`, {
         username,
         password,
+        id
       })
       .then((response) => {
         if (response.data.accessToken) {
@@ -26,6 +27,7 @@ class AuthService {
       username,
       email,
       password,
+      id
     });
   }
 

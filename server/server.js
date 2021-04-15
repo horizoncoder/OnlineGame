@@ -25,9 +25,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 // database
 const db = require('./models');
 
-db.sequelize.sync({ force: false }).then(() => {
-  console.log("Drop and re-sync db.");
-});
+db.sequelize.sync();
 require('./routes/auth.routes')(app);
 require('./routes/user.routes')(app);
 require('./routes/room.routes')(app);
@@ -66,6 +64,7 @@ io.on('connect', (socket) => {
     console.log(`User Joined Room: ${data} ||   ${socket.id}`);
     Tutorial.update(
       { status: 'wait',
+      room: data,
         userid2:userName
 
      },
@@ -78,14 +77,13 @@ io.on('connect', (socket) => {
       console.log(res);
     });
   });
+
   socket.on('unjoin_room', (data) => {
     const Tutorial = db.rooms;
     socket.join(data);
     console.log(`User Left Room: ${data} ||   ${socket.id}`);
     Tutorial.update(
-      { status: 'work2?',
-        test: ["test1","test2"]
-     },
+      { status: 'stoped' },
       {
         where: {
           room: data,
@@ -107,12 +105,78 @@ io.on('connect', (socket) => {
     console.log(data);
   });
 
-  socket.on('put', (coord, data) => {
+  socket.on('put', (coord, data,user) => {
+    const Tutorial = db.rooms;
+
+    
+    Tutorial.findOne({
+      where: {room: data.room},
+    }).then(project => {
+   let arr=[]
+   console.log(project.turn)
+    })
+    const checkBoxes = (lineCoordinates) => {
+      const filledBoxes = {};
+      const boxColors={};
+      Object.keys(lineCoordinates).forEach((coord) => {
+        const splitCoord = coord.split("");
+        const x = splitCoord[0]; // x кордината
+        const y = splitCoord[1]; // y кордината
+        const boxCount = filledBoxes[`${x}${y} `];
+        if (!boxColors[`${x}${y}`]) {
+          filledBoxes[`${x}${y}`] = boxCount ? boxCount + 1 : 1;
+        }
+      });
+  
+      return Object.keys(filledBoxes).reduce((acc, key) => {
+        if (filledBoxes[key] === 4) {
+          acc[key] = state.turn;
+        }
+        return acc;
+      }, {}); 
+    };
+    let lineCoordinates=[]
+      const newCoords = coord.reduce((acc, coord) => {
+        if (!lineCoordinates[coord]) {
+          acc[coord] = ["red", user];
+        }
+        return acc;
+      }, {});
+      const newLineState = {
+        lineCoordinates: { ...lineCoordinates, ...newCoords },
+      };
+     let boxColors=[]
+      const newBoxState = {
+        ...newLineState,
+       
+        boxColors: {
+          ...newLineState.boxColors,
+         ...checkBoxes(newLineState),
+        },
+
+      };
+      Tutorial.update(
+        { status: 'wait',
+        turn:"red",
+        boxfield:[{newLineState}]
+       },
+        {
+          where: {
+            room: data.room,
+          },
+        },
+      ).then((res) => {
+        console.log(res.room)
+        console.log(data)
+        console.log(res);
+      });
     io.in(data.room).emit(
       'action',
       {
         type: 'putline',
         coord,
+        newLineState,
+        newBoxState
       },
       data,
     );
@@ -163,7 +227,7 @@ io.on('connect', (socket) => {
       Tutorial.update(
         { status: 'wait',
         test: BoxsCoord,
-        turn:"yellow"
+        turn:"red"
        },
         {
           where: {
@@ -198,6 +262,7 @@ io.on('connect', (socket) => {
       
     }
   });
+
 
   app.use(bodyParser.json());
 

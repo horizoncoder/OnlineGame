@@ -25,6 +25,7 @@ exports.create = (req, res) => {
     win: req.body.win,
     test: req.body.test,
     turn:req.body.count,
+    boxfield:red.body.boxfield,
     states:req.body.states
   }
   // Save Room in the database
