@@ -138,13 +138,14 @@ io.on('connect', (socket) => {
     let lineCoordinates=[]
       const newCoords = coord.reduce((acc, coord) => {
         if (!lineCoordinates[coord]) {
-          acc[coord] = ["red", user];
+          acc[coord] = [user];
         }
         return acc;
       }, {});
       const newLineState = {
-        lineCoordinates: { ...lineCoordinates, ...newCoords },
+         ...lineCoordinates
       };
+      lineCoordinates.unshift(newCoords)
      let boxColors=[]
       const newBoxState = {
         ...newLineState,
@@ -155,10 +156,13 @@ io.on('connect', (socket) => {
         },
 
       };
+      console.log(lineCoordinates)
+      console.log(newCoords)
+      console.log("sdhhsdhs")
       Tutorial.update(
         { status: 'wait',
         turn:"red",
-        boxfield:[{newLineState}]
+        boxfield:[newCoords]
        },
         {
           where: {

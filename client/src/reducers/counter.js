@@ -127,6 +127,7 @@ export default (state = initialState, action) => {
       console.log(action.newLineState)
       console.log(action.newBoxState)
       console.log(newLineState.boxColors)
+      console.log(newCoords)
       return {
         ...state,
         rooomid: action.coord,
