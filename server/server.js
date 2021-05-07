@@ -105,16 +105,10 @@ io.on('connect', (socket) => {
     console.log(data);
   });
 
-  socket.on('put', (coord, data,user) => {
+  socket.on('put', (coord, data,user,boxColors) => {
     const Tutorial = db.rooms;
 
-    
-    Tutorial.findOne({
-      where: {room: data.room},
-    }).then(project => {
-   let arr=[]
-   console.log(project.turn)
-    })
+    console.log(boxColors)
     const checkBoxes = (lineCoordinates) => {
       const filledBoxes = {};
       const boxColors={};
@@ -125,44 +119,53 @@ io.on('connect', (socket) => {
         const boxCount = filledBoxes[`${x}${y} `];
         if (!boxColors[`${x}${y}`]) {
           filledBoxes[`${x}${y}`] = boxCount ? boxCount + 1 : 1;
+          console.log(boxColors)
         }
       });
   
       return Object.keys(filledBoxes).reduce((acc, key) => {
         if (filledBoxes[key] === 4) {
-          acc[key] = state.turn;
+             acc[key] = `${state.turn}${user}`;
         }
         return acc;
       }, {}); 
     };
+  
+    
+     
     let lineCoordinates=[]
+    let numRed=0
+    let numBlue=0
+    // подсчет очков
+    numRed = Object.values(boxColors).filter((color) => color === `red${user}`)
+      .length, // считаем очки
+    numBlue=Object.values(boxColors).filter((color) => color === `blue${user}`)
+      .length
+      console.log(numRed)
+      console.log(numBlue)
       const newCoords = coord.reduce((acc, coord) => {
         if (!lineCoordinates[coord]) {
-          acc[coord] = [user];
+          acc[coord] = ["red", user];
         }
         return acc;
       }, {});
       const newLineState = {
-         ...lineCoordinates
+        lineCoordinates: { ...lineCoordinates, ...newCoords },
       };
-      lineCoordinates.unshift(newCoords)
-     let boxColors=[]
+     let boxColor=[]
       const newBoxState = {
         ...newLineState,
        
         boxColors: {
-          ...newLineState.boxColors,
+          ...newLineState.boxColor,
          ...checkBoxes(newLineState),
         },
 
       };
-      console.log(lineCoordinates)
-      console.log(newCoords)
-      console.log("sdhhsdhs")
       Tutorial.update(
         { status: 'wait',
         turn:"red",
-        boxfield:[newCoords]
+        boxfield:[boxColors]
        },
         {
           where: {
@@ -174,13 +177,45 @@ io.on('connect', (socket) => {
         console.log(data)
         console.log(res);
       });
+      Tutorial.findOne({
+        where: {room: data.room},
+      }).then(project => {
+          let bx=project.boxfield
+          console.log(bx)
+          for (let [key, value] of Object.entries(bx)) {
+            console.log(`${value.length}:${value}`);
+            if(value.length===37){
+              Tutorial.update(
+                { status: 'ending',
+                userid2:"Dima",
+                rednum: 4,
+                bluenum: 5,
+               win: "winner",
+
+               },
+                {
+                  where: {
+                    room: data.room,
+                  },
+                },
+              ).then((res) => {
+                console.log(res.room)
+                console.log(data)
+                console.log(res);
+              });
+              console.log("game end")
+            }
+        }
+      })
     io.in(data.room).emit(
       'action',
       {
         type: 'putline',
         coord,
         newLineState,
-        newBoxState
+        newBoxState,
+        numBlue,
+        numRed
       },
       data,
     );

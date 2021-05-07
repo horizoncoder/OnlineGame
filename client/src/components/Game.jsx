@@ -17,9 +17,11 @@ class Game extends React.Component {
 
   makeBoard = () => {
     const putline = async (coord) => {
-      const { turn, userred, userblue } = this.props;
+      const { turn, userred, userblue,boxColors,coordsH } = this.props;
       const currentUser = AuthService.getCurrentUser();
       let user=currentUser.username
+      console.log(coordsH)
+      console.log(boxColors)
      console.log(currentUser.username)
       if (turn === "red") {
         const { room } = this.props;
@@ -29,18 +31,18 @@ class Game extends React.Component {
         const username = {
           
         };
-        socket.emit("put", coord, roomname,user);
+        socket.emit("put", coord, roomname,user,boxColors);
       }
       if (turn === "blue") {
         const { room } = this.props;
         const roomname = {
           room,
         };
-        socket.emit("put", coord, roomname,user);
+        socket.emit("put", coord, roomname,user,boxColors);
       }
     };
     const switchT = async () => {
-      const { turn, userred, userblue } = this.props;
+      const { turn, userred, userblue, } = this.props;
       const currentUser = AuthService.getCurrentUser();
       if (turn === "red" ) {
         const { room } = this.props;
