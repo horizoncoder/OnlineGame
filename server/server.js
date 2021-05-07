@@ -108,28 +108,6 @@ io.on('connect', (socket) => {
   socket.on('put', (coord, data,user,boxColors) => {
     const Tutorial = db.rooms;
 
-    console.log(boxColors)
-    const checkBoxes = (lineCoordinates) => {
-      const filledBoxes = {};
-      const boxColors={};
-      Object.keys(lineCoordinates).forEach((coord) => {
-        const splitCoord = coord.split("");
-        const x = splitCoord[0]; // x кордината
-        const y = splitCoord[1]; // y кордината
-        const boxCount = filledBoxes[`${x}${y} `];
-        if (!boxColors[`${x}${y}`]) {
-          filledBoxes[`${x}${y}`] = boxCount ? boxCount + 1 : 1;
-          console.log(boxColors)
-        }
-      });
-  
-      return Object.keys(filledBoxes).reduce((acc, key) => {
-        if (filledBoxes[key] === 4) {
-             acc[key] = `${state.turn}${user}`;
-        }
-        return acc;
-      }, {}); 
-    };
   
     
      
@@ -158,7 +136,6 @@ io.on('connect', (socket) => {
        
         boxColors: {
           ...newLineState.boxColor,
-         ...checkBoxes(newLineState),
         },
 
       };
@@ -184,12 +161,12 @@ io.on('connect', (socket) => {
           console.log(bx)
           for (let [key, value] of Object.entries(bx)) {
             console.log(`${value.length}:${value}`);
-            if(value.length===37){
+            if(value.length===48){
               Tutorial.update(
                 { status: 'ending',
                 userid2:"Dima",
-                rednum: 4,
-                bluenum: 5,
+                rednum: numRed,
+                bluenum: numBlue,
                win: "winner",
 
                },
@@ -204,6 +181,7 @@ io.on('connect', (socket) => {
                 console.log(res);
               });
               console.log("game end")
+              console.log(count)
             }
         }
       })

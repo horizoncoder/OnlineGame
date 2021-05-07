@@ -1,21 +1,21 @@
 import { CALC_SCORE, GET_ROOM_ID } from "../actions";
 import RoomDataService from "../services/room.service";
 import AuthService from "../services/auth.service";
-
+//проверка квадратов
 const checkBoxes = (state) => {
   const currentUser = AuthService.getCurrentUser();
-  console.log(currentUser.id)
   const { lineCoordinates, boxColors } = state;
+  console.log(boxColors)
   const filledBoxes = {};
   Object.keys(lineCoordinates).forEach((coord) => {
     const splitCoord = coord.split("");
     const x = splitCoord[0]; // x кордината
     const y = splitCoord[1]; // y кордината
     const boxCount = filledBoxes[`${x}${y}`];
+    console.log(`${x}${y}`)
     if (!boxColors[`${x}${y}`]) {
       filledBoxes[`${x}${y}`] = boxCount ? boxCount + 1 : 1;
       console.log(boxColors)
-      console.log("dddd")
     }
   });
   return Object.keys(filledBoxes).reduce((acc, key) => {
@@ -63,6 +63,7 @@ export default (state = initialState, action) => {
 
 
     case "putline":
+      
       console.log(state.boxColors)
        {
       const newCoords = action.coord.reduce((acc, coord) => {
@@ -84,11 +85,7 @@ export default (state = initialState, action) => {
           ...checkBoxes(newLineState),
         },
       };
-      console.log(checkBoxes(newLineState))
-      console.log(state.lineCoordinates)
-      console.log(state.boxColors)
-      console.log()
-      console.log(action.numRed)
+
       return {
         ...state,
         ...state.lineCoordinates,

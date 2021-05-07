@@ -17,7 +17,7 @@ class Game extends React.Component {
 
   makeBoard = () => {
     const putline = async (coord) => {
-      const { turn, userred, userblue,boxColors,coordsH } = this.props;
+      const { turn, userred, userblue,boxColors,coordsH,lineCoordinates } = this.props;
       const currentUser = AuthService.getCurrentUser();
       let user=currentUser.username
       console.log(coordsH)
@@ -31,14 +31,14 @@ class Game extends React.Component {
         const username = {
           
         };
-        socket.emit("put", coord, roomname,user,boxColors);
+        socket.emit("put", coord, roomname,user,boxColors,lineCoordinates);
       }
       if (turn === "blue") {
         const { room } = this.props;
         const roomname = {
           room,
         };
-        socket.emit("put", coord, roomname,user,boxColors);
+        socket.emit("put", coord, roomname,user,boxColors,lineCoordinates);
       }
     };
     const switchT = async () => {
