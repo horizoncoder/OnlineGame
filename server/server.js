@@ -131,7 +131,33 @@ io.on('connect', (socket) => {
         lineCoordinates: { ...lineCoordinates, ...newCoords },
       };
      let boxColor=[]
+     let arr= Object.values(boxColors)
+     console.log(arr)
+     console.log(typeof(arr))
+
+    var resultReduce = arr.reduce(function(acc, cur) {
+     if (!acc.hash[cur]) {
+       acc.hash[cur] = { [cur]: 1 };
+       acc.map.set(acc.hash[cur], 1);
+       acc.result.push(acc.hash[cur]);
+     } else {
+       acc.hash[cur][cur] += 1;
+       acc.map.set(acc.hash[cur], acc.hash[cur][cur]);
+     }
+     return acc;
+   }, {
+     hash: {},
+     map: new Map(),
+     result: []
+   });
+   
+   var result = resultReduce.result.sort(function(a, b) {
+     return resultReduce.map.get(b) - resultReduce.map.get(a);
+   });
+             console.log(result);
+
       const newBoxState = {
+        
         ...newLineState,
        
         boxColors: {
@@ -142,7 +168,7 @@ io.on('connect', (socket) => {
       Tutorial.update(
         { status: 'wait',
         turn:"red",
-        boxfield:[boxColors]
+        boxfield:result
        },
         {
           where: {
@@ -159,9 +185,8 @@ io.on('connect', (socket) => {
       }).then(project => {
           let bx=project.boxfield
           console.log(bx)
-          for (let [key, value] of Object.entries(bx)) {
-            console.log(`${value.length}:${value}`);
-            if(value.length===48){
+          
+            if(bx.length===3){
               Tutorial.update(
                 { status: 'ending',
                 userid2:"Dima",
@@ -181,9 +206,7 @@ io.on('connect', (socket) => {
                 console.log(res);
               });
               console.log("game end")
-              console.log(count)
             }
-        }
       })
     io.in(data.room).emit(
       'action',

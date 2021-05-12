@@ -46,9 +46,38 @@ export default class RoomsList extends Component {
 
   render() {
     const { rooms } = this.state;
+   //var arr = ["aa", "aa", "ab", "ab", "ac", "a", "s", "s", "s"];
+   let arr=[]
+              rooms.map((room) => (
+             console.log(room.boxfield),
+             arr.push(room.boxfield)
+              ))
+              
+var resultReduce = arr.reduce(function(acc, cur) {
+  if (!acc.hash[cur]) {
+    acc.hash[cur] = { [cur]: 1 };
+    acc.map.set(acc.hash[cur], 1);
+    acc.result.push(acc.hash[cur]);
+  } else {
+    acc.hash[cur][cur] += 1;
+    acc.map.set(acc.hash[cur], acc.hash[cur][cur]);
+  }
+  return acc;
+}, {
+  hash: {},
+  map: new Map(),
+  result: []
+});
+
+var result = resultReduce.result.sort(function(a, b) {
+  return resultReduce.map.get(b) - resultReduce.map.get(a);
+});
+
+console.log(result);
     return (
       <>
         <h4 className="d-flex justify-content-center">Stats</h4>
+       
         <Table responsive="sm">
           <thead>
             <tr>
@@ -57,8 +86,7 @@ export default class RoomsList extends Component {
               <th>PlayerRed</th>
               <th>PlayerBlue</th>
               <th>Status</th>
-              <th>BlueNum</th>
-              <th>RedNum</th>
+              <th>Score</th>
               <th>win</th>
             </tr>
           </thead>
@@ -71,8 +99,7 @@ export default class RoomsList extends Component {
                   <td>{room.userid1}</td>
                   <td>{room.userid2}</td>
                   <td>{room.status}</td>
-                  <td>{room.bluenum}</td>
-                  <td>{room.rednum}</td>
+                  <td>{room.boxfield}</td>
                   <td>{room.win}</td>
                 </tr>
               ))}
